@@ -9,9 +9,31 @@ param(
 $ErrorActionPreference = 'Stop'
 
 function Invoke-Gh {
+    $command = $args -join ' '
+    Write-Output "+ gh $command"
     & gh @args
-    if ($LASTEXITCODE -ne 0) { throw "GitHub CLI failed: $($args[0]) $($args[1])" }
+    if ($LASTEXITCODE -ne 0) { throw "GitHub CLI failed (exit $LASTEXITCODE): gh $command" }
 }
+
+# The uploads are large (about 130 MB), so a transient failure is retried instead
+# of leaving a draft release behind.
+function Send-ReleaseAssets {
+    param([string]$Tag, [string[]]$Files, [string]$Repo)
+    for ($attempt = 1; $attempt -le 3; $attempt++) {
+        try {
+            Invoke-Gh release upload $Tag @Files --repo $Repo --clobber
+            return
+        }
+        catch {
+            Write-Output "upload attempt $attempt failed: $($_.Exception.Message)"
+            if ($attempt -eq 3) { throw }
+            Start-Sleep -Seconds 10
+        }
+    }
+}
+
+try { Write-Output "gh: $(& gh --version | Select-Object -First 1)" }
+catch { Write-Output "gh: version unknown" }
 
 # Refuse a partial package even if the legacy packaging script returned success.
 $versionFile = Join-Path $PSScriptRoot '../workflows/do-release.cmd'
@@ -51,6 +73,9 @@ if (!$repo -or $sha -notmatch '^[0-9a-f]{40}$' -or $env:GITHUB_RUN_NUMBER -notma
 $tag = if ($isVersionTag) { $env:GITHUB_REF.Substring(10) } else { "build-$($env:GITHUB_RUN_NUMBER)-$($sha.Substring(0, 8))" }
 $title = if ($isVersionTag) { "RoxaZip $tag" } else { "RoxaZip $version - build $($env:GITHUB_RUN_NUMBER)" }
 $runUrl = "$env:GITHUB_SERVER_URL/$repo/actions/runs/$env:GITHUB_RUN_ID"
+Write-Output "version      : $version"
+Write-Output "release tag  : $tag"
+Write-Output "assets       : $($assets.Count) (incl. SHA256SUMS.txt) from $ArtifactDirectory"
 
 # Keep uploads in a draft until all assets are present. Re-running a completed
 # release leaves its published assets untouched; a failed draft can be retried.
@@ -80,11 +105,15 @@ Linux tar.gz packages: x64 and ARM64, built with GCC and Clang. Each includes Ro
     if ($isVersionTag) { $createArgs += '--verify-tag' } else { $createArgs += '--prerelease' }
     Invoke-Gh @createArgs
 }
-Invoke-Gh release upload $tag @assets --repo $repo --clobber
+Send-ReleaseAssets -Tag $tag -Files $assets -Repo $repo
 $editArgs = @('release', 'edit', $tag, '--repo', $repo, '--draft=false')
 if ($isVersionTag) { $editArgs += '--prerelease=false' } else { $editArgs += '--prerelease', '--latest=false' }
 Invoke-Gh @editArgs
-$releaseUrl = Invoke-Gh release view $tag --repo $repo --json url --jq .url
+$stateJson = & gh release view $tag --repo $repo --json isDraft,url
+if ($LASTEXITCODE -ne 0) { throw "cannot read back the release: $tag" }
+$state = $stateJson | ConvertFrom-Json
+if ($state.isDraft) { throw "the release $tag is still a draft after publishing" }
+$releaseUrl = $state.url
 Write-Output "Published: $releaseUrl"
 if ($env:GITHUB_STEP_SUMMARY) {
     "Published [$title]($releaseUrl) with $($assets.Count) assets." | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
