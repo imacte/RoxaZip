@@ -19,21 +19,18 @@ function Invoke-Gh {
 # of leaving a draft release behind.
 function Send-ReleaseAssets {
     param([string]$Tag, [string[]]$Files, [string]$Repo)
-    for ($attempt = 1; $attempt -le 3; $attempt++) {
+    for ($attempt = 1; $attempt -le 2; $attempt++) {
         try {
             Invoke-Gh release upload $Tag @Files --repo $Repo --clobber
             return
         }
         catch {
             Write-Output "upload attempt $attempt failed: $($_.Exception.Message)"
-            if ($attempt -eq 3) { throw }
-            Start-Sleep -Seconds 10
+            if ($attempt -eq 2) { throw }
+            Start-Sleep -Seconds 5
         }
     }
 }
-
-try { Write-Output "gh: $(& gh --version | Select-Object -First 1)" }
-catch { Write-Output "gh: version unknown" }
 
 # Refuse a partial package even if the legacy packaging script returned success.
 $versionFile = Join-Path $PSScriptRoot '../workflows/do-release.cmd'
@@ -109,11 +106,7 @@ Send-ReleaseAssets -Tag $tag -Files $assets -Repo $repo
 $editArgs = @('release', 'edit', $tag, '--repo', $repo, '--draft=false')
 if ($isVersionTag) { $editArgs += '--prerelease=false' } else { $editArgs += '--prerelease', '--latest=false' }
 Invoke-Gh @editArgs
-$stateJson = & gh release view $tag --repo $repo --json isDraft,url
-if ($LASTEXITCODE -ne 0) { throw "cannot read back the release: $tag" }
-$state = $stateJson | ConvertFrom-Json
-if ($state.isDraft) { throw "the release $tag is still a draft after publishing" }
-$releaseUrl = $state.url
+$releaseUrl = Invoke-Gh release view $tag --repo $repo --json url --jq .url
 Write-Output "Published: $releaseUrl"
 if ($env:GITHUB_STEP_SUMMARY) {
     "Published [$title]($releaseUrl) with $($assets.Count) assets." | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
