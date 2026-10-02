@@ -41,11 +41,16 @@
        (Product -> Product identity). The Publisher is issued by the Store and
        must stay exactly like this, otherwise the Store rejects the upload.
        A local test build changes the publisher to the test certificate
-       (build-store-package.ps1 -Sign) in its staging copy only. -->
+       (build-store-package.ps1 -Sign) in its staging copy only.
+       ProcessorArchitecture is the x64 default; build-store-package.ps1
+       overwrites it with the architecture it packs (-Arch arm64 and so on),
+       otherwise the x64 and arm64 packages would share the same full name and
+       the Store would reject one of them. -->
   <Identity
     Name="imacte.RoxaZip"
     Publisher="CN=99CE4C4C-7CDF-4CB7-A3F5-AAB5567A3092"
-    Version="26.3.0.0" />
+    Version="26.3.0.0"
+    ProcessorArchitecture="x64" />
 
   <Properties>
     <DisplayName>RoxaZip</DisplayName>

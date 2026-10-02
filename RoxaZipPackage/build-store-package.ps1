@@ -180,6 +180,10 @@ $manifest = Join-Path $stage 'AppxManifest.xml'
 Copy-Item (Join-Path $pkgDir 'Package.appxmanifest') $manifest -Force
 $xml = [xml](Get-Content $manifest -Raw)
 $xml.Package.Identity.Version = $Version
+# Without this the package is architecture "neutral" and the x64 and arm64
+# packages would share one full name (the Store rejects that, and a neutral
+# package would be offered on every device although the binaries are not).
+[void]$xml.Package.Identity.SetAttribute('ProcessorArchitecture', $Arch)
 if ($IdentityName) { $xml.Package.Identity.Name = $IdentityName }
 if ($Publisher) { $xml.Package.Identity.Publisher = $Publisher }
 if ($PublisherDisplayName) { $xml.Package.Properties.PublisherDisplayName = $PublisherDisplayName }
