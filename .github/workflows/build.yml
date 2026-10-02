@@ -1,5 +1,5 @@
 
-name: Build binaries
+name: Build and release RoxaZip
 on: [push, pull_request]
 
 jobs:
@@ -238,6 +238,9 @@ jobs:
   do-release:
     runs-on: windows-latest
     needs: windows
+    permissions:
+      contents: read
+      actions: write
     steps:
     - uses: actions/download-artifact@v7
       with:
