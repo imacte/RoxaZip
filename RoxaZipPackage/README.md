@@ -80,6 +80,11 @@ from there; otherwise they come from `-InstallDir`. `-IdentityName`,
 `-Publisher`, `-PublisherDisplayName` and `-Version` override the manifest when
 needed (`-Version` accepts `26.03` and `26.3.0.0`).
 
+`-HideHelperApps` marks the console and the GUI helper with
+`AppListEntry="none"` so that only "RoxaZip" appears in the Start menu. It
+requires the **HeadlessAppBypass** waiver for the product - see the ticket text
+and the procedure in [StoreListing.md](StoreListing.md).
+
 ## Local test before submitting
 
 ```powershell

@@ -170,18 +170,58 @@ How to test RoxaZip - no account, no network, no special hardware needed:
 - The application never connects to the network and collects no data.
 ```
 
-## Start menu entries
+## Start menu entries and the HeadlessAppBypass waiver
 
 The package declares three applications, so the Start menu shows three entries:
 `RoxaZip` (file manager), `RoxaZip Console` (command line, provides the `7z.exe`
 alias) and `RoxaZip GUI` (progress window, provides the `7zG.exe` alias).
 
-Hiding the two helper entries requires `AppListEntry="none"`, which the Store
-rejects with "the package specifies a headless app; you do not have permission to
-create headless apps" unless the **HeadlessAppBypass** waiver is granted for the
-product. Request that waiver from Microsoft support if the helper entries should
-disappear; until then they stay visible, which keeps the legacy command names
-working.
+Hiding the two helper entries needs `AppListEntry="none"`, and the Store rejects
+that with "the package specifies a headless app; you do not have permission to
+create headless apps - also ensure you have the waiver HeadlessAppBypass
+associated to this app". The waiver is granted per product by the Store team.
+
+### How to request it
+
+Open a support ticket at
+<https://support.serviceshub.microsoft.com/supportforbusiness/create?sapId=bc9d4067-7218-61b9-1d2c-68ae591acf9d>
+and choose the category **Developer, Student and Startup Programs -> Dev Center
+-> Account Management** (recommended by Microsoft support in
+[this Q&A](https://learn.microsoft.com/en-ie/answers/questions/2115779/headlessappbypass-waiver)).
+Do not rely on `partnerops@microsoft.com`, and the "Windows Developer Support"
+page does not offer that category - developers got stuck in a loop there.
+
+Ticket text:
+
+```
+Product : RoxaZip
+Store ID: 9P836WXHPJGZ
+Identity: imacte.RoxaZip
+Publisher: CN=99CE4C4C-7CDF-4CB7-A3F5-AAB5567A3092
+Package family name: imacte.RoxaZip_dy69qcvur1ke
+
+Please associate the "HeadlessAppBypass" waiver with this product.
+
+RoxaZip is a Win32 archive manager packaged as MSIX. The package contains three
+applications: RoxaZipFM.exe (the file manager, listed as "RoxaZip"), RoxaZip.exe
+(the command line tool, needed for the 7z.exe execution alias) and RoxaZipG.exe
+(the progress dialog helper that the file manager starts for long operations).
+The last two are helper executables without their own user interface: they are
+started by the file manager and by scripts, and listing them in the Start menu
+would be confusing for customers. We therefore mark them with
+AppListEntry="none", which currently blocks the package upload.
+```
+
+### After the waiver is granted
+
+```powershell
+pwsh -File RoxaZipPackage\build-store-package.ps1 -HideHelperApps
+```
+
+adds `AppListEntry="none"` to the two helper applications. For CI, add the same
+switch to the "Build the Store packages" step in `.github/workflows/build.yml`.
+Until the waiver exists, the packages ship with the three visible entries, which
+also keeps the `7z.exe` and `7zG.exe` aliases working.
 
 ## Age rating questionnaire (expected answers)
 

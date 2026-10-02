@@ -52,6 +52,10 @@ param(
   [switch]$MakeCert,
   [string]$Subject = 'CN=RoxaZip Store Development',
   [switch]$Install,
+  # Hides "RoxaZip Console" and "RoxaZip GUI" from the Start menu with
+  # AppListEntry="none". Only works once the Store granted the "HeadlessAppBypass"
+  # waiver for the product - without it the upload is rejected.
+  [switch]$HideHelperApps,
   [switch]$KeepStage
 )
 
@@ -187,6 +191,17 @@ $xml.Package.Identity.Version = $Version
 if ($IdentityName) { $xml.Package.Identity.Name = $IdentityName }
 if ($Publisher) { $xml.Package.Identity.Publisher = $Publisher }
 if ($PublisherDisplayName) { $xml.Package.Properties.PublisherDisplayName = $PublisherDisplayName }
+if ($HideHelperApps)
+{
+  foreach ($app in $xml.Package.Applications.Application)
+  {
+    if ($app.Id -eq 'RoxaZip.Console' -or $app.Id -eq 'RoxaZip.Windows')
+    {
+      [void]$app.VisualElements.SetAttribute('AppListEntry', 'none')
+    }
+  }
+  Info "helpers      : AppListEntry=none (needs the HeadlessAppBypass waiver)"
+}
 $xml.Save($manifest)
 Info "identity   : $($xml.Package.Identity.Name)"
 Info "publisher  : $($xml.Package.Identity.Publisher)"
