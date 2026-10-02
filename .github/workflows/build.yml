@@ -308,15 +308,21 @@ jobs:
         # published one, so the run number becomes the third version part:
         # 26.3.<run>.0 is always newer than the 26.3.0.0 of the first submission.
         STORE_VERSION: 26.3.${{ github.run_number }}.0
+        # Set to 1 once the Store associated the HeadlessAppBypass waiver with the
+        # product: the console and the GUI helper then disappear from the Start
+        # menu (AppListEntry="none"), which the Store rejects without the waiver.
+        STORE_HIDE_HELPERS: ''
       run: |
         if (-not $env:STORE_VERSION) { throw 'STORE_VERSION is not set' }
+        $hide = if ($env:STORE_HIDE_HELPERS -eq '1') { @('-HideHelperApps') } else { @() }
+        Write-Output "Store version $env:STORE_VERSION, hide helper apps: $($hide.Count -gt 0)"
         foreach ($arch in @('x64', 'arm64')) {
           $bin = Join-Path $PWD "artifact/bin-$arch"
           if (-not (Test-Path (Join-Path $bin 'RoxaZipFM.exe'))) { throw "missing build output: $bin" }
           # the staged payload takes the binaries of this architecture
           Get-ChildItem skel -File | Where-Object { $_.Extension -in '.exe', '.dll', '.sfx' } | Remove-Item -Force
           Copy-Item (Join-Path $bin '*') skel -Force
-          & pwsh -NoProfile -File RoxaZipPackage/build-store-package.ps1 -SourceDir skel -Arch $arch -Version $env:STORE_VERSION -OutDir store
+          & pwsh -NoProfile -File RoxaZipPackage/build-store-package.ps1 -SourceDir skel -Arch $arch -Version $env:STORE_VERSION -OutDir store @hide
           if ($LASTEXITCODE -ne 0) { throw "Store packaging failed for $arch" }
         }
 
