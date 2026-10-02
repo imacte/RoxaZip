@@ -160,10 +160,15 @@ separate build:
 
 ## Open work
 
-* the x64 package builds, installs and works locally (aliases, Windows 11 menu,
-  file manager, options page); the arm64 package is built in CI;
-* what is left for the listing: the screenshots, the description (see
-  [StoreListing.md](StoreListing.md)) and the submission itself;
+* the x64 package is submitted for certification (version `26.3.0.0`); the arm64
+  package exists in CI and goes out with the next update, whose version comes from
+  the workflow run number;
+* the HeadlessAppBypass waiver (ticket `2610020010001019`) is pending. Once the
+  Store granted it, `-HideHelperApps` (or `STORE_HIDE_HELPERS: '1'` in CI) removes
+  the console and the GUI helper from the Start menu;
+* the whole submission process - identity, first submission, update checklist, the
+  waiver and the Store error messages seen so far - is documented in
+  [../DOC/StoreSubmission.md](../DOC/StoreSubmission.md);
 * the classic `-AssocAll`/shell registration of the classic build is replaced by
   the manifest in this variant (`fileTypeAssociation`,
   `fileExplorerContextMenus`).

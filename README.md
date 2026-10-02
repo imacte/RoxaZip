@@ -116,6 +116,7 @@ are documented in [DOC/RoxaZip.md](DOC/RoxaZip.md).
 - [DOC/RoxaZip.md](DOC/RoxaZip.md) - branding, file names, compatibility with existing installations
 - [Package/README.md](Package/README.md) - Windows 11 context menu (sparse package)
 - [RoxaZipPackage/README.md](RoxaZipPackage/README.md) - the Microsoft Store package (`RoxaZipPackage/StoreListing.md` has the listing text)
+- [DOC/StoreSubmission.md](DOC/StoreSubmission.md) - Store submission: package build, the first submission, the update checklist and the HeadlessAppBypass waiver
 - [PRIVACY.md](PRIVACY.md) - privacy policy: no data collection, no network access
 - [DOC/readme.txt](DOC/readme.txt) - upstream build instructions and module layout
 - [DOC/UpstreamSynchronization.md](DOC/UpstreamSynchronization.md) - pinned upstream revisions and modification markers

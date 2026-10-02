@@ -39,7 +39,8 @@ not part of the archive manager itself:
     `.github/msvc-problem-matcher.json`
   - the icon pipeline and its SVG masters: `design/icons/`
   - the RoxaZip documentation: `DOC/CLI.md`, `DOC/RoxaZip.md`,
-    `DOC/UpstreamSynchronization.md`, `DOC/known-issues.md`, `PRIVACY.md`
+    `DOC/StoreSubmission.md`, `DOC/UpstreamSynchronization.md`,
+    `DOC/known-issues.md`, `PRIVACY.md`
 
 Every one of these files carries a `License: MIT` header. This file is only a
 notice for them - it is not the license of the project as a whole.
