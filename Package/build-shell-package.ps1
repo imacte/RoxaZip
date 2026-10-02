@@ -225,7 +225,7 @@ try
 }
 catch
 {
-  if ($_.Exception.HResult -ne 0x80073CFB) { Fail "registration failed: $($_.Exception.Message)" }
+  if ([uint32]$_.Exception.HResult -ne 0x80073CFB) { Fail "registration failed: $($_.Exception.Message)" }
   $existing = Get-AppxPackage -Name $identityName -ErrorAction SilentlyContinue
   if ($existing) { Remove-AppxPackage -Package $existing.PackageFullName }
   Info "removed the previous registration"

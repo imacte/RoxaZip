@@ -260,22 +260,32 @@ if ($Install)
     Info "certificate trusted for the machine"
   }
   else { Info "test certificate is already trusted for the machine" }
-  try { Add-AppxPackage -Path $msix -ErrorAction Stop }
-  catch
+
+  # Add-AppxPackage refuses to replace a registration of the same version, and the
+  # HRESULT it reports differs between Windows versions, so the previous *test*
+  # registration is removed first. Only packages with the "Developer" signature
+  # kind are touched: a Store installation of RoxaZip (SignatureKind "Store") is
+  # never removed by this script.
+  $old = @(Get-AppxPackage -Name $xml.Package.Identity.Name -ErrorAction SilentlyContinue |
+      Where-Object { $_.SignatureKind -eq 'Developer' })
+  if ($old.Count)
   {
-    if ($_.Exception.HResult -ne 0x80073CFB) { Fail "registration failed: $($_.Exception.Message)" }
-    $old = Get-AppxPackage -Name $xml.Package.Identity.Name -ErrorAction SilentlyContinue
-    if ($old) { Remove-AppxPackage -Package $old.PackageFullName }
-    Add-AppxPackage -Path $msix -ErrorAction Stop
+    foreach ($o in $old) { Remove-AppxPackage -Package $o.PackageFullName }
+    Info "removed the previous test registration ($($old.Count))"
   }
-  $pkg = Get-AppxPackage -Name $xml.Package.Identity.Name
+  try { Add-AppxPackage -Path $msix -ErrorAction Stop }
+  catch { Fail "registration failed: $($_.Exception.Message)" }
+
+  $pkg = Get-AppxPackage -Name $xml.Package.Identity.Name -ErrorAction SilentlyContinue |
+    Where-Object { $_.SignatureKind -eq 'Developer' } | Sort-Object Version -Descending | Select-Object -First 1
+  if (-not $pkg) { Fail 'registration failed' }
   Info "registered : $($pkg.PackageFullName)"
   Info "family     : $($pkg.PackageFamilyName)"
   Info "install    : $($pkg.InstallLocation)"
   Write-Host "`nCheck now: aliases in $env:LOCALAPPDATA\Microsoft\WindowsApps (7z.exe, 7zFM.exe, 7zG.exe,"
   Write-Host "RoxaZip*.exe) and the Windows 11 context menu entry. Sign out and back in if the menu"
   Write-Host "does not appear. Remove the test package with:"
-  Write-Host "    Get-AppxPackage -Name '$($xml.Package.Identity.Name)' | Remove-AppxPackage"
+  Write-Host "    Get-AppxPackage -Name '$($xml.Package.Identity.Name)' | Where-Object SignatureKind -eq Developer | Remove-AppxPackage"
 }
 
 if (-not $KeepStage) { Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue }

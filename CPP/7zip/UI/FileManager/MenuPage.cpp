@@ -231,18 +231,32 @@ bool CMenuPage::OnInit()
 
   Set_ModeControls_Text(*this);
   // **** RoxaZip Modification Start ****
-  /* The Windows 11 menu can only be switched on when the sparse package is
-     available next to the program. A released installation does not contain it,
-     and "Apply" would then fail with a message box, so the option is disabled
-     instead. A package that is already registered keeps the option enabled, so
-     that it can be switched off again. */
+  /* The Windows 11 menu needs the sparse package next to the program, or a
+     package identity of its own (the Microsoft Store variant). Without either,
+     "Apply" would refuse with a message box, so the option is disabled instead.
+     A package that is already registered keeps the option enabled, so that it can
+     be switched off again. */
+  const bool packaged = NShellIntegrationModern::Is_Running_Packaged();
   const bool modernAvailable =
       NShellIntegrationModern::Is_Supported() &&
-      (NShellIntegrationModern::Is_Installed() ||
+      (packaged ||
+       NShellIntegrationModern::Is_Installed() ||
        !NShellIntegrationModern::Get_DefaultMsixPath().IsEmpty());
   // **** RoxaZip Modification End ****
   EnableItem(IDX_SYSTEM_MENU_MODERN, modernAvailable);
   EnableItem(IDX_SYSTEM_MENU_BOTH, modernAvailable);
+  // **** RoxaZip Modification Start ****
+  if (packaged)
+  {
+    /* The Store variant: the package manifest owns the menu and the file
+       associations. Its classic registration is machine-wide, which a packaged
+       process cannot change - and the shell lists the commands of a package in
+       the classic menu anyway. */
+    EnableItem(IDX_SYSTEM_MENU_CLASSIC, false);
+    EnableItem(IDX_SYSTEM_MENU_BOTH, false);
+    EnableItem(IDX_SYSTEM_MENU_NONE, false);
+  }
+  // **** RoxaZip Modification End ****
   Update_MenuMode_Controls();
 
   CContextMenuInfo ci;
@@ -396,7 +410,9 @@ CMenuPage::enum_MenuMode CMenuPage::Get_Saved_MenuMode() const
     classicFiles = CheckContextMenuHandler(fs2us(_dlls[0].Path), _dlls[0].wow);
   #endif
 
-  const bool modern = NShellIntegrationModern::Is_Installed();
+  const bool modern = NShellIntegrationModern::Is_Installed()
+      /* the Microsoft Store variant provides the menu through its own package */
+      || NShellIntegrationModern::Is_Running_Packaged();
 
   if (modern)
     return classicFiles ? kMenuMode_Both : kMenuMode_Modern;
@@ -491,6 +507,14 @@ public:
   {
     UString error;
     HRESULT hr = S_OK;
+    /* The machine-wide classic registration is out of reach for a packaged
+       process (the Microsoft Store variant) and the package manifest owns the
+       menu there, so this part is not available. The per-user registration for
+       folders is kept: it is what puts the commands into the classic menu for
+       directories as well. */
+    if (NShellIntegrationModern::Is_Running_Packaged()
+        && part == NShellMenuTransaction::kClassic)
+      return true;
     switch (part)
     {
       case NShellMenuTransaction::kModern:
@@ -543,6 +567,12 @@ bool CMenuPage::Apply_MenuMode(enum_MenuMode mode)
 {
   #ifndef UNDER_CE
   using namespace NShellMenuTransaction;
+  /* The Microsoft Store variant has the menu from its package manifest and no
+     classic registration to switch, so the mode is fixed there (the options page
+     disables the other radio buttons as well). */
+  const bool packaged = NShellIntegrationModern::Is_Running_Packaged();
+  if (packaged)
+    mode = kMenuMode_Modern;
   const bool wantClassic = (mode == kMenuMode_Classic || mode == kMenuMode_Both);
   const bool wantModern = (mode == kMenuMode_Modern || mode == kMenuMode_Both);
   if (wantModern && !NShellIntegrationModern::Is_Supported())
@@ -554,7 +584,7 @@ bool CMenuPage::Apply_MenuMode(enum_MenuMode mode)
   CMenuModeBackend backend(_dlls, *this);
   backend.MsixPath = NShellIntegrationModern::Get_DefaultMsixPath();
   const unsigned before[kNumParts] = {
-      NShellIntegrationModern::Is_Installed() ? 1u : 0u,
+      (NShellIntegrationModern::Is_Installed() || packaged) ? 1u : 0u,
       NShellIntegrationModern::Get_FolderRegistration_Mask(),
       backend.ClassicMask() };
   unsigned available = 0;

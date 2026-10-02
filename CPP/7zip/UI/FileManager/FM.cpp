@@ -825,6 +825,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
       const wchar_t *k_Unreg = L"-ShellMenu=unregister";
       const wchar_t *k_ModernOn = L"-ShellMenu=modern-on";
       const wchar_t *k_ModernOff = L"-ShellMenu=modern-off";
+      const wchar_t *statePrefix = L"-ShellMenu=state:";
+
+      /* The integration switches below change machine-wide registrations or
+         install the sparse package. The Microsoft Store variant runs with a
+         package identity: its manifest owns the context menu and the file
+         associations, and a packaged process cannot write the machine-wide keys
+         for the shell, so answer with an explanation instead of an HRESULT. A
+         plain file argument (opening an archive) is not affected. */
+      if (NShellIntegrationModern::Is_Running_Packaged()
+          && (arg == k_Reg || arg == k_Unreg || arg == k_ModernOn || arg == k_ModernOff
+              || arg.IsPrefixedBy(L"-AssocAll=") || arg.IsPrefixedBy(statePrefix)))
+      {
+        ::MessageBoxW(NULL,
+            L"RoxaZip was installed from the Microsoft Store.\n\n"
+            L"Its package manifest provides the context menu and the file "
+            L"associations, so the machine-wide registration commands "
+            L"(-ShellMenu=..., -AssocAll=...) are not available in this variant.",
+            L"RoxaZip", MB_OK | MB_ICONINFORMATION);
+        return 1;
+      }
 
       if (arg == k_Reg)
       {
@@ -862,7 +882,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
          HKEY_LOCAL_MACHINE): "-AssocAll=+ext1,ext2-ext3" */
       if (arg.IsPrefixedBy(L"-AssocAll="))
         return ApplyAssocAll_FromCommandLine(arg) == 0 ? 0 : 1;
-      const wchar_t *statePrefix = L"-ShellMenu=state:";
       const unsigned statePos = (unsigned)wcslen(statePrefix);
       if (arg.Len() == statePos + 1 && arg.IsPrefixedBy(statePrefix)
           && arg[statePos] >= L'0' && arg[statePos] <= L'3')

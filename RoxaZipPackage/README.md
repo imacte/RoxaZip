@@ -24,6 +24,22 @@ Do not confuse the three package flavours of this repository:
 * **file associations** from the manifest;
 * updates and uninstall through the Store.
 
+### Never installed together with the sparse package
+
+The Store package and the sparse package of `Package/build-shell-package.ps1`
+both register the shell extension CLSID
+`{3878DDB7-37F6-4265-BB4F-835DC2A790ED}` for the same user. Windows then holds
+two registrations of the same CLSID and it is undefined which one the menu uses,
+so remove the sparse registration before installing this package:
+
+```powershell
+Get-AppxPackage -Name 'RoxaZip.ShellExtension' | Remove-AppxPackage
+```
+
+The Store variant must also not offer to create that sparse package - it has the
+identity already; the packaged-mode detection in the file manager takes care of
+that (see the open work below).
+
 ## Store identity (assigned by Partner Center)
 
 | Field | Value |
@@ -98,14 +114,29 @@ Get-AppxPackage -Name 'imacte.RoxaZip' | Remove-AppxPackage
 * [ ] first submission created in Partner Center (needed once before the
       `msstore` CLI can manage submissions)
 
+## Packaged mode
+
+The program detects the package identity at run time
+(`NShellIntegrationModern::Is_Running_Packaged()`), so the Store variant needs no
+separate build:
+
+* the options page keeps the Windows 11 menu enabled (the package provides it)
+  and disables the classic modes - a packaged process cannot change the
+  machine-wide registration, and the shell lists the commands of a package in the
+  classic menu anyway;
+* the machine-wide switches (`-ShellMenu=register|unregister|state:`,
+  `-AssocAll=...`) answer with an explanation instead of failing with an HRESULT;
+* opening an archive by command line (`RoxaZipFM.exe archive.7z`) still works;
+* `tests/smoke-options.ps1` detects whether it runs against a packaged build and
+  checks both behaviours.
+
 ## Open work
 
-* the package has not been built or installed yet - the script and the manifest
-  are new; the local test below has to run before the first upload;
-* packaged-mode behaviour still has to be adapted: a packaged app cannot write
-  `HKLM`, so the machine-wide paths of the classic build (`-AssocAll`,
-  `-ShellMenu=register`) must detect the package and explain themselves, and the
-  options page must not look for the sparse `.msix` next to the binaries
-  (`ShellIntegrationModern.cpp`);
-* `-AssocAll`/classic shell registration in the Store variant is replaced by the
-  manifest (`fileTypeAssociation`, `fileExplorerContextMenus`).
+* the x64 package builds, installs and works locally (aliases, Windows 11 menu,
+  file manager, options page); the arm64 package comes from CI;
+* the store listing still needs the four extra tiles
+  (`Wide310x150Logo`, `Square71x71Logo`, `Square310x310Logo`, `LargeTile`), the
+  screenshots and the submission itself;
+* the classic `-AssocAll`/shell registration of the classic build is replaced by
+  the manifest in this variant (`fileTypeAssociation`,
+  `fileExplorerContextMenus`).

@@ -59,10 +59,15 @@ try {
       if ([OptionsSmoke]::Send($tab,0x130B,0).ToInt32() -ne $i) { throw "Wrong selected tab $i" }
       Write-Output "Round $round tab $i OK"
       if ($i -eq 1) {
-        # The Windows 11 modes (2307, 2308) need the sparse package: it has to be
-        # registered, or lie next to the program as RoxaZip.ShellExtension*.msix.
-        # This test directory has neither, so those radios have to be disabled -
-        # otherwise "Apply" would refuse with a message box instead.
+        # Two variants have to be distinguished here:
+        #  * a classic installation: the Windows 11 modes (2307, 2308) need the
+        #    sparse package, either registered or lying next to the program as
+        #    RoxaZip.ShellExtension*.msix. Without it those radios are disabled,
+        #    because "Apply" would refuse with a message box;
+        #  * the Microsoft Store variant (the program runs from WindowsApps): its
+        #    package manifest provides the menu, so the modern radio is enabled
+        #    and the machine-wide classic modes are not available at all.
+        $packaged = $Exe -like '*\WindowsApps\*'
         $modernUsable =
           [bool](Get-AppxPackage -Name 'RoxaZip.ShellExtension' -ErrorAction SilentlyContinue) -or
           [bool](Get-ChildItem (Join-Path (Split-Path $Exe -Parent) 'RoxaZip.ShellExtension*.msix') -ErrorAction SilentlyContinue)
@@ -71,17 +76,26 @@ try {
           $radio = [OptionsSmoke]::Child($dialog, 'Button', $id)
           if ($radio -eq [IntPtr]::Zero) { throw "Radio $id missing" }
           $enabled = [OptionsSmoke]::IsWindowEnabled($radio)
-          $expectEnabled = $modernUsable -or $id -eq 2306 -or $id -eq 2309
+          if ($packaged) { $expectEnabled = ($id -eq 2307) }
+          else { $expectEnabled = $modernUsable -or $id -eq 2306 -or $id -eq 2309 }
           if ($enabled -ne $expectEnabled) {
-            throw "Radio $id enabled=$enabled but the sparse package is available=$modernUsable"
+            throw "Radio $id enabled=$enabled but packaged=$packaged, sparse package available=$modernUsable"
           }
           if (-not $expectEnabled) { $disabled++; continue }
+          if ($packaged) {
+            # the package fixes the mode: the modern radio has to be the selected
+            # one, and it is the only enabled radio
+            if ([OptionsSmoke]::Send($radio,0xF0,0).ToInt32() -ne 1) {
+              throw 'the Windows 11 mode must be selected in a packaged installation'
+            }
+            continue
+          }
           [void][OptionsSmoke]::Send($radio,0xF5,0)
           if ([OptionsSmoke]::Send($radio,0xF0,0).ToInt32() -ne 1) { throw "Radio $id not selected" }
           $classic = [OptionsSmoke]::Child($dialog, 'Button', 2301)
           if ([OptionsSmoke]::IsWindowVisible($classic) -ne ($id -eq 2306 -or $id -eq 2308)) { throw "Classic visibility incorrect for $id" }
         }
-        Write-Output "Round $round all menu modes and checkbox visibility OK ($disabled disabled without the sparse package)"
+        Write-Output "Round $round all menu modes and checkbox visibility OK (packaged=$packaged, $disabled disabled)"
       }
     }
     [void][OptionsSmoke]::PostMessage($dialog, 0x111, [IntPtr]2, [IntPtr]::Zero)
@@ -117,6 +131,11 @@ try {
 
 # No shell extension DLL is copied here, so even a broken legacy argument
 # matcher cannot alter machine-wide shell registration during this regression.
+# The packaged variant is skipped: it refuses those machine-wide switches and its
+# program file is an execution alias, not a copyable binary.
+if ($packaged) {
+  Write-Output 'SKIP: the legacy argument checks do not apply to the packaged variant.'
+} else {
 $testDir = Join-Path $env:TEMP ('7zip-options-files-' + [guid]::NewGuid().ToString('N'))
 [void](New-Item -ItemType Directory -Path $testDir)
 try {
@@ -150,4 +169,5 @@ try {
   }
   [IO.Directory]::Delete((Join-Path $testDir '7zipzs-setdefault'))
   [IO.Directory]::Delete($testDir)
+}
 }

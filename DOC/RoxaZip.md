@@ -101,9 +101,10 @@ Values that contain a program path have to be written again after the upgrade:
 ### The Windows 11 context menu needs the sparse package
 
 Windows 11 shows entries in the new context menu only for *packaged* apps, so
-that menu needs the sparse package `RoxaZip.ShellExtension`. A released
-installation does **not** contain it: the package has to be signed, and it is
-built next to the sources with
+that menu needs a package - either the sparse package `RoxaZip.ShellExtension`
+(see above) or the package of the Microsoft Store variant (see
+`RoxaZipPackage/`). A released installation does **not** contain the sparse
+package: it has to be signed, and it is built next to the sources with
 
 ```
 pwsh -File Package\build-shell-package.ps1 -InstallDir "<installation folder>"
@@ -118,10 +119,18 @@ Without that file the "Windows 11 menu" options are disabled and the classic
 menu ("Show more options") is used - it works out of the box and needs no
 package.
 
-For a release that should offer the Windows 11 menu without that step, the
+**Installed from the Microsoft Store?** Then the package itself provides the
+menu, the file associations and the command names (`7z.exe`, `7zFM.exe`,
+`7zG.exe`, managed by Windows in `%LOCALAPPDATA%\Microsoft\WindowsApps`). The
+program detects that and disables the classic registration options of the
+options page; the sparse package must not be registered on top of it, because
+both would claim the same shell extension CLSID.
+
+For a release that should offer the Windows 11 menu without an extra step, the
 package has to be signed with a real code signing certificate whose subject
 matches `Identity/@Publisher` in `Package/AppxManifest.xml` and shipped next to
-the binaries.
+the binaries - or distributed through the Microsoft Store, which signs the
+uploaded package itself (`RoxaZipPackage/`).
 
 ### Kept on purpose
 

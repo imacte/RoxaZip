@@ -33,6 +33,13 @@ namespace NShellIntegrationModern {
   bool Is_Installed(UString *packageFullName = NULL);
   bool Is_Supported();
 
+  /* True when this process runs with an MSIX package identity (the Microsoft
+     Store variant in RoxaZipPackage\). That package provides the Windows 11 menu
+     and the command name aliases through its own manifest, so the program must
+     not look for a sparse .msix, and it cannot change the machine-wide
+     registrations for the shell either. */
+  bool Is_Running_Packaged();
+
   // register / unregister the sparse package for the current user
   // (sparse package: the payload stays in the program directory)
   HRESULT Install(const UString &msixPath, const UString &externalDir, UString &errorText);

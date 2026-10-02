@@ -46,8 +46,29 @@ static const wchar_t *k_RegistryKeyName = L"RoxaZip";
 const wchar_t *Get_Clsid() { return k_Clsid; }
 
 
+/* The Microsoft Store variant runs with an MSIX package identity: its manifest
+   owns the Windows 11 menu, the file associations and the command name aliases,
+   and a packaged process cannot change the machine-wide registrations for the
+   shell. GetCurrentPackageFullName is resolved dynamically, because the file
+   manager still runs on systems whose kernel32 does not export it. */
+bool Is_Running_Packaged()
+{
+  typedef LONG (WINAPI *Func_GetCurrentPackageFullName)(UINT32 *, PWSTR);
+  static Func_GetCurrentPackageFullName func = (Func_GetCurrentPackageFullName)
+      ::GetProcAddress(::GetModuleHandleW(L"kernel32.dll"), "GetCurrentPackageFullName");
+  if (!func)
+    return false;
+  UINT32 length = 0;
+  return func(&length, NULL) == ERROR_INSUFFICIENT_BUFFER;
+}
+
+
 UString Get_DefaultMsixPath()
 {
+  // the package provides the menu; there is no .msix next to the binaries
+  if (Is_Running_Packaged())
+    return UString();
+
   const FString dir = NDLL::GetModuleDirPrefix();
   {
     FString path = dir;
