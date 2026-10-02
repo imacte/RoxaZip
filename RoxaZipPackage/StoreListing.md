@@ -183,6 +183,16 @@ associated to this app". The waiver is granted per product by the Store team.
 
 ### How to request it
 
+Ticket **2610020010001019** was submitted on 2026-10-02 through the "Create
+support case (MSA)" link on <https://developer.microsoft.com/en-us/windows/support/>
+(program Windows Developer Center, problem type App Management, support plan
+Professional No Charge) and is waiting for the Store team. The form is reachable
+without a business tenant; the Engage Center link for Entra ID accounts only shows
+"no access" for an individual developer account, and `partnerops@microsoft.com`
+went unanswered for other developers.
+
+The steps below are the ones that worked:
+
 Open a support ticket at
 <https://support.serviceshub.microsoft.com/supportforbusiness/create?sapId=bc9d4067-7218-61b9-1d2c-68ae591acf9d>
 and choose the category **Developer, Student and Startup Programs -> Dev Center
