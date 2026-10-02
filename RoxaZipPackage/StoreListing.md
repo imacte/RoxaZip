@@ -116,22 +116,59 @@ pwsh -File RoxaZipPackage\make-screenshots.ps1 -ExeDir "<installation folder>"
 
 ## Restricted capabilities (submission options)
 
-The package uses two restricted capabilities. They have to be justified in the
-submission form ("Submission options"); without the justification the package is
-rejected with "you have to request approval for the following restricted
-capabilities".
+Partner Center asks for a separate justification per restricted capability
+("Submission options" -> restricted capabilities). Paste one text per box.
 
-**runFullTrust** - RoxaZip is a Win32 desktop application (a 7-Zip / 7-Zip ZS
-fork) packaged for the Store. The file manager, the command line tool, the
-progress helper and the shell extension are classic Win32 executables and cannot
-run inside an app container.
+### Why do you need the runFullTrust capability?
 
-**unvirtualizedResources** - the program works with the files the user chooses: it
-opens, creates and extracts archives in user-selected folders, including network
-and removable drives, it keeps file attributes and timestamps, and the shell
-extension loads from its own program directory. With virtualized file and
-registry access the file manager could not operate on real files and other
-programs could not call the installed command line tools.
+```
+RoxaZip is a Win32 desktop archive manager (a fork of 7-Zip and 7-Zip ZS) that is
+packaged as MSIX for the Store. All of its components are classic Win32
+executables and DLLs: the file manager (RoxaZipFM.exe), the command line tool
+(RoxaZip.exe), the progress dialog helper (RoxaZipG.exe) and the Explorer shell
+extension (RoxaZipShell.dll). They use Win32 APIs that an app container does not
+provide - CreateProcess to run the helper, the Explorer context menu interfaces,
+the common dialogs, the registry for settings and the multi-format codec DLLs.
+runFullTrust (FullTrustApplication entry point) is the supported way to ship such
+an application in an MSIX package; without it the program cannot start.
+```
+
+### Why do you need the unvirtualizedResources capability?
+
+```
+RoxaZip works with the files the user chooses, so it has to see and modify the
+real file system instead of a per-package virtual copy:
+
+- it opens, creates and extracts archives in any folder the user selects,
+  including network shares, removable drives and locations outside the user
+  profile, and it preserves file attributes, timestamps, alternate data streams
+  and hard links;
+- the file manager browses all drives, and the command line tool is called by
+  other programs and scripts with absolute paths;
+- the shell extension runs in Explorer's surrogate process, has to resolve paths
+  exactly like Explorer does, and loads its own DLLs from the program directory.
+
+With virtualized file and registry access the program would write into a private
+package copy instead of the user's files: archives would appear to be created but
+end up in a hidden location, and the integration with Explorer and with other
+tools would break.
+```
+
+### Certification notes (optional, speeds up the review)
+
+```
+How to test RoxaZip - no account, no network, no special hardware needed:
+
+- Windows 11: right-click any file or folder. The new context menu lists
+  "RoxaZip" with a cascaded submenu (open archive, extract, extract here, test,
+  add to archive, compress and send by e-mail, hash).
+- "Show more options" (classic menu) shows the same entry through the shell
+  extension DLL.
+- Start menu: "RoxaZip" opens the file manager; "RoxaZip Console" opens a console
+  window where "RoxaZip.exe i" lists the loaded codecs. Try
+  "RoxaZip.exe a test.7z <some file> -m0=zstd" and "RoxaZip.exe x test.7z -oout".
+- The application never connects to the network and collects no data.
+```
 
 ## Start menu entries
 
