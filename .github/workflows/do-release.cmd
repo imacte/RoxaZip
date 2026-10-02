@@ -53,13 +53,6 @@ copy %BIN%\Install.exe + %ARCH%.7z RoxaZip-%VERSION%-windows-%ARCH%.exe
 IF %errorlevel% NEQ 0 EXIT 1
 del %ARCH%.7z
 
-REM Store package for the Microsoft Store submission. It is unsigned (the Store
-REM signs the uploaded package) and is uploaded as a workflow artifact, not
-REM attached to the GitHub release. Built from the same payload as the classic
-REM setup, so the skeleton directory has to be intact at this point.
-IF "%ARCH%" == "x64"   call :store x64
-IF "%ARCH%" == "arm64" call :store arm64
-
 REM Codec Files
 mkdir codecs-%ARCH%
 FOR %%f IN (brotli flzma2 lizard lz4 lz5 zstd) DO (
@@ -78,15 +71,6 @@ IF %errorlevel% NEQ 0 EXIT 1
 cd %WD% && rd /S /Q Codecs-%ARCH%
 goto :eof
 REM end of doit function.
-
-@rem Build the Microsoft Store package from the staged payload (%SKEL%)
-:store
-SET SARCH=%~1
-echo Building the Microsoft Store package for %SARCH%
-if not exist %WD%\store mkdir %WD%\store
-powershell -NoProfile -ExecutionPolicy Bypass -File "%WD%\RoxaZipPackage\build-store-package.ps1" -SourceDir "%SKEL%" -Arch %SARCH% -Version %VERSION% -OutDir "%WD%\store"
-IF %errorlevel% NEQ 0 EXIT 1
-goto :eof
 
 REM Currently we build 3 architectures as 6 targets with and without darkmode (ndm suffix)
 :start

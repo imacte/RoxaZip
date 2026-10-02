@@ -176,9 +176,6 @@ jobs:
 
           REM Will be by the do-release action
           copy %WDIR%\.github\workflows\do-release.cmd %WDIR%\build\do-release.cmd
-          REM the do-release action also builds the Microsoft Store package,
-          REM so it needs the packaging script next to the binaries
-          xcopy /E /I /Y %WDIR%\RoxaZipPackage %WDIR%\build\RoxaZipPackage >nul
 
       - name: LZ5 and Lizard frame regression tests
         shell: cmd
@@ -269,13 +266,61 @@ jobs:
           artifact\*.7z
         if-no-files-found: error
 
-    # The Microsoft Store package is unsigned on purpose (the Store signs the
-    # upload) and is therefore kept out of the GitHub release. Download it from
-    # this workflow run when a new submission is prepared.
+  store-package:
+    # Builds the Microsoft Store packages. They are unsigned on purpose (the Store
+    # signs the upload) and are kept out of the GitHub release, because an
+    # unsigned .msix cannot be installed by users - download them from this
+    # workflow run when a submission is prepared.
+    #
+    # This is a separate job so that a packaging problem here can never block a
+    # release. It needs the repository (Package\Assets and RoxaZipPackage), which
+    # the do-release job does not check out.
+    runs-on: windows-latest
+    needs: windows
+    steps:
+    - uses: actions/checkout@v6
+
+    - uses: actions/download-artifact@v7
+      with:
+        path: artifact
+        pattern: binary-*
+        merge-multiple: true
+
+    - name: Stage the payload (upstream skeleton)
+      shell: cmd
+      run: |
+        set WD=%cd%
+        set SKEL=%WD%\skel
+        mkdir %SKEL%
+        cd %SKEL%
+        curl -L -o 7-Zip.exe https://www.7-zip.org/a/7z2603.exe
+        IF %errorlevel% NEQ 0 EXIT 1
+        "C:\Program Files\7-Zip\7z.exe" x 7-Zip.exe
+        IF %errorlevel% NEQ 0 EXIT 1
+        del 7-Zip.exe
+        REM the help file is shipped under the RoxaZip name
+        if exist 7-zip.chm ren 7-zip.chm RoxaZip.chm
+
+    - name: Build the Store packages
+      shell: pwsh
+      run: |
+        $version = [regex]::Match((Get-Content -Raw .github/workflows/do-release.cmd),
+          '(?m)^SET VERSION=([^\r\n]+)').Groups[1].Value.Trim()
+        if (-not $version) { throw 'cannot read the version from do-release.cmd' }
+        foreach ($arch in @('x64', 'arm64')) {
+          $bin = Join-Path $PWD "artifact/bin-$arch"
+          if (-not (Test-Path (Join-Path $bin 'RoxaZipFM.exe'))) { throw "missing build output: $bin" }
+          # the staged payload takes the binaries of this architecture
+          Get-ChildItem skel -File | Where-Object { $_.Extension -in '.exe', '.dll', '.sfx' } | Remove-Item -Force
+          Copy-Item (Join-Path $bin '*') skel -Force
+          & pwsh -NoProfile -File RoxaZipPackage/build-store-package.ps1 -SourceDir skel -Arch $arch -Version $version -OutDir store
+          if ($LASTEXITCODE -ne 0) { throw "Store packaging failed for $arch" }
+        }
+
     - uses: actions/upload-artifact@v6
       with:
         name: RoxaZip Store package
-        path: artifact\store\*.msix
+        path: store\*.msix
         if-no-files-found: error
 
   publish-release:
@@ -299,6 +344,15 @@ jobs:
         pattern: linux-release-*
         path: release
         merge-multiple: true
+
+    # Prints what the release will contain, so a missing asset is visible in the
+    # log instead of only showing up as a failed step.
+    - name: List the release assets
+      shell: pwsh
+      run: |
+        Get-ChildItem release -File | Sort-Object Name |
+          ForEach-Object { "  {0,12:N0}  {1}" -f $_.Length, $_.Name }
+        "assets: $((Get-ChildItem release -File).Count)"
 
     - name: Publish GitHub Release
       shell: pwsh

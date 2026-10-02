@@ -165,6 +165,11 @@ if (-not (Test-Path (Join-Path $stage 'Lang')) -and -not (Test-Path (Join-Path $
 }
 
 $assets = Join-Path (Split-Path $pkgDir -Parent) 'Package\Assets'
+if (-not (Test-Path (Join-Path $assets 'StoreLogo.png')))
+{
+  # a copied folder (a CI artifact, for example) carries its own Assets
+  $assets = Join-Path $pkgDir 'Assets'
+}
 if (-not (Test-Path (Join-Path $assets 'StoreLogo.png'))) { Fail "no package assets in $assets" }
 Get-ChildItem $assets -Filter *.png | ForEach-Object { Copy-Item $_.FullName (Join-Path $stage 'Assets') -Force }
 Info "assets     : $((Get-ChildItem (Join-Path $stage 'Assets') -File | Measure-Object).Count) png"
