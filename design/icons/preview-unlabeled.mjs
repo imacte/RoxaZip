@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // Standalone design preview. Does not overwrite installed or exported resources.
 import fs from 'node:fs';
 import path from 'node:path';

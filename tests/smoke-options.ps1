@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 # Run against a built x64 file manager. Changes in options are cancelled.
 param([Parameter(Mandatory=$true)][string]$Exe)
 $Exe = (Resolve-Path -LiteralPath $Exe).Path

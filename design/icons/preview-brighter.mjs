@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // Optical-weight study only: exported ICOs and installed binaries stay untouched.
 import fs from 'node:fs';
 import path from 'node:path';

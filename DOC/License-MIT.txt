@@ -1,0 +1,51 @@
+MIT License
+
+Copyright (c) 2026 RoxaZip contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Scope
+-----
+
+This license applies to the files that were written for RoxaZip and that are
+not part of the archive manager itself:
+
+  - the packaging, release and shell integration tooling: `Package/`
+  - the tests added for RoxaZip: `tests/assoc-command.cpp`,
+    `tests/check-fm-sdk.ps1`, `tests/lz-frame.c`,
+    `tests/publish-test-failures.ps1`, `tests/registry-context-menu.cpp`,
+    `tests/run-lz-frame-tests.ps1`, `tests/run-options-tests.ps1`,
+    `tests/shell-menu-transaction.cpp`, `tests/shell-operation-wait.cpp`,
+    `tests/smoke-options.ps1`, `tests/test-branding-shortcuts.ps1`,
+    `tests/test-release-publishing.ps1`
+  - the release helper scripts: `.github/scripts/publish-release.ps1`,
+    `.github/msvc-problem-matcher.json`
+  - the icon pipeline and its SVG masters: `design/icons/`
+  - the RoxaZip documentation: `DOC/CLI.md`, `DOC/RoxaZip.md`,
+    `DOC/UpstreamSynchronization.md`, `DOC/known-issues.md`
+
+Every one of these files carries a `License: MIT` header. This file is only a
+notice for them - it is not the license of the project as a whole.
+
+Everything else - the archive manager, the codecs, the bundled third-party
+libraries and the modified upstream sources - follows `COPYING` and
+`DOC/License.txt`: GNU LGPL v2.1-or-later as the main license, with BSD, MIT,
+CC0/public-domain parts and the unRAR license restriction for the RAR code.
+Source files under `C/`, `CPP/` and `Asm/` stay under LGPL even when they were
+written for RoxaZip, so that the distributed binaries have a single license.

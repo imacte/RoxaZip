@@ -1,4 +1,7 @@
 @echo off
+@rem RoxaZip
+@rem Copyright (c) 2026 RoxaZip contributors
+@rem License: MIT - see DOC/License-MIT.txt
 rem Builds Package\Output\probe-modern-menu.exe (needs the Visual Studio C++ tools).
 setlocal
 set "VCVARS=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"

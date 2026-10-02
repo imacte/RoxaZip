@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // Rasterize the editable SVG masters into the existing Windows resource paths.
 import fs from 'node:fs';
 import path from 'node:path';

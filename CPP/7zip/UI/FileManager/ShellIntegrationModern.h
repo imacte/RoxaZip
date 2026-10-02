@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: GNU LGPL v2.1-or-later - see COPYING
+ */
 // ShellIntegrationModern.h
 //
 // The Windows 11 (compact) context menu shows the commands of this fork only if

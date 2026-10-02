@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 # Run from a Visual Studio developer prompt. Cover non-LTCG optimization,
 # including the codecs' /O2 /Ob3 flags, and an unoptimized control build.
 $ErrorActionPreference = 'Stop'

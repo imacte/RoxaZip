@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // Native 16–32px book stacks: whole-pixel covers, quiet pages, real semibold text.
 import { bookColors, mixColor, fittedLabel } from './stacked-books.mjs';
 

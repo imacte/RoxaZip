@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 <#
   RoxaZip - remove the duplicate entry in the classic context menu.
 

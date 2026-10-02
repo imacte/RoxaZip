@@ -1,3 +1,4 @@
+<!-- RoxaZip - Copyright (c) 2026 RoxaZip contributors - License: MIT, see DOC/License-MIT.txt -->
 # RoxaZip upstream synchronization
 
 RoxaZip tracks 7-Zip, the 7-Zip ZS fork and the bundled codec libraries. This

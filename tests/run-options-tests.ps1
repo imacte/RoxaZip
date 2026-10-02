@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 # Run from a Visual Studio developer prompt. Tests never alter shell registration.
 $ErrorActionPreference = 'Stop'
 $dir = Join-Path $env:TEMP ('7zip-options-tests-' + [guid]::NewGuid().ToString('N'))

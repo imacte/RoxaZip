@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // Redirect both predefined roots into a disposable HKCU key, in this process only.
 #include "../CPP/Common/Common.h"
 #include "../CPP/Common/MyString.h"

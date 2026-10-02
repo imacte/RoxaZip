@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 # Run from a Visual Studio developer prompt. All shortcuts live in a temporary fixture.
 $ErrorActionPreference = 'Stop'
 $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('roxazip-shortcuts-' + [guid]::NewGuid().ToString('N'))

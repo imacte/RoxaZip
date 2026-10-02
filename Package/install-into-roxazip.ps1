@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 <#
   RoxaZip - copy the freshly built binaries into the installation directory.
 

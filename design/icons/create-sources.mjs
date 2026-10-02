@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // Design geometry. Run explicitly to reset SVG masters; build.mjs preserves edits.
 // Labels are outlined once so normal resource builds require no installed fonts.
 import fs from 'node:fs';

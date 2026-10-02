@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: GNU LGPL v2.1-or-later - see COPYING
 # Shared by UI/FileManager and Bundles/Fm, after 7zip.mak defines the tool flags.
 # Property pages and their stack-allocating caller must agree on class layouts.
 FM_PAGE_HEADERS = \

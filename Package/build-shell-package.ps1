@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 <#
   RoxaZip - build, sign and register the sparse package that puts "RoxaZip"
   into the modern (Windows 11) File Explorer context menu.

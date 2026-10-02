@@ -1,3 +1,4 @@
+<!-- RoxaZip - Copyright (c) 2026 RoxaZip contributors - License: MIT, see DOC/License-MIT.txt -->
 # RoxaZip command line
 
 Full reference for the RoxaZip binaries. The short overview is in

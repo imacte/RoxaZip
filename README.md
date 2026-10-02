@@ -100,7 +100,14 @@ documented in [DOC/RoxaZip.md](DOC/RoxaZip.md).
   authorship, see [COPYING](COPYING).
 - Icons by AlexGal, masamunecyrus and Mr4Mike4; dark mode via
   [darkmodelib](https://github.com/ozone10) by ozone10.
-- License: GNU LGPL v2.1-or-later, like mainline 7-Zip - see [COPYING](COPYING).
+- License of the archive manager, the codecs and the bundled libraries: see
+  [COPYING](COPYING) and [DOC/License.txt](DOC/License.txt) - GNU LGPL
+  v2.1-or-later as the main license, plus BSD, MIT and public-domain parts and
+  the unRAR license restriction for the RAR code.
+- The tooling and documentation written for RoxaZip (packaging, release scripts,
+  tests, icon pipeline, [DOC/CLI.md](DOC/CLI.md), [DOC/RoxaZip.md](DOC/RoxaZip.md),
+  ...) are MIT licensed - see [DOC/License-MIT.txt](DOC/License-MIT.txt); every
+  such file carries a `License: MIT` header.
 - Upstream project and benchmarks: <https://mcmilk.de/projects/7-Zip-zstd/>.
 - Donations to the upstream author: <https://www.paypal.me/TinoReichardt>.
 

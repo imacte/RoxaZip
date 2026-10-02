@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // probe-modern-menu.cpp
 //
 // Native probe for the context menu of RoxaZip. It calls the shell extension

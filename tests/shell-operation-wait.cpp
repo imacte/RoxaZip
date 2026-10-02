@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 #include "../CPP/7zip/UI/FileManager/StdAfx.h"
 #include <cassert>
 #include <cstdio>

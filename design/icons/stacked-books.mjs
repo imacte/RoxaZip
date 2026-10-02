@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // Original vector artwork inspired by the bound-book archive metaphor.
 import { Resvg } from '@resvg/resvg-js';
 

@@ -1,3 +1,4 @@
+<!-- RoxaZip - Copyright (c) 2026 RoxaZip contributors - License: MIT, see DOC/License-MIT.txt -->
 # RoxaZip - modern (Windows 11) context menu package
 
 Windows 11 shows two different context menus:

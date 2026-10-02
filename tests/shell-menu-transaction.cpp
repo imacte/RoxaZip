@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 // Build with: cl /nologo /EHsc /W4 /WX tests/shell-menu-transaction.cpp
 // This test uses an in-memory backend; it never touches Windows registrations.
 #include <assert.h>

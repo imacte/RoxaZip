@@ -1,3 +1,4 @@
+<!-- RoxaZip - Copyright (c) 2026 RoxaZip contributors - License: MIT, see DOC/License-MIT.txt -->
 # 7-Zip ZS icon family
 
 Original SVG artwork inspired by [WinRAR's bound-book archive icon](https://www.win-rar.com/):

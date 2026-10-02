@@ -1,3 +1,4 @@
+<!-- RoxaZip - Copyright (c) 2026 RoxaZip contributors - License: MIT, see DOC/License-MIT.txt -->
 # RoxaZip
 
 RoxaZip is based on 7-Zip and the 7-Zip ZS fork. The upstream authors,

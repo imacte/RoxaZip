@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 <#
   RoxaZip - verify the sparse package of the modern (Windows 11) context menu.
 

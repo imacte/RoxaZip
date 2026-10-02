@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 # Validate the real Windows ICO decoder and alpha bitmap loading path.
 # Does not install anything or modify file associations.
 param([string]$FileManager, [string]$ArchiveLibrary)

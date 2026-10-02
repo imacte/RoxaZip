@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 # publish-test-failures.ps1 --
 #
 # Part of 7-Zip ZS test suite.

@@ -1,3 +1,8 @@
+/*
+ * RoxaZip
+ * Copyright (c) 2026 RoxaZip contributors
+ * License: MIT - see DOC/License-MIT.txt
+ */
 /* Regression for stored-block decoding with MSVC 2026 /O1 (notably ARM64). */
 #include <stdio.h>
 #include <stdlib.h>

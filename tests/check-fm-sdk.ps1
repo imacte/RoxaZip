@@ -1,3 +1,6 @@
+# RoxaZip
+# Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
 # Run from a Visual Studio developer prompt; no build products are generated.
 $ErrorActionPreference = 'Stop'
 $rules = (Resolve-Path "$PSScriptRoot/../CPP/7zip/UI/FileManager/FMBuild.mak").Path
