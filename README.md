@@ -1,7 +1,9 @@
 
-# README
+# RoxaZip
 
-This is the Github Page of [7-Zip] ZS with support of additional Codecs. The library used therefore is located here: [Multithreading Library](https://github.com/mcmilk/zstdmt)
+RoxaZip is an archive manager based on [7-Zip] and [7-Zip ZS](https://github.com/mcmilk/7-Zip-zstd), with additional codecs, dark mode, Explorer integration and format-specific icons. Original authorship and licenses are preserved.
+
+[Download RoxaZip for Windows and Linux](https://github.com/imacte/RoxaZip/releases). Windows packages cover x64, x86 and ARM64; Linux packages cover x64 and ARM64 with GCC/Clang builds. Master builds are prereleases; version tags produce stable releases. See [branding and compatibility](DOC/RoxaZip.md).
 
 You can install it in two ways:
 1. complete setup with additions within the GUI and a modified Explorer context menu
@@ -9,7 +11,7 @@ You can install it in two ways:
 
 # Status
 
-[![Latest stable release](https://img.shields.io/github/release/mcmilk/7-Zip-zstd.svg)](https://github.com/mcmilk/7-Zip-zstd/releases)
+[![Latest release](https://img.shields.io/github/v/release/imacte/RoxaZip?include_prereleases)](https://github.com/imacte/RoxaZip/releases)
 [![PayPal.me](https://img.shields.io/badge/PayPal-me-blue.svg?maxAge=2592000)](https://www.paypal.me/TinoReichardt)
 
 ## Codec overview
@@ -59,7 +61,7 @@ You can install it in two ways:
    - Key derivation: PBKDF2-HMAC-SHA512 + HKDF-BLAKE2sp
    - Authentication: AEGIS-256 tag (256-bit)
 
-### 7-Zip ZS CLI variants
+### RoxaZip CLI variants
 
 7z and 7zz provide largely the same core 7‑Zip functionality, but they are built/distributed
 differently (plugin-capable vs. standalone), which can affect available formats/codecs.
@@ -71,20 +73,20 @@ differently (plugin-capable vs. standalone), which can affect available formats/
 | `7za`  | Standalone executable which supports fewer archive formats than `7z`. (Minimal + LZ4 and Hashes) |
 | `7zr`  | Minimal "light" standalone executable focused on the 7z format. (FLZMA2, Zstd) |
 
-## 7-Zip Zstandard Edition (full setup, with GUI and Explorer integration)
+## RoxaZip (full setup, with GUI and Explorer integration)
 
 ### Installation (via setup)
-1. download the setup from here [7-Zip ZS Releases](https://github.com/mcmilk/7-Zip-zstd/releases)
+1. download the setup from here [RoxaZip Releases](https://github.com/imacte/RoxaZip/releases)
 2. install it, like the default [7-Zip] one
 4. you may check, if the [7-Zip] can deal with [Zstandard] or other codecs via this command: `7z.exe i`
 
 The output should look like this:
 ```
-7-Zip 26.03 ZS v1.5.7 R1 : Copyright (c) 1999- Igor Pavlov, 2016- Tino Reichardt, 2022- Sergey G. Brester : 2026-09-05
+RoxaZip 26.03 : Copyright (c) 1999- Igor Pavlov, 2016- Tino Reichardt, 2022- Sergey G. Brester, 2026- fzxx : 2026-09-05
 
 Libs:
- 0  c:\Program Files\7-Zip-Zstandard\7z.dll
- 1  C:\Program Files\7-Zip-Zstandard\Codecs\Iso7z.64.dll
+ 0  c:\Program Files\RoxaZip\7z.dll
+ 1  C:\Program Files\RoxaZip\Codecs\Iso7z.64.dll
  
 Formats:
 ...
@@ -160,9 +162,9 @@ running in Microsoft data centers 😉
 
 For example, for the released version `v25.01-v1.5.7-R4`:
 - it's the one with tag `v25.01-v1.5.7-R4`
-- click on [Adjust Blake3 MAX_SIMD_DEGREE](https://github.com/mcmilk/7-Zip-zstd/actions/runs/20877497651)
+- open a successful [RoxaZip build](https://github.com/imacte/RoxaZip/actions/workflows/build.yml)
 - scroll down to the Artifacts section
-- all the windows binaries are within this ZIP file: `7-Zip ZS Release binaries.zip`
+- all the windows binaries are within this ZIP file: `RoxaZip Release binaries.zip`
 - check if the SHA256 hashsums are the same as the files of the release
 
 I started a list of false positive issues [with issue #451](https://github.com/mcmilk/7-Zip-zstd/issues/451#issuecomment-3733009809).
@@ -245,7 +247,7 @@ Please don’t open a new issue. Instead, contact the antivirus vendor and ask t
 
 ### Installation (via plugin)
 
-1. download the `Codecs.7z` archive from here [7-Zip ZS Releases](https://github.com/mcmilk/7-Zip-zstd/releases), this archive holds binaries, which are compatible with the Mainline version of [7-Zip]
+1. download the `RoxaZip-<version>-codecs-<arch>.7z` archive from [RoxaZip Releases](https://github.com/imacte/RoxaZip/releases); these codec plugins are compatible with the Mainline version of [7-Zip]
 2. create a new directory named `Codecs` and put in there the zstd-x32.dll or the zstd-x64.dll, depending on your [7-Zip] installation
    - normally, the x32 should go to: "C:\Program Files (x86)\7-Zip\Codecs"
    - the x64 version should go in here: "C:\Program Files\7-Zip\Codecs"
@@ -330,7 +332,7 @@ Codecs:
   format should work out of the box with Total Commander now :-)
 
 ## Codec Plugin for Far Manager
-- copy the `7z.dll` file from `C:\Program Files\7-Zip-Zstandard\7z.dll` to `C:\Program Files\Far Manager\Plugins\ArcLite\7z.dll`
+- copy the `7z.dll` file from `C:\Program Files\RoxaZip\7z.dll` to `C:\Program Files\Far Manager\Plugins\ArcLite\7z.dll`
 - then restart the Far manager - and on next start, you will have support for 7-Zip Zstandard archives ;-)
 
 ## Benchmarks
@@ -401,7 +403,7 @@ You find this project useful, maybe you consider a donation ;-)
 
 /TR 2026-10-01
 
-## Notes
+## Upstream notes
 
 We are planning a to use a code signed installer again, https://github.com/mcmilk/7-Zip-zstd/issues/473
 
@@ -418,6 +420,6 @@ We are planning a to use a code signed installer again, https://github.com/mcmil
 [AES+XChaCha20-Poly1305]:https://github.com/fzxx/7-Zip-zstd-crypto
 [AES+XChaCha20+Ascon]:https://github.com/fzxx/7-Zip-zstd-crypto
 [XChaCha20+AES+AEGIS]:https://github.com/fzxx/7-Zip-zstd-crypto
-[Codecs.7z]:https://github.com/mcmilk/7-Zip-zstd/releases
-[TotalCmd.7z]:https://github.com/mcmilk/7-Zip-zstd/releases
+[Codecs.7z]:https://github.com/imacte/RoxaZip/releases
+[TotalCmd.7z]:https://github.com/imacte/RoxaZip/releases
 

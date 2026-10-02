@@ -144,7 +144,7 @@ How DoDragDrop() works:
 static const UInt32 k_Struct_Id_SetTranfer = 2;  // it's our selected id
 static const UInt32 k_Struct_Id_GetTranfer = 3;  // it's our selected id
 
-static const UInt64 k_Program_Id = 1; // "7-Zip"
+static const UInt64 k_Program_Id = 1; // "RoxaZip"
 
 enum E_Program_ISA
 {
@@ -2101,18 +2101,18 @@ bool CDropTarget::IsItSameDrive() const
 
 /*
   There are 2 different actions, when we drag to 7-Zip:
-  1) if target panel is "7-Zip" FS and any of the 2 cases:
-     - Drag from any non "7-Zip" program;
+  1) if target panel is "RoxaZip" FS and any of the 2 cases:
+     - Drag from any non "RoxaZip" program;
      or
-     - Drag from "7-Zip" to non-panel area of "7-Zip".
+     - Drag from "RoxaZip" to non-panel area of "RoxaZip".
      We want to create new archive for that operation with "Add to Archive" window.
   2) all another operations work as usual file COPY/MOVE
-    - Drag from "7-Zip" FS to "7-Zip" FS.
+    - Drag from "RoxaZip" FS to "RoxaZip" FS.
         COPY/MOVE are supported.
     - Drag to open archive in 7-Zip.
         We want to update archive.
         We replace COPY to MOVE.
-    - Drag from "7-Zip" archive to "7-Zip" FS.
+    - Drag from "RoxaZip" archive to "RoxaZip" FS.
         We replace COPY to MOVE.
 */
 

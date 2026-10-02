@@ -1,5 +1,5 @@
 <#
-  7-Zip ZS - copy the freshly built binaries into the installation directory.
+  RoxaZip - copy the freshly built binaries into the installation directory.
 
   Run this with administrator rights (the script elevates itself if needed):
 
@@ -51,7 +51,7 @@ Start-Transcript -Path $LogFile -Force | Out-Null
 
 if (-not (Test-Path (Join-Path $InstallDir '7zFM.exe')))
 {
-  Write-Host "ERROR: not an 7-Zip ZS installation: $InstallDir" -ForegroundColor Red
+  Write-Host "ERROR: not an RoxaZip installation: $InstallDir" -ForegroundColor Red
   exit 2
 }
 
@@ -140,7 +140,7 @@ if (Test-Path $assetsSrc)
   Info ("OK     Assets\  -> {0} ({1} file(s))" -f $assetsDst, (Get-ChildItem $assetsDst -Filter *.png | Measure-Object).Count)
 }
 
-# The options page ("7-Zip ZS") registers the sparse package of the Windows 11
+# The options page ("RoxaZip") registers the sparse package of the Windows 11
 # context menu itself, so the .msix has to be next to the binaries; the program
 # directory is where it looks for SevenZipZS.ShellExtension*.msix.
 $msix = Get-ChildItem (Join-Path $PSScriptRoot 'Output\*.msix') -ErrorAction SilentlyContinue |

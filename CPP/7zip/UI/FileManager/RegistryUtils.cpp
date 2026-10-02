@@ -37,7 +37,7 @@ static LPCTSTR const kShowSystemMenu = TEXT("ShowSystemMenu");
 // static LPCTSTR const kLockMemoryAdd = TEXT("LockMemoryAdd");
 static LPCTSTR const kLargePages = TEXT("LargePages");
 
-// they default to off (0) in 7-Zip ZS /TR
+// they default to off (0) in RoxaZip /TR
 static LPCTSTR const kArcHistory = TEXT("WantArcHistory");
 static LPCTSTR const kPathHistory = TEXT("WantPathHistory");
 static LPCTSTR const kCopyHistory = TEXT("WantCopyHistory");

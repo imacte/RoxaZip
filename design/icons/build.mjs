@@ -101,7 +101,7 @@ function preview(dark) {
   const bg=dark?'#1c2129':'#f3f6fa',card=dark?'#272e39':'#ffffff',ink=dark?'#edf3fb':'#202b3a',muted=dark?'#a5b4c5':'#637286';
   let b=`<rect width="1440" height="1430" fill="${bg}"/>`;
   const text=(t,x,y,size=16,color=ink)=>`<text x="${x}" y="${y}" font-family="Segoe UI, sans-serif" font-size="${size}" fill="${color}">${t}</text>`;
-  b+=text('7-Zip ZS',48,64,32)+text('Bound books + leather strap · application / archive / commands',48,96,17,muted);
+  b+=text('RoxaZip',48,64,32)+text('Bound books + leather strap · application / archive / commands',48,96,17,muted);
   b+=`<rect x="40" y="122" width="1360" height="210" rx="16" fill="${card}"/>`;
   for(const [i,e] of manifest.applications.entries()) b+=embed(iconImage(e,96),62+i*178,149)+text(['Application','Install / Setup','Uninstall','Self-extracting'][i],62+i*178,278,15,muted);
   b+=text('Actual pixel sizes',820,164,16,muted);
@@ -130,7 +130,7 @@ if(!check) {
   let body='<rect width="1080" height="770" fill="#f3f6fa"/>';
   for(const [i,e] of cases.entries()) {
     const x=12+i*178;
-    body+=`<text x="${x+12}" y="32" font-family="Segoe UI" font-size="17" fill="#263445">${e.label || '7-ZIP'}</text>`;
+    body+=`<text x="${x+12}" y="32" font-family="Segoe UI" font-size="17" fill="#263445">${e.label || 'RoxaZip'}</text>`;
     for(const [j,size] of [16,24,32].entries()) {
       const y=48+j*236,im=iconImage(e,size);
       body+=`<rect x="${x}" y="${y}" width="164" height="225" rx="8" fill="#fff"/><rect x="${x}" y="${y+65}" width="164" height="160" fill="#272e39"/>`;
@@ -146,12 +146,12 @@ if(!check) {
   // Review at native sizes rather than enlarged pixels; the full atlas is separate.
   const heroes=[app,...['7z','zip','rar','iso'].map(name=>manifest.formats.find(e=>e.name===name))];
   let overview='<rect width="1000" height="580" fill="#f5f2eb"/>';
-  overview+='<text x="34" y="48" font-family="Segoe UI" font-size="28" font-weight="600" fill="#28363f">7-ZIP · BOUND BOOKS</text>';
+  overview+='<text x="34" y="48" font-family="Segoe UI" font-size="28" font-weight="600" fill="#28363f">RoxaZip · BOUND BOOKS</text>';
   overview+='<text x="34" y="77" font-family="Segoe UI" font-size="15" fill="#68737a">Colored volumes / leather strap / silver buckle / no text</text>';
   heroes.forEach((entry,i)=>{
     const x=34+i*194;
     overview+=embed(iconImage(entry,128),x+21,108);
-    overview+=`<text x="${x+21}" y="263" font-family="Segoe UI" font-size="18" fill="#28363f">${entry.label || '7-ZIP'}</text>`;
+    overview+=`<text x="${x+21}" y="263" font-family="Segoe UI" font-size="18" fill="#28363f">${entry.label || 'RoxaZip'}</text>`;
   });
   overview+='<rect x="20" y="291" width="960" height="269" rx="12" fill="#272e39"/>';
   overview+='<text x="38" y="324" font-family="Segoe UI" font-size="16" fill="#e3e9ef">ACTUAL SIZES</text>';

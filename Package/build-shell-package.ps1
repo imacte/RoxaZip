@@ -1,8 +1,8 @@
 <#
-  7-Zip ZS - build, sign and register the sparse package that puts "7-Zip ZS"
+  RoxaZip - build, sign and register the sparse package that puts "RoxaZip"
   into the modern (Windows 11) File Explorer context menu.
 
-  The package contains no binaries: it only gives the installed 7-Zip ZS
+  The package contains no binaries: it only gives the installed RoxaZip
   (7-zip.dll + 7zFM.exe) a package identity and registers the IExplorerCommand
   implementation of 7-zip.dll under "windows.fileExplorerContextMenus".
 
@@ -78,7 +78,7 @@ if ($Uninstall)
 }
 
 # ------------------------------------------------------------------- checks ---
-Step "Checking the 7-Zip ZS installation"
+Step "Checking the RoxaZip installation"
 $dll = Join-Path $InstallDir '7-zip.dll'
 $exe = Join-Path $InstallDir '7zFM.exe'
 foreach ($f in @($dll, $exe))
@@ -130,7 +130,7 @@ else
       -Type Custom `
       -Subject $Subject `
       -KeyUsage DigitalSignature `
-      -FriendlyName '7-Zip ZS sparse package (development)' `
+      -FriendlyName 'RoxaZip sparse package (development)' `
       -CertStoreLocation 'Cert:\CurrentUser\My' `
       -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}') `
       -NotAfter (Get-Date).AddYears(5)
@@ -231,6 +231,6 @@ if ($RestartExplorer)
 if (-not $KeepPackageFile) { }
 Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
 
-Write-Host "`nDone. Right-click any file or folder: '7-Zip ZS' should now appear in the" -ForegroundColor Green
+Write-Host "`nDone. Right-click any file or folder: 'RoxaZip' should now appear in the" -ForegroundColor Green
 Write-Host "Windows 11 context menu (with a cascaded submenu), not only under 'Show more options'." -ForegroundColor Green
 Write-Host "If it does not appear, sign out and back in (or run with -RestartExplorer)." -ForegroundColor Green

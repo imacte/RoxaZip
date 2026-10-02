@@ -8,7 +8,7 @@
 <?define MmmmVer = "$(var.MmVer).$(var.VerBuild).0" ?>
 <?define UpgradeMinVer = "4.38" ?>
 
-<?define ProductName = "7-Zip" ?>
+<?define ProductName = "RoxaZip" ?>
 
 <?ifndef MyCPU?>
   <?define MyCPU = "Intel" ?>
@@ -187,7 +187,7 @@
 
           <Component Id="Fm" Guid="$(var.CompFm)" DiskId="1" Win64="$(var.Is64)">
             <File Id="_7zFM.exe" Name="7zFM.exe">
-              <Shortcut Id="startmenuFmShortcut" Directory="PMenu" Name="7zipFM" LongName="7-Zip ZS File Manager" />
+              <Shortcut Id="startmenuFmShortcut" Directory="PMenu" Name="7zipFM" LongName="RoxaZip File Manager" />
             </File>
           </Component>
 

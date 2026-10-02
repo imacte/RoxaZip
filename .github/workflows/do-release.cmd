@@ -1,5 +1,5 @@
 @echo off
-REM Build some release of 7-Zip ZS
+REM Build some release of RoxaZip
 
 SET COPYCMD=/Y /B
 SET COPTS=-m0=lzma -mx9 -ms=on -mf=bcj2
@@ -43,7 +43,7 @@ IF NOT "%ZIP32%" == "" (
 )
 %SZIP% a ..\%ARCH%.7z %COPTS%
 cd %WD%
-copy %BIN%\Install.exe + %ARCH%.7z 7z%VERSION%-zstd-%ARCH%.exe
+copy %BIN%\Install.exe + %ARCH%.7z RoxaZip-%VERSION%-windows-%ARCH%.exe
 IF %errorlevel% NEQ 0 EXIT 1
 del %ARCH%.7z
 
@@ -60,7 +60,7 @@ curl %LURL%/Codecs/LICENSE --output LICENSE
 IF %errorlevel% NEQ 0 EXIT 1
 curl %LURL%/Codecs/README.md --output README.md
 IF %errorlevel% NEQ 0 EXIT 1
-%SZIP% a ..\Codecs-%ARCH%.7z %COPTS%
+%SZIP% a ..\RoxaZip-%VERSION%-codecs-%ARCH%.7z %COPTS%
 IF %errorlevel% NEQ 0 EXIT 1
 cd %WD% && rd /S /Q Codecs-%ARCH%
 goto :eof
@@ -84,7 +84,7 @@ curl %LURL%/TotalCMD/LICENSE --output LICENSE
 IF %errorlevel% NEQ 0 EXIT 1
 curl %LURL%/TotalCMD/README.md --output README.md
 IF %errorlevel% NEQ 0 EXIT 1
-%SZIP% a ..\TotalCmd.7z %COPTS%
+%SZIP% a ..\RoxaZip-%VERSION%-totalcmd.7z %COPTS%
 IF %errorlevel% NEQ 0 EXIT 1
 
 REM Cleanup

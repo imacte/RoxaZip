@@ -15,13 +15,13 @@ $versionFile = Join-Path $PSScriptRoot '../workflows/do-release.cmd'
 $versionMatch = [regex]::Match((Get-Content -Raw -LiteralPath $versionFile), '(?m)^SET VERSION=([^\r\n]+)')
 if (!$versionMatch.Success) { throw 'Cannot determine the package version.' }
 $version = $versionMatch.Groups[1].Value.Trim()
-$expected = @('TotalCmd.7z')
+$expected = @("RoxaZip-$version-totalcmd.7z")
 foreach ($arch in @('x86', 'x64', 'arm64', 'x86-ndm', 'x64-ndm', 'arm64-ndm')) {
-    $expected += "7z$version-zstd-$arch.exe", "Codecs-$arch.7z"
+    $expected += "RoxaZip-$version-windows-$arch.exe", "RoxaZip-$version-codecs-$arch.7z"
 }
 foreach ($arch in @('x64', 'arm64')) {
     foreach ($compiler in @('gcc', 'clang')) {
-        $expected += "7z$version-zstd-linux-$arch-$compiler.tar.gz"
+        $expected += "RoxaZip-$version-linux-$arch-$compiler.tar.gz"
     }
 }
 $assets = @(foreach ($name in $expected) {
@@ -46,7 +46,7 @@ if (!$repo -or $sha -notmatch '^[0-9a-f]{40}$' -or $env:GITHUB_RUN_NUMBER -notma
     throw 'Missing or invalid GitHub Actions release context.'
 }
 $tag = if ($isVersionTag) { $env:GITHUB_REF.Substring(10) } else { "build-$($env:GITHUB_RUN_NUMBER)-$($sha.Substring(0, 8))" }
-$title = if ($isVersionTag) { "7-Zip ZS $tag" } else { "7-Zip ZS $version - build $($env:GITHUB_RUN_NUMBER)" }
+$title = if ($isVersionTag) { "RoxaZip $tag" } else { "RoxaZip $version - build $($env:GITHUB_RUN_NUMBER)" }
 $runUrl = "$env:GITHUB_SERVER_URL/$repo/actions/runs/$env:GITHUB_RUN_ID"
 
 # Keep uploads in a draft until all assets are present. Re-running a completed

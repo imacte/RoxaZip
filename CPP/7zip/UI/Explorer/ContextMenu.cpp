@@ -1032,7 +1032,7 @@ Z7_COMWF_B CZipContextMenu::QueryContextMenu(HMENU hMenu, UINT indexMenu,
     CMenu menu;
     menu.Attach(hMenu);
     menuDestroyer.Disable();
-    MyAddSubMenu(_commandMap, kMainVerb, menu, indexMenu++, currentCommandID++, (UString)"7-Zip ZS",
+    MyAddSubMenu(_commandMap, kMainVerb, menu, indexMenu++, currentCommandID++, (UString)"RoxaZip",
         popupMenu, // popupMenu.Detach(),
         bitmap);
   }
@@ -1078,7 +1078,7 @@ Z7_COMWF_B CZipContextMenu::QueryContextMenu(HMENU hMenu, UINT indexMenu,
           menu.Attach(hMenu);
           // menuDestroyer_CRC.Disable();
         }
-        MyAddSubMenu(_commandMap, kCheckSumCascadedVerb, menu, indexInParent++, currentCommandID++, (UString)"7-Zip ZS Hash", subMenu,
+        MyAddSubMenu(_commandMap, kCheckSumCascadedVerb, menu, indexInParent++, currentCommandID++, (UString)"RoxaZip Hash", subMenu,
           /* insertHashMenuTo7zipMenu ? NULL : */ bitmap);
         _commandMap.Back().CtxCommandType = CtxCommandType_CrcRoot;
         if (!insertHashMenuTo7zipMenu)
@@ -1609,7 +1609,7 @@ void CZipExplorerCommand::LoadItems(IShellItemArray *psiItemArray)
   CZipExplorerCommand *openHandler = NULL;
 
   /* The Windows 11 modern (compact) context menu renders only ONE level, so
-     cascaded sub-commands ("7-Zip ZS Hash", and the "open archive with ..."
+     cascaded sub-commands ("RoxaZip Hash", and the "open archive with ..."
      cascade for archives) opened empty flyouts there, and flattening them made
      the flyout unnecessarily long. Those cascades are therefore not part of the
      modern command: the remaining items are the plain commands (the leaf
@@ -1684,10 +1684,10 @@ Z7_COMWF_B CZipExplorerCommand::GetTitle(IShellItemArray *psiItemArray, LPWSTR *
     LoadItems(psiItemArray);
     // The name of the root command of the Windows 11 (modern) context menu.
     // It's the same name that is used for the classic context menu of this fork.
-    name = "7-Zip ZS"; //  "New"
+    name = "RoxaZip"; //  "New"
   }
   else
-    name = "7-Zip item";
+    name = "RoxaZip item";
   
   if (!_commandMap_Cur.IsEmpty())
   {

@@ -16,7 +16,7 @@ extern bool g_DisableUserQuestions;
 void ShowErrorMessage(HWND window, LPCWSTR message)
 {
   if (!g_DisableUserQuestions)
-    ::MessageBoxW(window, message, L"7-Zip-Zstandard", MB_OK | MB_ICONSTOP);
+    ::MessageBoxW(window, message, L"RoxaZip", MB_OK | MB_ICONSTOP);
 }
 
 void ShowErrorMessageHwndRes(HWND window, UInt32 resID)

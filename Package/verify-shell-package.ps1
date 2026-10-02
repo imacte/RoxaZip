@@ -1,5 +1,5 @@
 <#
-  7-Zip ZS - verify the sparse package of the modern (Windows 11) context menu.
+  RoxaZip - verify the sparse package of the modern (Windows 11) context menu.
 
       pwsh -File Package\verify-shell-package.ps1
 
@@ -10,7 +10,7 @@
        Windows 11 context menu uses,
     3. with the native probe (Package\Output\probe-modern-menu.exe, build it with
        Package\build-probe.cmd) that the shell extension really answers like the
-       shell expects it: the classic path inserts the "7-Zip ZS" submenu, and
+       shell expects it: the classic path inserts the "RoxaZip" submenu, and
        IExplorerCommand returns a root command with sub-commands (the cascaded
        submenu) - the titles are printed.
 
@@ -90,7 +90,7 @@ else
 Write-Host ''
 if ($ok)
 {
-  Write-Host 'RESULT: OK - 7-Zip ZS is registered for the Windows 11 context menu (cascaded submenu).' -ForegroundColor Green
-  Write-Host '        Right-click a file/folder: "7-Zip ZS" should be in the modern menu.' -ForegroundColor Green
+  Write-Host 'RESULT: OK - RoxaZip is registered for the Windows 11 context menu (cascaded submenu).' -ForegroundColor Green
+  Write-Host '        Right-click a file/folder: "RoxaZip" should be in the modern menu.' -ForegroundColor Green
 }
 else { Write-Host 'RESULT: there are problems, see above.' -ForegroundColor Yellow }

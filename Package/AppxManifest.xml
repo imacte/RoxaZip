@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  7-Zip ZS - sparse package for the modern (Windows 11) File Explorer context menu.
+  RoxaZip - sparse package for the modern (Windows 11) File Explorer context menu.
 
-  This package contains no binaries. It gives the already installed 7-Zip ZS
+  This package contains no binaries. It gives the already installed RoxaZip
   (7-zip.dll + 7zFM.exe) a package identity and registers the IExplorerCommand
   implementation of 7-zip.dll as a "windows.fileExplorerContextMenus" command,
-  so "7-Zip ZS" appears directly in the Windows 11 context menu (with a cascaded
+  so "RoxaZip" appears directly in the Windows 11 context menu (with a cascaded
   submenu), instead of only in "Show more options".
 
   Identity/@Publisher must match the subject of the code signing certificate.
@@ -28,8 +28,8 @@
     ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>7-Zip ZS Shell Extension</DisplayName>
-    <PublisherDisplayName>7-Zip ZS</PublisherDisplayName>
+    <DisplayName>RoxaZip Shell Extension</DisplayName>
+    <PublisherDisplayName>RoxaZip</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
     <uap10:AllowExternalContent>true</uap10:AllowExternalContent>
   </Properties>
@@ -50,18 +50,18 @@
       uap10:RuntimeBehavior="win32App">
       <uap:VisualElements
         AppListEntry="none"
-        DisplayName="7-Zip ZS"
-        Description="7-Zip ZS file manager"
+        DisplayName="RoxaZip"
+        Description="RoxaZip file manager"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png" />
       <Extensions>
-        <!-- The shell extension DLL of 7-Zip ZS. It is loaded by dllhost.exe
+        <!-- The shell extension DLL of RoxaZip. It is loaded by dllhost.exe
              (surrogate) and must be present in the external location
-             (the 7-Zip ZS installation directory). -->
+             (the RoxaZip installation directory). -->
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:SurrogateServer DisplayName="7-Zip ZS Shell Extension">
+            <com:SurrogateServer DisplayName="RoxaZip Shell Extension">
               <com:Class
                 Id="23170F69-20BB-278A-1000-000100020000"
                 Path="7-zip.dll"
@@ -69,7 +69,7 @@
             </com:SurrogateServer>
           </com:ComServer>
         </com:Extension>
-        <!-- The cascaded "7-Zip ZS" submenu of the Windows 11 context menu.
+        <!-- The cascaded "RoxaZip" submenu of the Windows 11 context menu.
              The CLSID is the CLSID_CZipContextMenu of this fork, and the
              submenu items come from IExplorerCommand::EnumSubCommands(). -->
         <desktop4:Extension Category="windows.fileExplorerContextMenus">

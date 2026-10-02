@@ -65,8 +65,8 @@ const apps=[
 ];
 for(const [name,targets] of apps) {
   const source=`app/${name}`;
-  write(source,stackedBook('7-ZIP',overrides['7z'],name,smallFontFile,manifest.showLabels,manifest.vivid));
-  for(const size of [16,20,24,32]) write(source+(size===32?'-small':'-'+size),smallIcon('7-ZIP',overrides['7z'],name,size,smallFontFile,manifest.showLabels,manifest.vivid));
+  write(source,stackedBook('RoxaZip',overrides['7z'],name,smallFontFile,manifest.showLabels,manifest.vivid));
+  for(const size of [16,20,24,32]) write(source+(size===32?'-small':'-'+size),smallIcon('RoxaZip',overrides['7z'],name,size,smallFontFile,manifest.showLabels,manifest.vivid));
   manifest.applications.push({name,source,smallSource:source+'-small',sizeSources:{16:source+'-16',20:source+'-20',24:source+'-24',32:source+'-small'},targets});
 }
 for(const [name,geometry] of Object.entries(tools)) {

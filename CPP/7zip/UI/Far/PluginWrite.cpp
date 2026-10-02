@@ -406,11 +406,11 @@ HRESULT CompressFiles(const CObjectVector<PluginPanelItem> &pluginPanelItems)
   CCodecs *codecs = new CCodecs;
   CMyComPtr<ICompressCodecsInfo> compressCodecsInfo = codecs;
   if (codecs->Load() != S_OK)
-    throw "Can't load 7-Zip codecs";
+    throw "Can't load RoxaZip codecs";
   */
   
   if (LoadGlobalCodecs() != S_OK)
-    throw "Can't load 7-Zip codecs";
+    throw "Can't load RoxaZip codecs";
 
   CCodecs *codecs = g_CodecsObj;
 

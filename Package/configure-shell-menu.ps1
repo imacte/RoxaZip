@@ -1,5 +1,5 @@
 <#
-  7-Zip ZS - choose in which File Explorer context menu(s) 7-Zip ZS appears.
+  RoxaZip - choose in which File Explorer context menu(s) RoxaZip appears.
 
       pwsh -File Package\configure-shell-menu.ps1                  # show the current state
       pwsh -File Package\configure-shell-menu.ps1 -Mode Modern     # Windows 11 menu (+ classic for folders)
@@ -19,9 +19,9 @@
       from the package in the Windows 11 menu and from the classic registration
       in the classic menu - exactly one entry everywhere, no duplicates.
     * "Classic" is the pre-package behaviour: classic registration for *,
-      Folder and Directory, no package. The Windows 11 menu then has no 7-Zip ZS,
+      Folder and Directory, no package. The Windows 11 menu then has no RoxaZip,
       but the classic menu has the full cascaded submenus (including HASH).
-    * "Both" registers both variants, so the classic menu lists 7-Zip ZS twice
+    * "Both" registers both variants, so the classic menu lists RoxaZip twice
       for files (flat from the package, cascaded from the classic registration).
 
   Registry changes need administrator rights; the script elevates itself once.
@@ -32,7 +32,7 @@ param(
   [string]$Mode,
   [string]$KeyName = '7-Zip-Zstandard',
   [string]$Clsid = '{23170F69-20BB-278A-1000-000100020000}',
-  [string]$ShellExtName = '7-Zip ZS Shell Extension',
+  [string]$ShellExtName = 'RoxaZip Shell Extension',
   [string]$PackageName = 'SevenZipZS.ShellExtension',
   [string]$BackupDir,
   [string]$LogFile,
@@ -79,16 +79,16 @@ function Show-Status()
   $legacy = Get-LegacyRoots
   $hasStar = $legacy -contains '*'
   Head 'Current state'
-  if ($pkg) { Info "Windows 11 (compact) menu : 7-Zip ZS is registered  [$($pkg.PackageFullName)]" }
+  if ($pkg) { Info "Windows 11 (compact) menu : RoxaZip is registered  [$($pkg.PackageFullName)]" }
   else { Info 'Windows 11 (compact) menu : not registered' }
   if ($legacy.Count) { Info ("Classic (Show more options) : classic registration for: {0}" -f ($legacy -join ', ')) }
   else { Info 'Classic (Show more options) : no classic registration' }
   Write-Host ''
-  if ($pkg -and $hasStar) { Info '=> both menus, but the classic menu lists 7-Zip ZS twice for files' }
+  if ($pkg -and $hasStar) { Info '=> both menus, but the classic menu lists RoxaZip twice for files' }
   elseif ($pkg -and $legacy.Count) { Info '=> Windows 11 menu + classic menu, one entry each (files: package, folders: classic registration)' }
   elseif ($pkg) { Info '=> Windows 11 menu everywhere; classic menu: files only (folders need Folder/Directory)' }
   elseif ($legacy.Count) { Info '=> classic menu only, with the full cascaded submenus' }
-  else { Info '=> 7-Zip ZS does not appear in any context menu' }
+  else { Info '=> RoxaZip does not appear in any context menu' }
 }
 
 # -------------------------------------------------------------------- status --
@@ -127,7 +127,7 @@ function Remove-LegacyRegistration()
   }
 
   # The COM registration of the shell extension. The program's own unregister
-  # path ("Integrate 7-Zip ZS to shell context menu" off, or ... ) removes it, and
+  # path ("Integrate RoxaZip to shell context menu" off, or ... ) removes it, and
   # an extension without it cannot be loaded (the classic menu then stays empty).
   # In the Modern mode the sparse package provides the CLSID, so removing the
   # classic one is correct here as well.
@@ -249,7 +249,7 @@ switch ($Mode)
   {
     Install-Package $true
     Add-LegacyRegistration
-    Write-Host '  NOTE: the classic menu lists 7-Zip ZS twice for files (package + classic registration)' -ForegroundColor Yellow
+    Write-Host '  NOTE: the classic menu lists RoxaZip twice for files (package + classic registration)' -ForegroundColor Yellow
   }
   'None'
   {

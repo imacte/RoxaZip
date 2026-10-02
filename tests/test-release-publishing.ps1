@@ -54,14 +54,14 @@ function Assert-Rejected {
 try {
     $packageScript = Get-Content -Raw (Join-Path $PSScriptRoot '../.github/workflows/do-release.cmd')
     $version = [regex]::Match($packageScript, '(?m)^SET VERSION=([^\r\n]+)').Groups[1].Value.Trim()
-    Set-Content (Join-Path $fixture 'TotalCmd.7z') 'test fixture'
+    Set-Content (Join-Path $fixture "RoxaZip-$version-totalcmd.7z") 'test fixture'
     foreach ($arch in @('x86', 'x64', 'arm64', 'x86-ndm', 'x64-ndm', 'arm64-ndm')) {
-        Set-Content (Join-Path $fixture "7z$version-zstd-$arch.exe") 'test fixture'
-        Set-Content (Join-Path $fixture "Codecs-$arch.7z") 'test fixture'
+        Set-Content (Join-Path $fixture "RoxaZip-$version-windows-$arch.exe") 'test fixture'
+        Set-Content (Join-Path $fixture "RoxaZip-$version-codecs-$arch.7z") 'test fixture'
     }
     foreach ($arch in @('x64', 'arm64')) {
         foreach ($compiler in @('gcc', 'clang')) {
-            Set-Content (Join-Path $fixture "7z$version-zstd-linux-$arch-$compiler.tar.gz") 'test fixture'
+            Set-Content (Join-Path $fixture "RoxaZip-$version-linux-$arch-$compiler.tar.gz") 'test fixture'
         }
     }
 
@@ -114,7 +114,7 @@ try {
 
     foreach ($arch in @('x64', 'arm64')) {
         foreach ($compiler in @('gcc', 'clang')) {
-            $linuxPackage = Join-Path $fixture "7z$version-zstd-linux-$arch-$compiler.tar.gz"
+            $linuxPackage = Join-Path $fixture "RoxaZip-$version-linux-$arch-$compiler.tar.gz"
             Remove-Item -LiteralPath $linuxPackage
             Assert-Rejected
             Assert ($releaseTestContext.Calls.Count -eq 0) 'Missing Linux packages must fail before contacting GitHub.'
@@ -123,10 +123,10 @@ try {
     }
     Write-Output 'PASS: all four Linux packages are required'
 
-    Set-Content -LiteralPath (Join-Path $fixture 'TotalCmd.7z') -Value '' -NoNewline
+    Set-Content -LiteralPath (Join-Path $fixture "RoxaZip-$version-totalcmd.7z") -Value '' -NoNewline
     Assert-Rejected
     Assert ($releaseTestContext.Calls.Count -eq 0) 'Empty packages must fail before contacting GitHub.'
-    Remove-Item -LiteralPath (Join-Path $fixture 'TotalCmd.7z')
+    Remove-Item -LiteralPath (Join-Path $fixture "RoxaZip-$version-totalcmd.7z")
     Assert-Rejected
     Assert ($releaseTestContext.Calls.Count -eq 0) 'Missing packages must fail before contacting GitHub.'
     Write-Output 'PASS: empty and missing package guards'

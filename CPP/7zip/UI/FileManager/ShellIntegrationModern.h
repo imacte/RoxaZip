@@ -3,7 +3,7 @@
 // The Windows 11 (compact) context menu shows the commands of this fork only if
 // the sparse package (see the Package\ directory) is registered for the current
 // user. That registration is per user and needs no administrator rights, so it
-// can be toggled from the options page ("7-Zip ZS" page).
+// can be toggled from the options page ("RoxaZip" page).
 //
 // The shell lists the commands of a package in the classic menu for files, but
 // not for directories, so a per-user classic registration for Folder/Directory

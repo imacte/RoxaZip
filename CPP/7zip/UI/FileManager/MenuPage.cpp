@@ -293,7 +293,7 @@ bool CMenuPage::OnInit()
     if (menuItem.Flag == kCRC)
       s = "HASH";
     else if (menuItem.Flag == kCRC_Cascaded)
-      s = "7-Zip > HASH";
+      s = "RoxaZip > HASH";
     if (menuItem.Flag == kOpenAs
         || menuItem.Flag == kCRC
         || menuItem.Flag == kCRC_Cascaded)
@@ -345,7 +345,7 @@ bool CMenuPage::OnInit()
 
 static void ShowMenuErrorMessage(const wchar_t *m, HWND hwnd)
 {
-  MessageBoxW(hwnd, m, L"7-Zip ZS", MB_ICONERROR);
+  MessageBoxW(hwnd, m, L"RoxaZip", MB_ICONERROR);
 }
 
 #endif
@@ -417,7 +417,7 @@ void CMenuPage::Set_MenuMode_Controls(enum_MenuMode mode)
   /* The two checkboxes below control the machine-wide classic registration
      (HKEY_LOCAL_MACHINE, including the 32-bit DLL). The Windows 11 menu does not
      use it - it needs the sparse package - and an active classic registration
-     next to the package would list 7-Zip ZS twice in the classic menu, so they
+     next to the package would list RoxaZip twice in the classic menu, so they
      are hidden unless a mode uses the classic registration. The controls below
      move up when they are hidden, so no empty space is left. */
   const bool classic = (mode == kMenuMode_Classic || mode == kMenuMode_Both);

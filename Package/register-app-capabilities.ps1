@@ -1,15 +1,15 @@
 <#
-  7-Zip ZS - register the application for the Windows "Default apps" settings.
+  RoxaZip - register the application for the Windows "Default apps" settings.
 
   This writes (needs administrator rights, the script elevates itself):
 
       HKLM\SOFTWARE\7-Zip-Zstandard\Capabilities
-          ApplicationName        = 7-Zip ZS
+          ApplicationName        = RoxaZip
           ApplicationDescription = ...
           FileAssociations\.7z   = 7-Zip-Zstandard.7z
           ...
       HKLM\SOFTWARE\RegisteredApplications
-          7-Zip ZS               = Software\7-Zip-Zstandard\Capabilities
+          RoxaZip               = Software\7-Zip-Zstandard\Capabilities
 
   With that entry the options page ("System" tab -> double click a row) can open
   the app's own page in "Default apps" through
@@ -86,8 +86,8 @@ if ($Uninstall)
 }
 
 Write-Host "`n== Registering the application" -ForegroundColor Cyan
-& reg.exe add "$regCap" /v ApplicationName /t REG_SZ /d "$AppName" /f | Out-Null
-& reg.exe add "$regCap" /v ApplicationDescription /t REG_SZ /d "7-Zip ZS archiver" /f | Out-Null
+& reg.exe add "$regCap" /v ApplicationName /t REG_SZ /d "RoxaZip" /f | Out-Null
+& reg.exe add "$regCap" /v ApplicationDescription /t REG_SZ /d "RoxaZip archiver" /f | Out-Null
 
 $count = 0
 foreach ($ext in $Exts)

@@ -44,11 +44,11 @@ class CMenuPage: public NWindows::NControl::CPropertyPage
   }
 
 public:
-  /* Which context menu(s) 7-Zip ZS is registered in:
+  /* Which context menu(s) RoxaZip is registered in:
        Classic - machine-wide classic registration (*, Folder, Directory)
        Modern  - sparse package for the Windows 11 menu + per-user classic
                  registration for Folder/Directory
-       Both    - both of them (7-Zip ZS appears twice for files)
+       Both    - both of them (RoxaZip appears twice for files)
        None    - nowhere */
   enum enum_MenuMode
   {

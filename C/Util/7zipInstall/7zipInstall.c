@@ -56,7 +56,7 @@ typedef enum {
 #define Z7_7ZIP_CUR_VER ((MY_VER_MAJOR << 16) | MY_VER_MINOR)
 #define Z7_7ZIP_DLL_VER_COMPAT ((16 << 16) | 3)
 
-static LPCSTR const k_7zip = "7-Zip-Zstandard";
+static LPCSTR const k_7zip = "RoxaZip";
 
 static LPCWSTR const k_Reg_Software_7zip = L"Software\\7-Zip-Zstandard";
 
@@ -66,7 +66,7 @@ static LPCWSTR const k_Reg_Software_7zip = L"Software\\7-Zip-Zstandard";
   #define Z7_64BIT_INSTALLER 1
 #endif
 
-#define k_7zip_with_Ver_base L"7-Zip ZS " LLL(MY_VERSION)
+#define k_7zip_with_Ver_base L"RoxaZip " LLL(MY_VERSION)
 
 #ifdef Z7_64BIT_INSTALLER
 
@@ -618,9 +618,9 @@ static LPCWSTR FindSubString(LPCWSTR s1, const char *s2)
 static void Set7zipPostfix(WCHAR *s)
 {
   NormalizePrefix(s);
-  if (FindSubString(s, "7-Zip-Zstandard"))
+  if (FindSubString(s, "RoxaZip") || FindSubString(s, "7-Zip-Zstandard"))
     return;
-  CatAscii(s, "7-Zip-Zstandard\\");
+  CatAscii(s, "RoxaZip\\");
 }
     
 
@@ -785,6 +785,54 @@ static HRESULT CreateShellLink(LPCWSTR srcPath, LPCWSTR targetPath)
   return hres;
 }
 
+#ifndef UNDER_CE
+// Remove old branding only from shortcuts that still point to this installation.
+static void RemoveLegacyShellLinks(HWND hwndOwner)
+{
+  unsigned i;
+  for (i = (g_AllUsers ? 1 : 2); i < 3; i++)
+  {
+    WCHAR group[MAX_PATH + 40];
+    unsigned k;
+    if (SHGetFolderPathW(hwndOwner,
+        i == 1 ? CSIDL_COMMON_PROGRAMS : CSIDL_PROGRAMS,
+        NULL, SHGFP_TYPE_CURRENT, group) != S_OK)
+      continue;
+    NormalizePrefix(group);
+    CatAscii(group, "7-Zip-Zstandard\\");
+    for (k = 0; k < 2; k++)
+    {
+      WCHAR link[MAX_PATH + 80];
+      WCHAR expected[MAX_PATH + 40];
+      IShellLinkW *sl;
+      wcscpy(link, group);
+      CatAscii(link, k == 0 ? "7-Zip ZS File Manager.lnk" : "7-Zip Help.lnk");
+      wcscpy(expected, path);
+      CatAscii(expected, k == 0 ? "7zFM.exe" : "7-zip.chm");
+      if (SUCCEEDED(CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
+          &IID_IShellLinkW, (LPVOID *)&sl)))
+      {
+        IPersistFile *pf;
+        if (SUCCEEDED(sl->lpVtbl->QueryInterface(sl, &IID_IPersistFile, (LPVOID *)&pf)))
+        {
+          if (SUCCEEDED(pf->lpVtbl->Load(pf, link, STGM_READ)))
+          {
+            WCHAR target[MAX_PATH + 10];
+            if (SUCCEEDED(sl->lpVtbl->GetPath(sl, target, MAX_PATH, NULL, 0))
+                && lstrcmpiW(target, expected) == 0)
+              DeleteFileW(link);
+          }
+          pf->lpVtbl->Release(pf);
+        }
+        sl->lpVtbl->Release(sl);
+      }
+    }
+    // RemoveDirectory succeeds only if no user-created shortcuts remain.
+    RemoveDirectoryW(group);
+  }
+}
+#endif
+
 static void SetShellProgramsGroup(HWND hwndOwner)
 {
   #ifdef UNDER_CE
@@ -795,6 +843,8 @@ static void SetShellProgramsGroup(HWND hwndOwner)
   #else
 
   unsigned i = (g_AllUsers ? 0 : 2);
+
+  RemoveLegacyShellLinks(hwndOwner);
 
   for (; i < 3; i++)
   {
@@ -825,8 +875,8 @@ static void SetShellProgramsGroup(HWND hwndOwner)
       for (k = 0; k < 2; k++)
       {
         CpyAscii(link + baseLen, k == 0 ?
-            "7-Zip ZS File Manager.lnk" :
-            "7-Zip Help.lnk"
+            "RoxaZip File Manager.lnk" :
+            "RoxaZip Help.lnk"
            );
         wcscpy(destPath, path);
         CatAscii(destPath, k == 0 ?
@@ -848,7 +898,7 @@ static void SetShellProgramsGroup(HWND hwndOwner)
 }
 
 static LPCWSTR const k_Shell_Approved = L"Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved";
-static LPCWSTR const k_7zip_ShellExtension = L"7-Zip Shell Extension";
+static LPCWSTR const k_7zip_ShellExtension = L"RoxaZip Shell Extension";
 
 static void WriteCLSID(void)
 {
@@ -965,6 +1015,8 @@ static void WriteShellEx(void)
       MyRegistry_SetDWORD(destKey, L"VersionMinor", MY_VER_MINOR);
   
       MyRegistry_SetString(destKey, L"Publisher", LLL(MY_AUTHOR_NAME));
+      MyRegistry_SetString(destKey, L"URLInfoAbout", L"https://github.com/imacte/RoxaZip");
+      MyRegistry_SetString(destKey, L"URLUpdateInfo", L"https://github.com/imacte/RoxaZip/releases");
       
       // MyRegistry_SetString(destKey, L"HelpLink", L"http://www.7-zip.org/support.html");
       // MyRegistry_SetString(destKey, L"URLInfoAbout", L"http://www.7-zip.org/");

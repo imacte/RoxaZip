@@ -1,6 +1,6 @@
 // probe-modern-menu.cpp
 //
-// Native probe for the context menu of 7-Zip ZS. It calls the shell extension
+// Native probe for the context menu of RoxaZip. It calls the shell extension
 // exactly like the shell does:
 //   * the classic path  : IShellExtInit::Initialize + IContextMenu::QueryContextMenu
 //                         (with and without HMENU), the inserted item texts are dumped
@@ -17,7 +17,7 @@
 #include <shellapi.h>
 #include <stdio.h>
 
-// {23170F69-20BB-278A-1000-000100020000} - CLSID_CZipContextMenu of 7-Zip ZS
+// {23170F69-20BB-278A-1000-000100020000} - CLSID_CZipContextMenu of RoxaZip
 static const GUID CLSID_ZipZS =
   { 0x23170F69, 0x20BB, 0x278A, { 0x10, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00 } };
 
@@ -289,15 +289,15 @@ int wmain(int argc, wchar_t **argv)
             if (isSub) GetMenuStringW(GetSubMenu(menu, i), 0, buf, 1, MF_BYPOSITION); // touch
             buf[0] = 0;
             GetMenuStringW(menu, i, buf, 500, MF_BYPOSITION);
-            if (wcsstr(buf, L"7-Zip") || wcsstr(buf, L"7-zip"))
+            if (wcsstr(buf, L"RoxaZip"))
             {
               found++;
               printf("    [%2d] '", i);
               PrintW(buf);
-              printf("'%s   <== 7-Zip entry #%d\n", isSub ? "   (submenu)" : "", found);
+              printf("'%s   <== RoxaZip entry #%d\n", isSub ? "   (submenu)" : "", found);
             }
           }
-          printf("    7-Zip entries in the classic menu: %d\n", found);
+          printf("    RoxaZip entries in the classic menu: %d\n", found);
           DestroyMenu(menu);
           shellMenu->Release();
         }

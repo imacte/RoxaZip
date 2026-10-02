@@ -123,7 +123,7 @@ DECLARE_AND_SET_CLIENT_VERSION_VAR
 #endif
 
 
-#define kVersionString "7-Zip" PROG_POSTFIX_2 " " MY_VERSION_CPU
+#define kVersionString "RoxaZip" PROG_POSTFIX_2 " " MY_VERSION_CPU
 
 static const char * const kCopyrightString = "\n"
   kVersionString
@@ -211,7 +211,7 @@ static const char * const kHelpString =
 
 static const char * const kEverythingIsOk = "Everything is Ok";
 static const char * const kUserErrorMessage = "Incorrect command line";
-static const char * const kNoFormats = "7-Zip cannot find the code that works with archives.";
+static const char * const kNoFormats = "RoxaZip cannot find the code that works with archives.";
 static const char * const kUnsupportedArcTypeMessage = "Unsupported archive type";
 // static const char * const kUnsupportedUpdateArcType = "Can't create archive for that type";
 

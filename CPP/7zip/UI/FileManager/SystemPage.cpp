@@ -50,11 +50,11 @@ CSysString CModifiedExtInfo::GetString() const
 {
   const char *s;
   if (State == kExtState_7Zip)
-    s = "7-Zip ZS";
+    s = "RoxaZip";
   else if (State == kExtState_Clear)
     s = "";
   else if (Other7Zip)
-    s = "[7-Zip ZS]";
+    s = "[RoxaZip]";
   else
     return ProgramKey;
   return CSysString (s);
@@ -229,7 +229,7 @@ bool CSystemPage::OnInit()
   }
 
   {
-    /* 7-Zip ZS: the effective default app of Windows 10+ (UserChoice) is shown
+    /* RoxaZip: the effective default app of Windows 10+ (UserChoice) is shown
        in an extra column, because the columns above only hold the classic ProgID
        which Windows ignores as soon as a UserChoice exists. */
     UString t (L"\u7CFB\u7EDF\u9ED8\u8BA4\u7A0B\u5E8F");   // "system default app"
@@ -383,7 +383,7 @@ void CSystemPage::ResetSystemDefault(unsigned listIndex)
     UString m (L"\u65E0\u6CD5\u5220\u9664 UserChoice\uFF1A");   // "cannot delete UserChoice:"
     m.Add_LF();
     m += NError::MyFormatMessage(res);
-    MessageBoxW(*this, m.Ptr(), L"7-Zip ZS", MB_ICONERROR);
+    MessageBoxW(*this, m.Ptr(), L"RoxaZip", MB_ICONERROR);
     return;
   }
 
@@ -708,7 +708,7 @@ LONG CSystemPage::OnApply()
       {
         if (error.IsEmpty())
           error = L"the elevated operation failed";
-        MessageBoxW(*this, error.Ptr(), L"7-Zip ZS", MB_ICONERROR);
+        MessageBoxW(*this, error.Ptr(), L"RoxaZip", MB_ICONERROR);
         return PSNRET_INVALID_NOCHANGEPAGE;
       }
     }
@@ -749,7 +749,7 @@ LONG CSystemPage::OnApply()
           res2 = NRegistryAssoc::AddShellExtensionInfo(key, GetSystemString(extInfo.Ext),
               title, command, plug.IconPath, plug.IconIndex);
 
-          /* 7-Zip ZS: Windows 10/11 ignores the classic ProgID while a UserChoice
+          /* RoxaZip: Windows 10/11 ignores the classic ProgID while a UserChoice
              exists for that file type, so that entry is removed as well -
              otherwise setting the association here would have no effect and the
              "system default app" column would keep showing the other program. */
@@ -784,7 +784,7 @@ LONG CSystemPage::OnApply()
   _needSave = false;
   
   if (res != 0)
-    MessageBoxW(*this, NError::MyFormatMessage(res), L"7-Zip ZS", MB_ICONERROR);
+    MessageBoxW(*this, NError::MyFormatMessage(res), L"RoxaZip", MB_ICONERROR);
   
   return PSNRET_NOERROR;
 }
@@ -837,7 +837,7 @@ bool CSystemPage::OnNotify(UINT controlID, LPNMHDR lParam)
 
       case NM_RCLICK:
       {
-        /* 7-Zip ZS: right click offers to remove the UserChoice value, which is
+        /* RoxaZip: right click offers to remove the UserChoice value, which is
            the only way back to the classic association (an application cannot
            write UserChoice itself) */
         NMITEMACTIVATE *item = (NMITEMACTIVATE *)lParam;

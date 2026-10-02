@@ -38,7 +38,7 @@ namespace NFar {
 
 extern
 const char *g_PluginName_for_Error;
-const char *g_PluginName_for_Error = "7-Zip";
+const char *g_PluginName_for_Error = "RoxaZip";
 
 }
 
@@ -63,13 +63,13 @@ BOOL WINAPI DllMain(
 {
   if (dwReason == DLL_PROCESS_ATTACH)
   {
-    // OutputDebugStringA("7-Zip FAR DLL_PROCESS_ATTACH");
+    // OutputDebugStringA("RoxaZip FAR DLL_PROCESS_ATTACH");
     g_hInstance = (HINSTANCE)hInstance;
     NT_CHECK
   }
   if (dwReason == DLL_PROCESS_DETACH)
   {
-    // OutputDebugStringA("7-Zip FAR DLL_PROCESS_DETACH");
+    // OutputDebugStringA("RoxaZip FAR DLL_PROCESS_DETACH");
   }
   return TRUE;
 }

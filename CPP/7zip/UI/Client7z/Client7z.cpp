@@ -75,7 +75,7 @@ using namespace NDir;
 
 static const char * const kCopyrightString =
   "\n"
-  "7-Zip"
+  "RoxaZip"
   " (" kDllName " client)"
   " " MY_VERSION
   " : " MY_COPYRIGHT_DATE

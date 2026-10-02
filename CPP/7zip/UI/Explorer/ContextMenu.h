@@ -32,7 +32,7 @@ enum enum_CtxCommandType
    calls IEnumExplorerCommand::Clone(). The command object itself must not be
    returned as the enumerator: then all consumers would share a single position,
    and every enumeration after the first one returned zero items - which is why
-   a nested flyout (for example "7-Zip ZS Hash") opened empty. */
+   a nested flyout (for example "RoxaZip Hash") opened empty. */
 class CSubCommandsEnumerator Z7_final:
   public IEnumExplorerCommand,
   public CMyUnknownImp

@@ -990,9 +990,9 @@ INT_PTR CProgressDialog::Create(const UString &title, NWindows::CThread &thread,
   if (!g_DisableUserQuestions)
   {
 #ifdef ZIP7_DARKMODE
-    dmlib::darkMessageBoxW(wndParent, L"Progress Error", L"7-Zip", MB_ICONERROR);
+    dmlib::darkMessageBoxW(wndParent, L"Progress Error", L"RoxaZip", MB_ICONERROR);
 #else
-    MessageBoxW(wndParent, L"Progress Error", L"7-Zip", MB_ICONERROR);
+    MessageBoxW(wndParent, L"Progress Error", L"RoxaZip", MB_ICONERROR);
 #endif
   }
   return res;
@@ -1028,7 +1028,7 @@ bool CProgressDialog::OnExternalCloseMessage()
   {
     MessagesDisplayed = true;
     if (fm.ErrorMessage.Title.IsEmpty())
-      fm.ErrorMessage.Title = "7-Zip";
+      fm.ErrorMessage.Title = "RoxaZip";
     if (!g_DisableUserQuestions)
     { 
 #ifdef ZIP7_DARKMODE
@@ -1045,7 +1045,7 @@ bool CProgressDialog::OnExternalCloseMessage()
     if (!fm.OkMessage.Message.IsEmpty())
     {
       if (fm.OkMessage.Title.IsEmpty())
-        fm.OkMessage.Title = "7-Zip";
+        fm.OkMessage.Title = "RoxaZip";
       if (!g_DisableUserQuestions)
       {
 #ifdef ZIP7_DARKMODE

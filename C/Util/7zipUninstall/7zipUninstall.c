@@ -50,7 +50,7 @@ typedef enum {
   #define Z7_64BIT_INSTALLER 1
 #endif
 
-#define k_7zip_with_Ver_base L"7-Zip ZS " LLL(MY_VERSION)
+#define k_7zip_with_Ver_base L"RoxaZip " LLL(MY_VERSION)
 
 #ifdef Z7_64BIT_INSTALLER
 
@@ -394,7 +394,7 @@ static void SetShellProgramsGroup(HWND hwndOwner)
       continue;
 
     NormalizePrefix(link);
-    CatAscii(link, "7-Zip-Zstandard\\");
+    CatAscii(link, "RoxaZip\\");
     
     {
       const size_t baseLen = wcslen(link);
@@ -404,8 +404,8 @@ static void SetShellProgramsGroup(HWND hwndOwner)
       for (k = 0; k < 2; k++)
       {
         CpyAscii(link + baseLen, k == 0 ?
-            "7-Zip ZS File Manager.lnk" :
-            "7-Zip Help.lnk");
+            "RoxaZip File Manager.lnk" :
+            "RoxaZip Help.lnk");
         wcscpy(destPath, path);
         CatAscii(destPath, k == 0 ?
             "7zFM.exe" :

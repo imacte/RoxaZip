@@ -4,15 +4,15 @@
 
 #define zoneX 100
 
-CAPTION "7-Zip ZS"
+CAPTION "RoxaZip"
 BEGIN
   LTEXT    "Context menu integration:", IDT_SYSTEM_MENU_MODE, m, m - 2, xc, 8
   MY_CONTROL_AUTORADIOBUTTON_GROUP ( "Classic menu (Show more options)", IDX_SYSTEM_MENU_CLASSIC, m, m + 10, xc)
   MY_CONTROL_AUTORADIOBUTTON ( "Windows 11 menu (sparse package)", IDX_SYSTEM_MENU_MODERN, m, m + 22, xc)
-  MY_CONTROL_AUTORADIOBUTTON ( "Both (7-Zip ZS twice for files)", IDX_SYSTEM_MENU_BOTH, m, m + 34, xc)
+  MY_CONTROL_AUTORADIOBUTTON ( "Both (RoxaZip twice for files)", IDX_SYSTEM_MENU_BOTH, m, m + 34, xc)
   MY_CONTROL_AUTORADIOBUTTON ( "Neither", IDX_SYSTEM_MENU_NONE, m, m + 46, xc)
 
-  MY_CONTROL_CHECKBOX ( "Integrate 7-Zip ZS to shell context menu", IDX_SYSTEM_INTEGRATE_TO_MENU, m, m + 62, xc)
+  MY_CONTROL_CHECKBOX ( "Integrate RoxaZip to shell context menu", IDX_SYSTEM_INTEGRATE_TO_MENU, m, m + 62, xc)
   MY_CONTROL_CHECKBOX ( "(32-bit)", IDX_SYSTEM_INTEGRATE_TO_MENU_2, m, m + 76, xc)
   MY_CONTROL_CHECKBOX ( "Cascaded context menu", IDX_SYSTEM_CASCADED_MENU, m, m + 90, xc)
   MY_CONTROL_CHECKBOX ( "Icons in context menu", IDX_SYSTEM_ICON_IN_MENU, m, m + 104, xc)

@@ -37,6 +37,15 @@ FString GetLangDirPrefix()
 
 #ifdef Z7_LANG
 
+// Keep accepting upstream language files while displaying this application's name.
+static UString BrandText(const wchar_t *text)
+{
+  UString s(text);
+  s.Replace(L"7-Zip ZS", L"RoxaZip");
+  s.Replace(L"7-Zip", L"RoxaZip");
+  return s;
+}
+
 void LoadLangOneTime()
 {
   NSynchronization::CCriticalSectionLock lock(g_CriticalSection);
@@ -52,7 +61,7 @@ void LangSetDlgItemText(HWND dialog, UInt32 controlID, UInt32 langID)
   if (s)
   {
     CWindow window(GetDlgItem(dialog, (int)controlID));
-    window.SetText(s);
+    window.SetText(BrandText(s));
   }
 }
 
@@ -83,7 +92,7 @@ void LangSetDlgItems(HWND dialog, const UInt32 *ids, unsigned numItems)
     {
       const wchar_t *s = g_Lang.Get(pair.LangID);
       if (s)
-        window.SetText(s);
+        window.SetText(BrandText(s));
     }
   }
 
@@ -103,7 +112,7 @@ void LangSetDlgItems_Colon(HWND dialog, const UInt32 *ids, unsigned numItems)
     if (s)
     {
       CWindow window(GetDlgItem(dialog, (int)id));
-      UString s2 = s;
+      UString s2 = BrandText(s);
       s2.Add_Colon();
       window.SetText(s2);
     }
@@ -119,7 +128,7 @@ void LangSetDlgItems_RemoveColon(HWND dialog, const UInt32 *ids, unsigned numIte
     if (s)
     {
       CWindow window(GetDlgItem(dialog, (int)id));
-      UString s2 = s;
+      UString s2 = BrandText(s);
       if (!s2.IsEmpty() && s2.Back() == ':')
         s2.DeleteBack();
       window.SetText(s2);
@@ -131,14 +140,14 @@ void LangSetWindowText(HWND window, UInt32 langID)
 {
   const wchar_t *s = g_Lang.Get(langID);
   if (s)
-    MySetWindowText(window, s);
+    MySetWindowText(window, BrandText(s));
 }
 
 UString LangString(UInt32 langID)
 {
   const wchar_t *s = g_Lang.Get(langID);
   if (s)
-    return s;
+    return BrandText(s);
   return MyLoadString(langID);
 }
 
@@ -152,7 +161,7 @@ void LangString(UInt32 langID, UString &dest)
   const wchar_t *s = g_Lang.Get(langID);
   if (s)
   {
-    dest = s;
+    dest = BrandText(s);
     return;
   }
   MyLoadString(langID, dest);
@@ -163,7 +172,7 @@ void LangString_OnlyFromLangFile(UInt32 langID, UString &dest)
   dest.Empty();
   const wchar_t *s = g_Lang.Get(langID);
   if (s)
-    dest = s;
+    dest = BrandText(s);
 }
 
 static const char * const kLangs =

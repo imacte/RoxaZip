@@ -710,7 +710,7 @@ HRESULT CCodecs::LoadDll(const FString &dllPath, bool needCheckDll, bool *loaded
     {
       CCodecError &error = Errors.AddNew();
       error.Path = dllPath;
-      error.Message = "no 7-Zip code";
+      error.Message = "no RoxaZip code";
     }
     */
   }

@@ -55,7 +55,7 @@ jobs:
             test -s "$build_dir/$binary" && test -x "$build_dir/$binary"
           done
           test -s "$build_dir/7z.so"
-          archive="$PWD/release/7z$version-zstd-linux-$RELEASE_ARCH-$compiler.tar.gz"
+          archive="$PWD/release/RoxaZip-$version-linux-$RELEASE_ARCH-$compiler.tar.gz"
           # Archive on Linux before upload-artifact strips executable permissions.
           tar -czf "$archive" -C "$build_dir" 7z 7za 7zr 7zz 7z.so \
             -C "$PWD" DOC/License.txt DOC/copying.txt DOC/unRarLicense.txt DOC/readme.txt
@@ -196,6 +196,14 @@ jobs:
         shell: pwsh
         run: ./tests/test-release-publishing.ps1
 
+      - name: Branding shortcut migration tests
+        if: matrix.arch == 'x64' && matrix.darkmode == ''
+        shell: cmd
+        run: |
+          call "%VCVARSALL_PATH%" x64
+          pwsh -NoProfile -File tests\test-branding-shortcuts.ps1
+          if errorlevel 1 exit /b 1
+
       - name: Build standalone File Manager bundle
         if: matrix.arch == 'x64'
         shell: cmd
@@ -249,7 +257,7 @@ jobs:
 
     - uses: actions/upload-artifact@v6
       with:
-        name: 7-Zip ZS Release binaries
+        name: RoxaZip Release binaries
         path: |
           artifact\*.exe
           artifact\*.7z
@@ -268,7 +276,7 @@ jobs:
 
     - uses: actions/download-artifact@v7
       with:
-        name: 7-Zip ZS Release binaries
+        name: RoxaZip Release binaries
         path: release
 
     - uses: actions/download-artifact@v7

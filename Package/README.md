@@ -1,4 +1,4 @@
-# 7-Zip ZS - modern (Windows 11) context menu package
+# RoxaZip - modern (Windows 11) context menu package
 
 Windows 11 shows two different context menus:
 
@@ -7,7 +7,7 @@ Windows 11 shows two different context menus:
 * the **classic** menu (behind *Show more options*) - classic shell extensions
   registered under `HKCR\*\shellex\ContextMenuHandlers` appear here.
 
-7-Zip ZS registers its shell extension the classic way, so it only showed up in
+RoxaZip registers its shell extension the classic way, so it only showed up in
 the classic menu. `CPP/7zip/UI/Explorer/ContextMenu.cpp` already implements
 `IExplorerCommand` **including the cascaded submenu** (`GetFlags` returns
 `ECF_HASSUBCOMMANDS`, `EnumSubCommands` enumerates the same items as the classic
@@ -16,7 +16,7 @@ thing WinRAR and NanaZip do with a *sparse package* (MSIX with an external
 location).
 
 This folder adds that identity. **No C++ change is needed** for the cascade
-itself (the title patch for the root command - `"7-Zip ZS"` instead of `"7-Zip"`
+itself (the title patch for the root command - `"RoxaZip"` instead of `"7-Zip"`
 - is already in `ContextMenu.cpp`).
 
 ## Contents
@@ -32,7 +32,7 @@ itself (the title patch for the root command - `"7-Zip ZS"` instead of `"7-Zip"`
 | `Output/` | build output: the `.msix` and the probe (not tracked) |
 
 The package contains **no binaries** - `Add-AppxPackage -ExternalLocation`
-points it at the existing 7-Zip ZS installation directory.
+points it at the existing RoxaZip installation directory.
 
 ## Usage
 
@@ -85,18 +85,18 @@ uninstall: Get-AppxPackage -Name SevenZipZS.ShellExtension | Remove-AppxPackage
 HKCR\PackagedCom\ClassIndex\{23170F69-20BB-278A-1000-000100020000}
   -> SevenZipZS.ShellExtension_1.0.0.0_x64__emrf95xp6t0fy     <- what the modern menu uses
 
-classic: QueryContextMenu -> 1 item: '7-Zip ZS' (submenu) with 7 items
-modern : GetTitle='7-Zip ZS'  GetFlags=0x1 (ECF_HASSUBCOMMANDS)  EnumSubCommands -> 7 items
+classic: QueryContextMenu -> 1 item: 'RoxaZip' (submenu) with 7 items
+modern : GetTitle='RoxaZip'  GetFlags=0x1 (ECF_HASSUBCOMMANDS)  EnumSubCommands -> 7 items
          [1] 添加到压缩包...                 [5] 添加到 "win.zip"
          [2] 压缩并发送邮件...               [6] 压缩 "win.zip" 并发送邮件
-         [3] 添加到 "win.7z"                 [7] > 7-Zip ZS Hash     (second level cascade)
+         [3] 添加到 "win.7z"                 [7] > RoxaZip Hash     (second level cascade)
          [4] 压缩 "win.7z" 并发送邮件
 ```
 
 ## The modern menu shows a flat, short list (no cascades)
 
 The Windows 11 (compact) context menu renders the flyout of the top-level
-command but **not** a second level, so the cascaded "7-Zip ZS Hash" (and the
+command but **not** a second level, so the cascaded "RoxaZip Hash" (and the
 "open archive with ..." cascade for archives) opened **empty** flyouts there.
 Flattening the hash commands instead made the flyout unnecessarily long
 (26 items).
@@ -113,14 +113,14 @@ all (`LoadItems()` skips `CtxCommandType_CrcRoot/CrcChild/OpenRoot/OpenChild`):
 [ 6] 添加到压缩包...
 ```
 
-The hash commands stay available in 7zFM (its `7-Zip ZS Hash` submenu), and the
+The hash commands stay available in 7zFM (its `RoxaZip Hash` submenu), and the
 classic *legacy* handler path (`QueryContextMenu()`) still builds both cascades
 for a registration without the package.
 
 Do not put non-ASCII characters into `ContextMenu.cpp` comments: the file has no
 BOM, MSVC reads it as codepage 936 and `-WX` turns warning C4819 into an error.
 
-## Fixed: the nested "7-Zip ZS Hash" flyout opened empty
+## Fixed: the nested "RoxaZip Hash" flyout opened empty
 
 Cause: `IExplorerCommand::EnumSubCommands()` returned the **command object
 itself** (`QueryInterface(IID_IEnumExplorerCommand)`) whose position
@@ -128,11 +128,11 @@ itself** (`QueryInterface(IID_IEnumExplorerCommand)`) whose position
 `E_NOTIMPL`. The shell enumerates the children more than once (while sizing and
 rendering the flyout, and again when it is opened) and also calls `Clone()`, so
 every enumeration after the first one came back with zero items - the nested
-"7-Zip ZS Hash" flyout stayed empty.
+"RoxaZip Hash" flyout stayed empty.
 
 Fix: a separate `CSubCommandsEnumerator` class (`ContextMenu.h`,
 `ContextMenu.cpp`). Every `EnumSubCommands()` call returns a fresh enumerator and
-`Clone()` works. Probe measurement (children of "7-Zip ZS Hash"):
+`Clone()` works. Probe measurement (children of "RoxaZip Hash"):
 
 ```text
 before:  pass 1 = 19,  pass 2 (no Reset) = 0,   Clone = E_NOTIMPL
@@ -144,7 +144,7 @@ out / sign in) before the packaged command is listed again. Measured with the
 probe: `7-Zip entries in the classic menu: 0` for ~20 seconds after
 `explorer.exe` was restarted, `1` afterwards.
 
-## Switching from the program: Options -> 7-Zip ZS
+## Switching from the program: Options -> RoxaZip
 
 The options page has a "Context menu integration" group (右键菜单集成) with four
 radio buttons - the same modes as `configure-shell-menu.ps1`:
@@ -160,7 +160,7 @@ The page shows the **real** state (derived from the registry and from
 `PackageManager`) and "Apply" performs the change:
 
 * the classic part uses the same machine-wide registration as the checkbox
-  "Integrate 7-Zip ZS to shell context menu" below it. When 7zFM.exe does not run
+  "Integrate RoxaZip to shell context menu" below it. When 7zFM.exe does not run
   elevated, the page asks once and then starts
   `7zFM.exe -ShellMenu=register|unregister` with `runas`, i.e. **one UAC prompt
   instead of "restart 7-Zip as administrator"**; the helper does the registry
@@ -214,7 +214,7 @@ pwsh -File Package\configure-shell-menu.ps1 -Mode None    # neither
 |---|---|---|
 | `Modern` | package, files and folders | files: package, folders: classic `Folder`/`Directory` registration - one entry each |
 | `Classic` | none | classic registration for `*`, `Folder`, `Directory`, with the full cascaded submenus (HASH, open-with) |
-| `Both` | package | package **and** classic registration -> 7-Zip ZS twice for files |
+| `Both` | package | package **and** classic registration -> RoxaZip twice for files |
 | `None` | none | none |
 
 Measured behaviour of the shell on Windows 11 26200: the commands of a sparse
@@ -235,14 +235,14 @@ Pitfalls when writing those registry keys from PowerShell:
 * `New-Item` has **no** `-LiteralPath` at all; `reg.exe add "<key>" /ve /t REG_SZ
   /d <clsid> /f` is used instead (reg.exe treats the key name literally).
 
-## Duplicate "7-Zip ZS" in the classic menu
+## Duplicate "RoxaZip" in the classic menu
 
 Windows 11 shows the commands of a sparse package
 (`windows.fileExplorerContextMenus`) in **both** context menus - the modern one
 *and* the classic one ("Show more options"). Because this fork additionally
 registers the classic shell extension
 (`HKCR\{*,Folder,Directory,Drive}\shellex\ContextMenuHandlers\7-Zip-Zstandard`),
-the classic menu listed "7-Zip ZS" **twice** once the package was installed.
+the classic menu listed "RoxaZip" **twice** once the package was installed.
 
 Fix (removes only the classic *context menu* registration, keeps drag&drop and
 the packaged command):
@@ -274,7 +274,7 @@ confirmation box - the UAC prompt is the confirmation):
 
 | page | operation | elevated call |
 |---|---|---|
-| 7-Zip ZS | classic context menu registration on/off | `7zFM.exe -ShellMenu=register\|unregister` |
+| RoxaZip | classic context menu registration on/off | `7zFM.exe -ShellMenu=register\|unregister` |
 | System | "all users" column / right "+" (file type associations) | `7zFM.exe -AssocAll=+ext1,ext2-ext3` |
 
 `ShellIntegrationModern::Run_Elevated_Self()` starts the same executable with the
@@ -381,7 +381,7 @@ to the package builder.
 * A sparse `win32App` application must not declare `EntryPoint`.
 * The DLL is loaded by `dllhost.exe` (surrogate server). It locates `7zG.exe`
   and `7zFM.exe` through its own module path, so the external location must be
-  the installation directory that contains the whole 7-Zip ZS.
+  the installation directory that contains the whole RoxaZip.
 * Both menus coexist: the new entry does not replace the classic one.
 * Requires Windows 10 2004 (19041) or later; the modern menu itself needs
   Windows 11.

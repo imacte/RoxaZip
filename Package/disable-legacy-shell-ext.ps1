@@ -1,10 +1,10 @@
 <#
-  7-Zip ZS - remove the duplicate entry in the classic context menu.
+  RoxaZip - remove the duplicate entry in the classic context menu.
 
   Windows 11 shows the commands of a sparse package ("windows.fileExplorerContextMenus")
   in BOTH context menus: the modern one and the classic one ("Show more options").
   If the classic shell extension registration is still present, the classic menu
-  lists "7-Zip ZS" twice.
+  lists "RoxaZip" twice.
 
   This script removes only the classic *context menu* registration
   (HKCR\{*,Folder,Directory,Drive}\shellex\ContextMenuHandlers\7-Zip-Zstandard):
@@ -97,6 +97,6 @@ if ($removed -gt 0)
   Write-Host "Removed $removed classic registration(s)." -ForegroundColor Green
   Write-Host 'The packaged command (modern menu) is untouched: verify with' -ForegroundColor Green
   Write-Host '    pwsh -File Package\verify-shell-package.ps1' -ForegroundColor Green
-  Write-Host 'The classic menu should now list "7-Zip ZS" only once.' -ForegroundColor Green
+  Write-Host 'The classic menu should now list "RoxaZip" only once.' -ForegroundColor Green
 }
 else { Write-Host 'Nothing to do.' -ForegroundColor Yellow }
