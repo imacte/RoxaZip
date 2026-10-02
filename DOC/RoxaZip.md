@@ -46,11 +46,27 @@ Since the RoxaZip rename the shipped binaries carry RoxaZip file names:
 The Linux builds map the same way but drop the `.exe` suffix: `RoxaZip`,
 `RoxaZipA`, `RoxaZipR`, `RoxaZipZ` and `RoxaZip.so`.
 
-**The legacy command names keep working.** The installer creates `7z.exe`,
-`7zFM.exe` and `7zG.exe` as hard links to `RoxaZip.exe`, `RoxaZipFM.exe` and
-`RoxaZipG.exe`, so existing scripts, shortcuts and scheduled tasks do not have to
-be changed; the uninstaller removes the links again. The installer also removes the previously
-created `App Paths\7zFM.exe` entry.
+**The old command names are not installed.** RoxaZip installs only the RoxaZip
+names, so the installation directory stays free of `7z.exe`, `7zFM.exe` and
+`7zG.exe`. An in-place upgrade removes the files that earlier builds of this fork
+created there.
+
+Scripts, shortcuts and scheduled tasks that call `7z`, `7zFM` or `7zG` have to
+use `RoxaZip`, `RoxaZipFM` and `RoxaZipG` instead, or re-create the old names -
+one command per file, from an elevated prompt:
+
+```
+mklink /H "%ProgramFiles%\RoxaZip\7z.exe"   "%ProgramFiles%\RoxaZip\RoxaZip.exe"
+mklink /H "%ProgramFiles%\RoxaZip\7zFM.exe" "%ProgramFiles%\RoxaZip\RoxaZipFM.exe"
+mklink /H "%ProgramFiles%\RoxaZip\7zG.exe"  "%ProgramFiles%\RoxaZip\RoxaZipG.exe"
+```
+
+A hard link shares the program with the RoxaZip file and needs no extra disk
+space; a copy works as well. Note that other 7-Zip installations on the same
+machine may already provide these names.
+
+The installer also removes the `App Paths\7zFM.exe` entry that earlier builds
+created.
 
 ### Registry keys, CLSID and help file
 

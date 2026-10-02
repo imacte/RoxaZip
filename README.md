@@ -87,10 +87,9 @@ Clang build). Both are exactly what [.github/workflows/build.yml](.github/workfl
 does; upstream build documentation is in [DOC/readme.txt](DOC/readme.txt).
 
 All shipped binaries and libraries use RoxaZip file names (`RoxaZipFM.exe`, `RoxaZip.dll`,
-`RoxaZipShell.dll`, ...). For compatibility with existing scripts the installer also creates
-the legacy command names `7z.exe`, `7zFM.exe` and `7zG.exe` as hard links to the renamed
-programs. The full mapping, the registry and CLSID changes and the upgrade steps are
-documented in [DOC/RoxaZip.md](DOC/RoxaZip.md).
+`RoxaZipShell.dll`, ...); no `7z*` files are installed. The mapping from the previous names,
+the registry and CLSID changes, the upgrade steps and how to bring the old command names back
+are documented in [DOC/RoxaZip.md](DOC/RoxaZip.md).
 
 ## Credits and license
 

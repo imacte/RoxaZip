@@ -1319,34 +1319,26 @@ static BoolInt GetErrorMessage(DWORD errorCode, WCHAR *message)
 
 
 
-/* Compatibility: the 7-Zip command names stay usable, they are hard links to
-   the renamed programs. Scripts and shortcuts that still call "7z.exe",
-   "7zFM.exe" or "7zG.exe" therefore keep working. */
+/* Older builds of this fork put 7z.exe, 7zFM.exe and 7zG.exe next to the
+   programs as hard links to the renamed binaries. RoxaZip installs only the
+   RoxaZip names, so an upgrade removes those leftovers and the installation
+   directory stays clean. Users who need the old command names can create the
+   links again themselves (see DOC/RoxaZip.md). */
 // **** RoxaZip Modification Start ****
-static void CreateLegacyAliases(void)
+static void RemoveLegacyAliases(void)
 // **** RoxaZip Modification End ****
 {
-  static LPCSTR const k_LegacyAliases[][2] =
+  static LPCSTR const k_LegacyAliases[] =
   {
-    { "7z.exe",   "RoxaZip.exe" },
-    { "7zFM.exe", "RoxaZipFM.exe" },
-    { "7zG.exe",  "RoxaZipG.exe" }
+    "7z.exe", "7zFM.exe", "7zG.exe"
   };
   unsigned i;
   for (i = 0; i < Z7_ARRAY_SIZE(k_LegacyAliases); i++)
   {
     WCHAR dest[MAX_PATH + 40];
-    WCHAR src[MAX_PATH + 40];
     wcscpy(dest, path);
-    CatAscii(dest, k_LegacyAliases[i][0]);
-    wcscpy(src, path);
-    CatAscii(src, k_LegacyAliases[i][1]);
-    if (GetFileAttributesW(src) == INVALID_FILE_ATTRIBUTES)
-      continue;
-    /* an older installation can have left a real file with the legacy name */
+    CatAscii(dest, k_LegacyAliases[i]);
     DeleteFileW(dest);
-    if (!CreateHardLinkW(dest, src, NULL))
-      CopyFileW(src, dest, FALSE);
   }
 }
 
@@ -1711,7 +1703,7 @@ if (res == SZ_OK)
       SetRegKey_Path();
       WriteCLSID();
       WriteShellEx();
-      CreateLegacyAliases();
+      RemoveLegacyAliases();
       
       SetShellProgramsGroup(g_HWND);
       if (!g_SilentMode)
