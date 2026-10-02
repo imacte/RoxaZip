@@ -75,7 +75,13 @@
         Description="RoxaZip archive manager"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png" />
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile
+          Wide310x150Logo="Assets\Wide310x150Logo.png"
+          Square310x310Logo="Assets\Square310x310Logo.png"
+          Square71x71Logo="Assets\Square71x71Logo.png"
+          ShortName="RoxaZip" />
+      </uap:VisualElements>
       <Extensions>
         <!-- The 7-Zip command names stay usable through the OS, so no 7z*.exe
              files are needed in the installation folder. AllowOverride lets the

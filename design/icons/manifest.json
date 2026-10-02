@@ -688,12 +688,36 @@
       "size": 50
     },
     {
+      "target": "Package/Assets/StoreLogo300x300.png",
+      "size": 300
+    },
+    {
       "target": "Package/Assets/Square44x44Logo.png",
       "size": 44
     },
     {
+      "target": "Package/Assets/Square71x71Logo.png",
+      "size": 71
+    },
+    {
       "target": "Package/Assets/Square150x150Logo.png",
       "size": 150
+    },
+    {
+      "target": "Package/Assets/Square310x310Logo.png",
+      "size": 310
+    },
+    {
+      "target": "Package/Assets/LargeTile.png",
+      "size": 310
+    }
+  ],
+  "packageWide": [
+    {
+      "target": "Package/Assets/Wide310x150Logo.png",
+      "width": 310,
+      "height": 150,
+      "iconSize": 150
     }
   ],
   "menu": {

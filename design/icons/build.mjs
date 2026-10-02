@@ -78,6 +78,14 @@ for(const entry of manifest.toolbars) for(const target of entry.targets) {
 }
 const app=manifest.applications[0];
 for(const entry of manifest.package) emit(entry.target,iconImage(app,entry.size).asPng());
+// Wide tiles have no square master: the application icon is centred on the canvas.
+for(const entry of manifest.packageWide || []) {
+  const icon=iconImage(app,entry.iconSize).asPng().toString('base64');
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${entry.width}" height="${entry.height}">`
+    +`<image x="${(entry.width-entry.iconSize)/2}" y="${(entry.height-entry.iconSize)/2}" `
+    +`width="${entry.iconSize}" height="${entry.iconSize}" href="data:image/png;base64,${icon}"/></svg>`;
+  emit(entry.target,new Resvg(svg).render().asPng());
+}
 emit(manifest.menu.target,bitmap(iconImage(app,manifest.menu.size)));
 
 // Bundled FM must also distinguish formats when there is no external 7z.dll.
@@ -167,4 +175,6 @@ if(!check) {
   });
   emit('design/icons/preview-books.png',new Resvg(`<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="580">${overview}</svg>`,{font:{fontFiles:['C:/Windows/Fonts/segoeui.ttf','C:/Windows/Fonts/seguisb.ttf']}}).render().asPng());
 }
-console.log(`${check?'Verified':'Generated'} ${outputs.length} files (${manifest.formats.length} archive formats, ${manifest.applications.reduce((n,e)=>n+e.targets.length,0)} application ICOs, 14 toolbar BMPs, menu BMP, 3 package PNGs, bundled-format mappings).`);
+const toolbarBmps=manifest.toolbars.reduce((n,e)=>n+e.targets.length,0);
+const packagePngs=manifest.package.length+(manifest.packageWide||[]).length;
+console.log(`${check?'Verified':'Generated'} ${outputs.length} files (${manifest.formats.length} archive formats, ${manifest.applications.reduce((n,e)=>n+e.targets.length,0)} application ICOs, ${toolbarBmps} toolbar BMPs, menu BMP, ${packagePngs} package PNGs, bundled-format mappings).`);

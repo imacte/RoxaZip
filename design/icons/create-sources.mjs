@@ -79,7 +79,9 @@ for(const [name,geometry] of Object.entries(tools)) {
   write(source,wrap(`<g fill="none" stroke="#263445" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">${geometry}</g>`,24));
   manifest.toolbars.push({name,source,targets:[{path:`CPP/7zip/UI/FileManager/${name}.bmp`,width:48,height:36,glyphSize:28},{path:`CPP/7zip/UI/FileManager/${name}2.bmp`,width:24,height:24,glyphSize:22}]});
 }
-for(const [name,size] of [['StoreLogo',50],['Square44x44Logo',44],['Square150x150Logo',150]]) manifest.package.push({target:`Package/Assets/${name}.png`,size});
+for(const [name,size] of [['StoreLogo',50],['StoreLogo300x300',300],['Square44x44Logo',44],['Square71x71Logo',71],['Square150x150Logo',150],['Square310x310Logo',310],['LargeTile',310]]) manifest.package.push({target:`Package/Assets/${name}.png`,size});
+/* Wide tile: the square application icon centred on a 310x150 canvas. */
+manifest.packageWide=[{target:'Package/Assets/Wide310x150Logo.png',width:310,height:150,iconSize:150}];
 manifest.menu={target:'CPP/7zip/UI/Explorer/MenuLogo.bmp',size:16};
 manifest.excluded=['DarkMode/lib/dmlib_demo/demo.ico'];
 fs.writeFileSync(path.join(dir,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');

@@ -78,6 +78,11 @@ function Get-SdkTool([string]$name)
   return $null
 }
 
+# The manifest needs four version parts ("26.03" and "26.3.0.0" both work).
+$vParts = @($Version.Split('.') | ForEach-Object { [int]$_ })
+while ($vParts.Count -lt 4) { $vParts += 0 }
+$Version = ($vParts[0..3] -join '.')
+
 # --------------------------------------------------------------- source dir ---
 Step "Locating the binaries"
 if (-not $SourceDir)
@@ -133,7 +138,12 @@ foreach ($name in $binaries)
 }
 Info "binaries   : $copied"
 
-if (Test-Path $InstallDir)
+if (Test-Path (Join-Path $SourceDir 'Lang'))
+{
+  Copy-Item (Join-Path $SourceDir 'Lang') (Join-Path $stage 'Lang') -Recurse -Force
+  Info "Lang       : $((Get-ChildItem (Join-Path $stage 'Lang') -File | Measure-Object).Count) files from the source directory"
+}
+elseif (Test-Path $InstallDir)
 {
   $lang = Join-Path $InstallDir 'Lang'
   if (Test-Path $lang)
@@ -141,13 +151,18 @@ if (Test-Path $InstallDir)
     Copy-Item $lang (Join-Path $stage 'Lang') -Recurse -Force
     Info "Lang       : $((Get-ChildItem (Join-Path $stage 'Lang') -File | Measure-Object).Count) files"
   }
-  foreach ($name in $extras)
-  {
-    $src = Join-Path $InstallDir $name
-    if (Test-Path $src) { Copy-Item $src (Join-Path $stage $name) -Force }
-  }
 }
-else { Info "note       : $InstallDir not found - Lang/help text files are missing from the package" }
+# the extra files come from the staged payload first (CI), then from an installed copy
+foreach ($name in $extras)
+{
+  $src = Join-Path $SourceDir $name
+  if (-not (Test-Path $src)) { $src = Join-Path $InstallDir $name }
+  if (Test-Path $src) { Copy-Item $src (Join-Path $stage $name) -Force }
+}
+if (-not (Test-Path (Join-Path $stage 'Lang')) -and -not (Test-Path (Join-Path $stage 'RoxaZip.chm')))
+{
+  Info "note       : no Lang/help text files found - pass -SourceDir of a staged payload or -InstallDir"
+}
 
 $assets = Join-Path (Split-Path $pkgDir -Parent) 'Package\Assets'
 if (-not (Test-Path (Join-Path $assets 'StoreLogo.png'))) { Fail "no package assets in $assets" }
