@@ -114,6 +114,38 @@ it needs a real right-click.
 pwsh -File RoxaZipPackage\make-screenshots.ps1 -ExeDir "<installation folder>"
 ```
 
+## Restricted capabilities (submission options)
+
+The package uses two restricted capabilities. They have to be justified in the
+submission form ("Submission options"); without the justification the package is
+rejected with "you have to request approval for the following restricted
+capabilities".
+
+**runFullTrust** - RoxaZip is a Win32 desktop application (a 7-Zip / 7-Zip ZS
+fork) packaged for the Store. The file manager, the command line tool, the
+progress helper and the shell extension are classic Win32 executables and cannot
+run inside an app container.
+
+**unvirtualizedResources** - the program works with the files the user chooses: it
+opens, creates and extracts archives in user-selected folders, including network
+and removable drives, it keeps file attributes and timestamps, and the shell
+extension loads from its own program directory. With virtualized file and
+registry access the file manager could not operate on real files and other
+programs could not call the installed command line tools.
+
+## Start menu entries
+
+The package declares three applications, so the Start menu shows three entries:
+`RoxaZip` (file manager), `RoxaZip Console` (command line, provides the `7z.exe`
+alias) and `RoxaZip GUI` (progress window, provides the `7zG.exe` alias).
+
+Hiding the two helper entries requires `AppListEntry="none"`, which the Store
+rejects with "the package specifies a headless app; you do not have permission to
+create headless apps" unless the **HeadlessAppBypass** waiver is granted for the
+product. Request that waiver from Microsoft support if the helper entries should
+disappear; until then they stay visible, which keeps the legacy command names
+working.
+
 ## Age rating questionnaire (expected answers)
 
 Utility without user generated content or communication: no violence, no sex,

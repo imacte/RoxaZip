@@ -179,15 +179,17 @@
       </Extensions>
     </Application>
 
-    <!-- Console binary: "RoxaZip" and the legacy "7z" alias. -->
+    <!-- Console binary: "RoxaZip" and the legacy "7z" alias.
+         AppListEntry="none" (which hides helper applications) needs the Store's
+         "HeadlessAppBypass" waiver, so this application is listed as
+         "RoxaZip Console" instead. -->
     <Application
       Id="RoxaZip.Console"
       Executable="RoxaZip.exe"
       EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        AppListEntry="none"
-        DisplayName="RoxaZip"
-        Description="RoxaZip console"
+        DisplayName="RoxaZip Console"
+        Description="RoxaZip command line"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png" />
@@ -210,9 +212,8 @@
       Executable="RoxaZipG.exe"
       EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        AppListEntry="none"
-        DisplayName="RoxaZip"
-        Description="RoxaZip progress helper"
+        DisplayName="RoxaZip GUI"
+        Description="RoxaZip progress window"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png" />
