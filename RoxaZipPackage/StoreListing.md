@@ -94,14 +94,25 @@ Utilities > File managers
 * x64 or ARM64
 * about 30 MB of disk space
 
-## Screenshots to capture (1366x768 or larger, 1-10 images)
+## Screenshots
 
-1. file manager with an archive open (two panels, dark theme)
-2. Options > RoxaZip - context menu integration page
-3. add-to-archive dialog with `zstd` and a level
-4. encryption dialog (AES-256 / XChaCha20)
-5. the RoxaZip entry in the Windows 11 context menu
-6. hash dialog with BLAKE3
+`make-screenshots.ps1` captures the ones that come from the program itself into
+`RoxaZipPackage\Screenshots` (1600x1000, dark theme):
+
+| file | content |
+|---|---|
+| `01-file-manager.png` | the file manager with an archive open |
+| `02-options-roxazip.png` | `Options > RoxaZip`, the context menu integration page |
+| `03-add-to-archive.png` | the "Add to archive" dialog (AES-256 visible) |
+| `04-encryption.png` | the same dialog with a password and AES-256 |
+| `06-hash-blake3.png` | the BLAKE3 checksum dialog |
+
+Still manual: `05-context-menu.png` - the Windows 11 context menu entry, because
+it needs a real right-click.
+
+```powershell
+pwsh -File RoxaZipPackage\make-screenshots.ps1 -ExeDir "<installation folder>"
+```
 
 ## Age rating questionnaire (expected answers)
 
@@ -113,10 +124,10 @@ no language, no gambling, no user interaction, no location, no personal data.
 
 RoxaZip does not collect, store or transmit personal data. It does not connect to
 the network; archives are processed locally only. The application writes its
-settings to `HKCU\Software\RoxaZip` and its history to the user profile.
+settings to `HKCU\Software\RoxaZip`.
 
-(For the Store form a short statement or a link is enough; the text above can be
-published as `PRIVACY.md` in the repository and linked.)
+The policy is published as [PRIVACY.md](../PRIVACY.md) in the repository, which
+is the link to use in the submission form.
 
 ## Support and legal
 
