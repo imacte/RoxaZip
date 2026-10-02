@@ -1,4 +1,4 @@
-PROG = 7zxr.dll
+PROG = RoxaZipXR.dll
 DEF_FILE = ../../Archive/Archive2.def
 CFLAGS = $(CFLAGS) \
   -DZ7_EXTRACT_ONLY \

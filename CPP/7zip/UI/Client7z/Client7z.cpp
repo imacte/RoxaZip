@@ -68,9 +68,9 @@ using namespace NFile;
 using namespace NDir;
 
 #ifdef _WIN32
-#define kDllName "7z.dll"
+#define kDllName "RoxaZip.dll"
 #else
-#define kDllName "7z.so"
+#define kDllName "RoxaZip.so"
 #endif
 
 static const char * const kCopyrightString =

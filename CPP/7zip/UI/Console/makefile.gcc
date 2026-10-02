@@ -1,4 +1,4 @@
-PROG = 7z
+PROG = RoxaZip
 IS_NOT_STANDALONE = 1
 
 # IS_X64 = 1

@@ -1288,7 +1288,7 @@ bool CBrowseDialog2::OnContextMenu(HANDLE windowHandle, int xPos, int yPos)
     if (menuResult == k_CmdId_Open_7zip)
     {
       UString imageName = fs2us(NWindows::NDLL::GetModuleDirPrefix());
-      imageName += "7zFM.exe";
+      imageName += "RoxaZipFM.exe";
       WRes wres;
       {
         CProcess process;

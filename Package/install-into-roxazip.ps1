@@ -3,20 +3,20 @@
 
   Run this with administrator rights (the script elevates itself if needed):
 
-      pwsh -File Package\install-into-7zipzs.ps1
-      pwsh -File Package\install-into-7zipzs.ps1 -InstallDir "C:\Program Files\7-Zip-Zstandard"
+      pwsh -File Package\install-into-roxazip.ps1
+      pwsh -File Package\install-into-roxazip.ps1 -InstallDir "C:\Program Files\RoxaZip"
 
   Build the binaries first, for example:
 
-      nmake PLATFORM=x64                 (in CPP\7zip\Bundles\Fm)          -> 7zFM.exe
-      nmake PLATFORM=x64                 (in CPP\7zip\UI\GUI)              -> 7zG.exe
-      nmake PLATFORM=x64                 (in CPP\7zip\Bundles\Alone2)      -> 7zz.exe
-      nmake PLATFORM=x64                 (in CPP\7zip\Bundles\Format7zF)   -> 7z.dll
-      nmake PLATFORM=x64                 (in CPP\7zip\UI\Explorer)         -> 7-zip.dll
+      nmake PLATFORM=x64                 (in CPP\7zip\Bundles\Fm)          -> RoxaZipFM.exe
+      nmake PLATFORM=x64                 (in CPP\7zip\UI\GUI)              -> RoxaZipG.exe
+      nmake PLATFORM=x64                 (in CPP\7zip\Bundles\Alone2)      -> RoxaZipZ.exe
+      nmake PLATFORM=x64                 (in CPP\7zip\Bundles\Format7zF)   -> RoxaZip.dll
+      nmake PLATFORM=x64                 (in CPP\7zip\UI\Explorer)         -> RoxaZipShell.dll
 #>
 param(
   [string]$RepoRoot = (Split-Path $PSScriptRoot -Parent),
-  [string]$InstallDir = 'D:\Program Files\7-Zip-Zstandard',
+  [string]$InstallDir = 'D:\Program Files\RoxaZip',
   [switch]$NoExplorerRestart,
   [string]$LogFile
 )
@@ -24,7 +24,7 @@ param(
 $ErrorActionPreference = 'Stop'
 function Info($m) { Write-Host "  $m" }
 
-if (-not $LogFile) { $LogFile = Join-Path $PSScriptRoot 'Output\install-into-7zipzs.log' }
+if (-not $LogFile) { $LogFile = Join-Path $PSScriptRoot 'Output\install-into-roxazip.log' }
 
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
   [Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -49,23 +49,23 @@ if (-not $isAdmin)
 
 Start-Transcript -Path $LogFile -Force | Out-Null
 
-if (-not (Test-Path (Join-Path $InstallDir '7zFM.exe')))
+if (-not (Test-Path (Join-Path $InstallDir 'RoxaZipFM.exe')))
 {
   Write-Host "ERROR: not an RoxaZip installation: $InstallDir" -ForegroundColor Red
   exit 2
 }
 
 $files = @(
-  @{ Src = 'CPP\7zip\Bundles\Fm\x64\7zFM.exe';       Dst = '7zFM.exe' },
-  @{ Src = 'CPP\7zip\UI\GUI\x64\7zG.exe';            Dst = '7zG.exe' },
-  @{ Src = 'CPP\7zip\Bundles\Alone2\x64\7zz.exe';    Dst = '7zz.exe' },
-  @{ Src = 'CPP\7zip\Bundles\Format7zF\x64\7z.dll';  Dst = '7z.dll' },
+  @{ Src = 'CPP\7zip\Bundles\Fm\x64\RoxaZipFM.exe';       Dst = 'RoxaZipFM.exe' },
+  @{ Src = 'CPP\7zip\UI\GUI\x64\RoxaZipG.exe';            Dst = 'RoxaZipG.exe' },
+  @{ Src = 'CPP\7zip\Bundles\Alone2\x64\RoxaZipZ.exe';    Dst = 'RoxaZipZ.exe' },
+  @{ Src = 'CPP\7zip\Bundles\Format7zF\x64\RoxaZip.dll';  Dst = 'RoxaZip.dll' },
   # the shell extension is loaded by explorer.exe -> it is renamed before the copy
-  @{ Src = 'CPP\7zip\UI\Explorer\x64\7-zip.dll';     Dst = '7-zip.dll' }
+  @{ Src = 'CPP\7zip\UI\Explorer\x64\RoxaZipShell.dll'; Dst = 'RoxaZipShell.dll' }
 )
 
 # close the applications that would lock the files
-Stop-Process -Name 7zFM, 7zG -Force -ErrorAction SilentlyContinue
+Stop-Process -Name RoxaZipFM, RoxaZipG -Force -ErrorAction SilentlyContinue
 Start-Sleep -Milliseconds 300
 
 foreach ($f in $files)
@@ -78,9 +78,9 @@ foreach ($f in $files)
     continue
   }
 
-  if ($f.Dst -eq '7-zip.dll')
+  if ($f.Dst -eq 'RoxaZipShell.dll')
   {
-    $bak = Join-Path $InstallDir ("7-zip.dll.orig-" + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+    $bak = Join-Path $InstallDir ("RoxaZipShell.dll.orig-" + (Get-Date -Format 'yyyyMMdd-HHmmss'))
     try { Rename-Item -Path $dst -NewName (Split-Path $bak -Leaf) -ErrorAction Stop; Info "renamed $($f.Dst) -> $(Split-Path $bak -Leaf)" }
     catch { Info "WARN   could not rename the loaded $($f.Dst): $($_.Exception.Message)" }
   }
@@ -95,11 +95,11 @@ foreach ($f in $files)
 }
 
 # The packaged COM server runs inside a dllhost.exe surrogate. A surrogate that
-# is still alive keeps the OLD 7-zip.dll mapped and keeps serving the shell, so
+# is still alive keeps the OLD RoxaZipShell.dll mapped and keeps serving the shell, so
 # replacing the file and restarting Explorer is not enough - without this step
 # the new build only shows up after a reboot (it looks like "the change did
 # nothing").
-$dllDst = Join-Path $InstallDir '7-zip.dll'
+$dllDst = Join-Path $InstallDir 'RoxaZipShell.dll'
 $stale = @()
 Get-Process dllhost -ErrorAction SilentlyContinue | ForEach-Object {
   $proc = $_
@@ -114,7 +114,7 @@ Get-Process dllhost -ErrorAction SilentlyContinue | ForEach-Object {
 }
 foreach ($stalePid in $stale)
 {
-  try { Stop-Process -Id $stalePid -Force -ErrorAction Stop; Info "killed stale COM surrogate dllhost pid=$stalePid (had the old 7-zip.dll)" }
+  try { Stop-Process -Id $stalePid -Force -ErrorAction Stop; Info "killed stale COM surrogate dllhost pid=$stalePid (had the old RoxaZipShell.dll)" }
   catch { Info "WARN   could not stop dllhost pid=$stalePid : $($_.Exception.Message)" }
 }
 
@@ -142,7 +142,7 @@ if (Test-Path $assetsSrc)
 
 # The options page ("RoxaZip") registers the sparse package of the Windows 11
 # context menu itself, so the .msix has to be next to the binaries; the program
-# directory is where it looks for SevenZipZS.ShellExtension*.msix.
+# directory is where it looks for RoxaZip.ShellExtension*.msix.
 $msix = Get-ChildItem (Join-Path $PSScriptRoot 'Output\*.msix') -ErrorAction SilentlyContinue |
   Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if ($msix)

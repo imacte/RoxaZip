@@ -19,7 +19,10 @@ using namespace NRegistry;
 // CLISID (and Approved ?) items are separated for 32-bit and 64-bit code.
 // shellex items shared by 32-bit and 64-bit code?
 
-#define k_Clsid_A "{23170F69-20BB-278A-1000-000100020000}"
+// **** RoxaZip Modification Start ****
+// upstream: "{23170F69-40C1-278A-1000-000100020000}"
+#define k_Clsid_A "{3878DDB7-37F6-4265-BB4F-835DC2A790ED}"
+// **** RoxaZip Modification End ****
 
 static LPCTSTR const k_Clsid = TEXT(k_Clsid_A);
 static LPCTSTR const k_ShellExtName = TEXT("RoxaZip Shell Extension");
@@ -27,8 +30,10 @@ static LPCTSTR const k_ShellExtName = TEXT("RoxaZip Shell Extension");
 static LPCTSTR const k_Approved = TEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved");
 static LPCTSTR const k_Inproc = TEXT("InprocServer32");
 
-static LPCSTR const k_KeyPostfix_ContextMenu = "\\shellex\\ContextMenuHandlers\\7-Zip-Zstandard";
-static LPCSTR const k_KeyPostfix_DragDrop    = "\\shellex\\DragDropHandlers\\7-Zip-Zstandard";
+// **** RoxaZip Modification Start ****
+static LPCSTR const k_KeyPostfix_ContextMenu = "\\shellex\\ContextMenuHandlers\\RoxaZip";
+// **** RoxaZip Modification End ****
+static LPCSTR const k_KeyPostfix_DragDrop    = "\\shellex\\DragDropHandlers\\RoxaZip";
 
 static LPCSTR const k_KeyName_File      = "*";
 static LPCSTR const k_KeyName_Folder    = "Folder";
@@ -273,11 +278,11 @@ LONG SetContextMenuHandler_State(unsigned mask)
   for (unsigned d = 0; d < 2; d++)
   {
     FString path = prefix;
-    path += (d == 0 ? "7-zip.dll" :
+    path += (d == 0 ? "RoxaZipShell.dll" :
         #ifdef _WIN64
-          "7-zip32.dll"
+          "RoxaZipShell32.dll"
         #else
-          "7-zip64.dll"
+          "RoxaZipShell64.dll"
         #endif
         );
     if (!NFile::NFind::DoesFileExist_Raw(path))

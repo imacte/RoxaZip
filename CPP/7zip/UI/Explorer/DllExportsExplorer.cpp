@@ -43,14 +43,18 @@
 static LPCTSTR const k_ShellExtName = TEXT("RoxaZip Shell Extension");
 static LPCTSTR const k_Approved = TEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved");
 
-// {23170F69-40C1-278A-1000-000100020000}
-static LPCTSTR const k_Clsid = TEXT("{23170F69-20BB-278A-1000-000100020000}");
+// {3878DDB7-37F6-4265-BB4F-835DC2A790ED}
+// **** RoxaZip Modification Start ****
+// upstream: TEXT("{23170F69-40C1-278A-1000-000100020000}")
+static LPCTSTR const k_Clsid = TEXT("{3878DDB7-37F6-4265-BB4F-835DC2A790ED}");
+// **** RoxaZip Modification End ****
 
+/* The shell extension has its own CLSID; it is independent of the 7-Zip
+   interface GUIDs (k_7zip_GUID_*), which stay unchanged so that plugins keep
+   working. */
 Z7_DEFINE_GUID(CLSID_CZipContextMenu,
-    k_7zip_GUID_Data1,
-    k_7zip_GUID_Data2_ZS,
-    k_7zip_GUID_Data3_Common,
-    0x10, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00);
+    0x3878DDB7, 0x37F6, 0x4265,
+    0xBB, 0x4F, 0x83, 0x5D, 0xC2, 0xA7, 0x90, 0xED);
 
 using namespace NWindows;
 

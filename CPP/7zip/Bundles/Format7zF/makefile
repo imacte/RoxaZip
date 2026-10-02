@@ -1,4 +1,4 @@
-PROG = 7z.dll
+PROG = RoxaZip.dll
 # USE_C_LZFINDOPT = 1
 DEF_FILE = ../../Archive/Archive2.def
 CFLAGS = $(CFLAGS) \

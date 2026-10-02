@@ -30,14 +30,14 @@
 param(
   [ValidateSet('Modern', 'Classic', 'Both', 'None')]
   [string]$Mode,
-  [string]$KeyName = '7-Zip-Zstandard',
+  [string]$KeyName = 'RoxaZip',
   [string]$Clsid = '{23170F69-20BB-278A-1000-000100020000}',
   [string]$ShellExtName = 'RoxaZip Shell Extension',
-  [string]$PackageName = 'SevenZipZS.ShellExtension',
+  [string]$PackageName = 'RoxaZip.ShellExtension',
   [string]$BackupDir,
   [string]$LogFile,
   # the program directory - used for the COM registration of the shell extension
-  [string]$InstallDir = 'D:\Program Files\7-Zip-Zstandard',
+  [string]$InstallDir = 'D:\Program Files\RoxaZip',
   [switch]$Status
 )
 
@@ -186,7 +186,7 @@ function Add-LegacyRegistration([switch]$OnlyFolders)
   # well, but the program's own unregister path deletes it - and without it the
   # shell cannot load the DLL, so the classic menu stays empty even though the
   # shellex keys above exist.
-  $dllPath = Join-Path $InstallDir '7-zip.dll'
+  $dllPath = Join-Path $InstallDir 'RoxaZipShell.dll'
   if (-not (Test-Path $dllPath))
   {
     Info "WARN   $dllPath not found - the COM registration was not written"
@@ -197,7 +197,7 @@ function Add-LegacyRegistration([switch]$OnlyFolders)
   & reg.exe add "$clsidPredicate\InprocServer32" /ve /t REG_SZ /d "$dllPath" /f | Out-Null
   & reg.exe add "$clsidPredicate\InprocServer32" /v ThreadingModel /t REG_SZ /d Apartment /f | Out-Null
   $val = (Get-Item -LiteralPath "Registry::HKEY_CLASSES_ROOT\CLSID\$Clsid\InprocServer32" -ErrorAction SilentlyContinue).GetValue('')
-  if ($val -like '*7-zip.dll') { Info "COM registration: HKCR\CLSID\$Clsid -> $val" }
+  if ($val -like '*RoxaZipShell.dll') { Info "COM registration: HKCR\CLSID\$Clsid -> $val" }
   else { Info "FAILED  COM registration (value: '$val')" }
 }
 

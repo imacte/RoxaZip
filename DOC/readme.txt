@@ -102,7 +102,7 @@ to compile for other platforms:
   vcvarsamd64_x86.bat
 
 Also you can compile single binary from directory with related project.
-For example, to compile 7za.exe, use the following command sequence:
+For example, to compile RoxaZipA.exe, use the following command sequence:
   cd SRC\CPP\7zip\Bundles\Alone\
   nmake
 
@@ -223,7 +223,7 @@ Some DLL files can use other DLL files from 7-Zip.
 If you don't like it, you must use standalone version of DLL.
 To compile standalone version of DLL you must include all used parts
 to project and define some defs.
-For example, 7zip\Bundles\Format7z is a standalone version  of 7z.dll
+For example, 7zip\Bundles\Format7z is a standalone version  of RoxaZip.dll
 that works with 7z format. So you can use such DLL in your project
 without additional DLL files.
 
@@ -263,19 +263,19 @@ Windows           common files for Windows related code
 
   Bundle          Modules that are bundles of other modules (files)
 
-    Alone         7za.exe: Standalone version of 7-Zip console that supports only 7z/xz/cab/zip/gzip/bzip2/tar.
-    Alone2        7zz.exe: Standalone version of 7-Zip console that supports all formats.
-    Alone7z       7zr.exe: Standalone version of 7-Zip console that supports only 7z (reduced version)
+    Alone         RoxaZipA.exe: Standalone version of 7-Zip console that supports only 7z/xz/cab/zip/gzip/bzip2/tar.
+    Alone2        RoxaZipZ.exe: Standalone version of 7-Zip console that supports all formats.
+    Alone7z       RoxaZipR.exe: Standalone version of 7-Zip console that supports only 7z (reduced version)
     Fm            Standalone version of 7-Zip File Manager
-    Format7z            7za.dll:  .7z support
-    Format7zExtract     7zxa.dll: .7z support, extracting only
-    Format7zR           7zr.dll:  .7z support, reduced version
-    Format7zExtractR    7zxr.dll: .7z support, reduced version, extracting only
-    Format7zF           7z.dll:   all formats
+    Format7z            RoxaZipA.dll:  .7z support
+    Format7zExtract     RoxaZipXA.dll: .7z support, extracting only
+    Format7zR           RoxaZipRA.dll:  .7z support, reduced version
+    Format7zExtractR    RoxaZipXR.dll: .7z support, reduced version, extracting only
+    Format7zF           RoxaZip.dll:   all formats
     LzmaCon       lzma.exe: LZMA compression/decompression
-    SFXCon        7zCon.sfx: Console 7z SFX module
-    SFXWin        7z.sfx: Windows 7z SFX module
-    SFXSetup      7zS.sfx: Windows 7z SFX module for Installers
+    SFXCon        RoxaZipCon.sfx: Console 7z SFX module
+    SFXWin        RoxaZip.sfx: Windows 7z SFX module
+    SFXSetup      RoxaZipS.sfx: Windows 7z SFX module for Installers
 
   Compress        files for compression / decompression
 
@@ -284,13 +284,13 @@ Windows           common files for Windows related code
   UI
 
     Agent         Intermediary modules for FAR plugin and Explorer plugin
-    Client7z      Test application for 7za.dll
+    Client7z      Test application for RoxaZipA.dll
     Common        Common UI files
-    Console       7z.exe : Console version
-    Explorer      7-zip.dll: 7-Zip Shell extension
+    Console       RoxaZip.exe : Console version
+    Explorer      RoxaZipShell.dll: 7-Zip Shell extension
     Far           plugin for Far Manager
-    FileManager   7zFM.exe: 7-Zip File Manager
-    GUI           7zG.exe: 7-Zip GUI version
+    FileManager   RoxaZipFM.exe: 7-Zip File Manager
+    GUI           RoxaZipG.exe: 7-Zip GUI version
 
 
 

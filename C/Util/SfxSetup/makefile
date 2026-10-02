@@ -1,4 +1,4 @@
-PROG = 7zS2.sfx
+PROG = RoxaZipS2.sfx
 RESOURCE_IMAGE_DEPS = setup.ico
 MY_FIXED = 1
 

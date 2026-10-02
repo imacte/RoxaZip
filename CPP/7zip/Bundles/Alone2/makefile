@@ -1,4 +1,4 @@
-PROG = 7zz.exe
+PROG = RoxaZipZ.exe
 # USE_C_AES = 1
 # USE_C_SHA = 1
 

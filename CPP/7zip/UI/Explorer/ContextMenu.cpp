@@ -253,9 +253,9 @@ Z7_COMWF_B CZipContextMenu::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJECT da
 /////////////////////////////
 // IContextMenu
 
-static LPCSTR const kMainVerb = "SevenZipZS";
-static LPCSTR const kOpenCascadedVerb = "SevenZipZS.OpenWithType.";
-static LPCSTR const kCheckSumCascadedVerb = "SevenZipZS.Checksum";
+static LPCSTR const kMainVerb = "RoxaZip";
+static LPCSTR const kOpenCascadedVerb = "RoxaZip.OpenWithType.";
+static LPCSTR const kCheckSumCascadedVerb = "RoxaZip.Checksum";
 
 
 struct CContextMenuCommand
@@ -1203,7 +1203,7 @@ int CZipContextMenu::FindVerb(const UString &verb) const
 
 static UString Get7zFmPath()
 {
-  return fs2us(NWindows::NDLL::GetModuleDirPrefix()) + L"7zFM.exe";
+  return fs2us(NWindows::NDLL::GetModuleDirPrefix()) + L"RoxaZipFM.exe";
 }
 
 
@@ -1613,7 +1613,7 @@ void CZipExplorerCommand::LoadItems(IShellItemArray *psiItemArray)
      cascade for archives) opened empty flyouts there, and flattening them made
      the flyout unnecessarily long. Those cascades are therefore not part of the
      modern command: the remaining items are the plain commands (the leaf
-     "Open archive" command is kept). The hash commands stay available in 7zFM,
+     "Open archive" command is kept). The hash commands stay available in RoxaZipFM,
      and the classic legacy handler - QueryContextMenu() - still builds both
      cascades for a registration without a package. */
   const bool skipNestedCascades = true;
@@ -1710,8 +1710,8 @@ Z7_COMWF_B CZipExplorerCommand::GetIcon(IShellItemArray * /* psiItemArray */, LP
   *ppszIcon = NULL;
   // return E_NOTIMPL;
   UString imageName = fs2us(NWindows::NDLL::GetModuleDirPrefix());
-  // imageName += "7zG.exe";
-  imageName += "7-zip.dll";
+  // imageName += "RoxaZipG.exe";
+  imageName += "RoxaZipShell.dll";
   // imageName += ",190";
   return My_SHStrDupW(imageName, ppszIcon);
   // COM_TRY_END

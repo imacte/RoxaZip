@@ -33,10 +33,10 @@ namespace NShellIntegrationModern {
 
 // {23170F69-20BB-278A-1000-000100020000} - must match the com:Class in
 // Package/AppxManifest.xml and the registration of the Explorer DLL.
-static const wchar_t *k_Clsid = L"{23170F69-20BB-278A-1000-000100020000}";
-static const wchar_t *k_PackageName = L"SevenZipZS.ShellExtension";
-static const wchar_t *k_MsixFileName = L"SevenZipZS.ShellExtension_x64.msix";
-static const wchar_t *k_RegistryKeyName = L"7-Zip-Zstandard";
+static const wchar_t *k_Clsid = L"{3878DDB7-37F6-4265-BB4F-835DC2A790ED}";
+static const wchar_t *k_PackageName = L"RoxaZip.ShellExtension";
+static const wchar_t *k_MsixFileName = L"RoxaZip.ShellExtension_x64.msix";
+static const wchar_t *k_RegistryKeyName = L"RoxaZip";
 
 const wchar_t *Get_Clsid() { return k_Clsid; }
 
@@ -52,13 +52,13 @@ UString Get_DefaultMsixPath()
   }
 
   /* build-shell-package.ps1 names the package with its version:
-       SevenZipZS.ShellExtension_<version>_x64.msix
+       RoxaZip.ShellExtension_<version>_x64.msix
      so the program directory is searched for such a file as well. */
   {
     NWindows::NFile::NFind::CEnumerator enumerator;
     enumerator.SetDirPrefix(dir);
     NWindows::NFile::NFind::CFileInfo fi;
-    const UString prefix = L"SevenZipZS.ShellExtension";
+    const UString prefix = L"RoxaZip.ShellExtension";
     const UString suffix = L".msix";
     for (;;)
     {
@@ -381,10 +381,10 @@ HRESULT Run_Elevated_Self(const UString &args, UString &errorText, HWND owner)
 
   const FString dir = NDLL::GetModuleDirPrefix();
   FString exe = dir;
-  exe += L"7zFM.exe";
+  exe += L"RoxaZipFM.exe";
   if (!NWindows::NFile::NFind::DoesFileExist_Raw(exe))
   {
-    errorText = L"7zFM.exe was not found next to the program";
+    errorText = L"RoxaZipFM.exe was not found next to the program";
     return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
   }
 

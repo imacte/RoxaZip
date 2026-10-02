@@ -3,8 +3,8 @@
   RoxaZip - sparse package for the modern (Windows 11) File Explorer context menu.
 
   This package contains no binaries. It gives the already installed RoxaZip
-  (7-zip.dll + 7zFM.exe) a package identity and registers the IExplorerCommand
-  implementation of 7-zip.dll as a "windows.fileExplorerContextMenus" command,
+  (RoxaZipShell.dll + RoxaZipFM.exe) a package identity and registers the IExplorerCommand
+  implementation of RoxaZipShell.dll as a "windows.fileExplorerContextMenus" command,
   so "RoxaZip" appears directly in the Windows 11 context menu (with a cascaded
   submenu), instead of only in "Show more options".
 
@@ -22,8 +22,8 @@
   IgnorableNamespaces="uap uap10 com desktop4 desktop5 rescap">
 
   <Identity
-    Name="SevenZipZS.ShellExtension"
-    Publisher="CN=7-Zip ZS Sparse Package"
+    Name="RoxaZip.ShellExtension"
+    Publisher="CN=RoxaZip Sparse Package"
     Version="1.0.0.0"
     ProcessorArchitecture="x64" />
 
@@ -44,8 +44,8 @@
 
   <Applications>
     <Application
-      Id="SevenZipZS.FileManager"
-      Executable="7zFM.exe"
+      Id="RoxaZip.FileManager"
+      Executable="RoxaZipFM.exe"
       uap10:TrustLevel="mediumIL"
       uap10:RuntimeBehavior="win32App">
       <uap:VisualElements
@@ -63,8 +63,8 @@
           <com:ComServer>
             <com:SurrogateServer DisplayName="RoxaZip Shell Extension">
               <com:Class
-                Id="23170F69-20BB-278A-1000-000100020000"
-                Path="7-zip.dll"
+                Id="3878DDB7-37F6-4265-BB4F-835DC2A790ED"
+                Path="RoxaZipShell.dll"
                 ThreadingModel="STA" />
             </com:SurrogateServer>
           </com:ComServer>
@@ -75,13 +75,13 @@
         <desktop4:Extension Category="windows.fileExplorerContextMenus">
           <desktop4:FileExplorerContextMenus>
             <desktop5:ItemType Type="*">
-              <desktop5:Verb Id="SevenZipZSFiles" Clsid="23170F69-20BB-278A-1000-000100020000" />
+              <desktop5:Verb Id="RoxaZipFiles" Clsid="3878DDB7-37F6-4265-BB4F-835DC2A790ED" />
             </desktop5:ItemType>
             <desktop5:ItemType Type="Directory">
-              <desktop5:Verb Id="SevenZipZSDirectory" Clsid="23170F69-20BB-278A-1000-000100020000" />
+              <desktop5:Verb Id="RoxaZipDirectory" Clsid="3878DDB7-37F6-4265-BB4F-835DC2A790ED" />
             </desktop5:ItemType>
             <desktop5:ItemType Type="Directory\Background">
-              <desktop5:Verb Id="SevenZipZSBackground" Clsid="23170F69-20BB-278A-1000-000100020000" />
+              <desktop5:Verb Id="RoxaZipBackground" Clsid="3878DDB7-37F6-4265-BB4F-835DC2A790ED" />
             </desktop5:ItemType>
           </desktop4:FileExplorerContextMenus>
         </desktop4:Extension>

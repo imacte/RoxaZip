@@ -20,7 +20,7 @@ if {![info exists Z7_PATH]} {
 	apply {{} {
 		variable Z7_PATH
 		foreach p {bin--x64 bin--x86} {
-			set Z7_PATH [file join [file dirname [file dirname [info script]]] bin $p 7z.exe]
+			set Z7_PATH [file join [file dirname [file dirname [info script]]] bin $p RoxaZip.exe]
 			if {[file exists $Z7_PATH]} break
 		}
 	}}

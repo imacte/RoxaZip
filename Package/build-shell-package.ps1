@@ -3,15 +3,15 @@
   into the modern (Windows 11) File Explorer context menu.
 
   The package contains no binaries: it only gives the installed RoxaZip
-  (7-zip.dll + 7zFM.exe) a package identity and registers the IExplorerCommand
-  implementation of 7-zip.dll under "windows.fileExplorerContextMenus".
+  (RoxaZipShell.dll + RoxaZipFM.exe) a package identity and registers the IExplorerCommand
+  implementation of RoxaZipShell.dll under "windows.fileExplorerContextMenus".
 
   Examples:
     # build + install for the current user (no administrator rights needed)
     pwsh -File Package\build-shell-package.ps1
 
     # another installation folder
-    pwsh -File Package\build-shell-package.ps1 -InstallDir "C:\Program Files\7-Zip-Zstandard"
+    pwsh -File Package\build-shell-package.ps1 -InstallDir "C:\Program Files\RoxaZip"
 
     # recreate the self-signed development certificate, then build + install
     pwsh -File Package\build-shell-package.ps1 -MakeCert
@@ -24,7 +24,7 @@
   with the certificate subject).
 #>
 param(
-  [string]$InstallDir = 'D:\Program Files\7-Zip-Zstandard',
+  [string]$InstallDir = 'D:\Program Files\RoxaZip',
   [string]$Subject = 'CN=7-Zip ZS Sparse Package',
   [string]$CertThumbprint,
   [string]$OutDir,
@@ -37,7 +37,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $pkgDir = $PSScriptRoot
 $assetsDir = Join-Path $pkgDir 'Assets'
-$identityName = 'SevenZipZS.ShellExtension'
+$identityName = 'RoxaZip.ShellExtension'
 
 function Info($m) { Write-Host "  $m" }
 function Step($m) { Write-Host "`n== $m" -ForegroundColor Cyan }
@@ -79,15 +79,15 @@ if ($Uninstall)
 
 # ------------------------------------------------------------------- checks ---
 Step "Checking the RoxaZip installation"
-$dll = Join-Path $InstallDir '7-zip.dll'
-$exe = Join-Path $InstallDir '7zFM.exe'
+$dll = Join-Path $InstallDir 'RoxaZipShell.dll'
+$exe = Join-Path $InstallDir 'RoxaZipFM.exe'
 foreach ($f in @($dll, $exe))
 {
   if (-not (Test-Path $f)) { Fail "not found: $f  (use -InstallDir <folder>)" }
 }
 Info "install dir : $InstallDir"
-Info "7-zip.dll   : $((Get-Item $dll).Length) bytes  $((Get-FileHash $dll -Algorithm SHA256).Hash.Substring(0,16))"
-Info "7zFM.exe    : $((Get-Item $exe).Length) bytes"
+Info "RoxaZipShell.dll : $((Get-Item $dll).Length) bytes  $((Get-FileHash $dll -Algorithm SHA256).Hash.Substring(0,16))"
+Info "RoxaZipFM.exe    : $((Get-Item $exe).Length) bytes"
 
 $makeappx = Get-SdkTool 'makeappx.exe'
 $signtool = Get-SdkTool 'signtool.exe'

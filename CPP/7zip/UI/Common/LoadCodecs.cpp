@@ -5,7 +5,7 @@ Z7_EXTERNAL_CODECS
 ---------------
   CCodecs::Load() tries to detect the directory with plugins.
   It stops the checking, if it can find any of the following items:
-    - 7z.dll file
+    - RoxaZip.dll file
     - "Formats" subdir
     - "Codecs"  subdir
   The order of check:
@@ -26,8 +26,8 @@ EXPORT_CODECS
   codecs of client from CCodecs object to external plugins.
   7-Zip doesn't use that feature. 7-Zip uses the scheme:
     - client application without internal plugins.
-    - 7z.dll module contains all (or almost all) plugins.
-      7z.dll can use codecs from another plugins, if required.
+    - RoxaZip.dll module contains all (or almost all) plugins.
+      RoxaZip.dll can use codecs from another plugins, if required.
 */
 
 
@@ -71,9 +71,9 @@ using namespace NFile;
 
 static CFSTR const kMainDll =
   #ifdef _WIN32
-    FTEXT("7z.dll");
+    FTEXT("RoxaZip.dll");
   #else
-    FTEXT("7z.so");
+    FTEXT("RoxaZip.so");
   #endif
 
 

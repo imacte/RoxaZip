@@ -194,11 +194,11 @@ bool CMenuPage::OnInit()
 
     FString &path = dll.Path;
     path = prefix;
-    path += (d == 0 ? "7-zip.dll" :
+    path += (d == 0 ? "RoxaZipShell.dll" :
         #ifdef _WIN64
-          "7-zip32.dll"
+          "RoxaZipShell32.dll"
         #else
-          "7-zip64.dll"
+          "RoxaZipShell64.dll"
         #endif
         );
 
@@ -562,7 +562,7 @@ bool CMenuPage::Apply_MenuMode(enum_MenuMode mode)
   {
     if (backend.MsixPath.IsEmpty())
     {
-      ShowMenuErrorMessage(L"Package file not found: SevenZipZS.ShellExtension*.msix", *this);
+      ShowMenuErrorMessage(L"Package file not found: RoxaZip.ShellExtension*.msix", *this);
       return false;
     }
   }

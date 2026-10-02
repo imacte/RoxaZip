@@ -37,10 +37,10 @@ jobs:
         CC="gcc" CXX="g++" OUTDIR="$PWD/build-gcc" ./build-lx.sh
     - name: Test with clang binary
       run: |
-        Z7_PATH="CPP/build-clang/7z" tclsh tests/7z-test.tcl -verbose tsem
+        Z7_PATH="CPP/build-clang/RoxaZip" tclsh tests/7z-test.tcl -verbose tsem
     - name: Test with gcc binary
       run: |
-        Z7_PATH="CPP/build-gcc/7z" tclsh tests/7z-test.tcl -verbose tsem
+        Z7_PATH="CPP/build-gcc/RoxaZip" tclsh tests/7z-test.tcl -verbose tsem
     - name: Package and verify Linux releases
       shell: bash
       env:
@@ -51,17 +51,17 @@ jobs:
         mkdir -p release
         for compiler in gcc clang; do
           build_dir="$PWD/CPP/build-$compiler"
-          for binary in 7z 7za 7zr 7zz; do
+          for binary in RoxaZip RoxaZipA RoxaZipR RoxaZipZ; do
             test -s "$build_dir/$binary" && test -x "$build_dir/$binary"
           done
-          test -s "$build_dir/7z.so"
+          test -s "$build_dir/RoxaZip.so"
           archive="$PWD/release/RoxaZip-$version-linux-$RELEASE_ARCH-$compiler.tar.gz"
           # Archive on Linux before upload-artifact strips executable permissions.
-          tar -czf "$archive" -C "$build_dir" 7z 7za 7zr 7zz 7z.so \
+          tar -czf "$archive" -C "$build_dir" RoxaZip RoxaZipA RoxaZipR RoxaZipZ RoxaZip.so \
             -C "$PWD" DOC/License.txt DOC/copying.txt DOC/unRarLicense.txt DOC/readme.txt
           extracted=$(mktemp -d)
           tar -xzf "$archive" -C "$extracted"
-          for binary in 7z 7za 7zr 7zz; do
+          for binary in RoxaZip RoxaZipA RoxaZipR RoxaZipZ; do
             test -x "$extracted/$binary"
             "$extracted/$binary" i > /dev/null
           done
@@ -221,7 +221,7 @@ jobs:
           set PLATFORM=${{matrix.platform}}
           set OUTDIR=build\bin-%PLATFORM%
           if "${{matrix.darkmode}}" == "" set OUTDIR=%OUTDIR%-ndm
-          set Z7_PATH=%OUTDIR%\7z.exe
+          set Z7_PATH=%OUTDIR%\RoxaZip.exe
           set TCLTEST_LOG=%TEMP%\7z-test-%PLATFORM%-${{matrix.darkmode}}.log
           tclsh tests\7z-test.tcl -verbose tsem > "%TCLTEST_LOG%" 2>&1
           set RC=%errorlevel%

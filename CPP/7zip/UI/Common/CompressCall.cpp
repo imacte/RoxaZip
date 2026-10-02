@@ -33,7 +33,10 @@ using namespace NWindows;
 #define MY_TRY_FINISH_VOID } \
   catch(...) { ErrorMessageHRESULT(E_FAIL); }
 
-#define k7zGui  "7zG.exe"
+// **** RoxaZip Modification Start ****
+// upstream: "7zG.exe"
+#define k7zGui  "RoxaZipG.exe"
+// **** RoxaZip Modification End ****
 
 // 21.07 : we can disable wildcard
 // #define ISWITCH_NO_WILDCARD_POSTFIX "w-"

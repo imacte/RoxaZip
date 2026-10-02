@@ -16,7 +16,10 @@
 using namespace NWindows;
 using namespace NRegistry;
 
-#define REG_PATH_FM TEXT("Software") TEXT(STRING_PATH_SEPARATOR) TEXT("7-Zip-Zstandard") TEXT(STRING_PATH_SEPARATOR) TEXT("FM")
+// **** RoxaZip Modification Start ****
+// upstream: TEXT("7-Zip") TEXT(STRING_PATH_SEPARATOR) TEXT("FM")
+#define REG_PATH_FM TEXT("Software") TEXT(STRING_PATH_SEPARATOR) TEXT("RoxaZip") TEXT(STRING_PATH_SEPARATOR) TEXT("FM")
+// **** RoxaZip Modification End ****
 
 static LPCTSTR const kCUBasePath = REG_PATH_FM;
 static LPCTSTR const kCulumnsKeyName = REG_PATH_FM TEXT(STRING_PATH_SEPARATOR) TEXT("Columns");

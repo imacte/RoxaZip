@@ -807,7 +807,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /* hPrevInstance */,
 
   /* RoxaZip: change the machine-wide shell context menu registration and exit
      without opening a window. The options page ("RoxaZip") starts this with
-     "runas" when 7zFM.exe itself does not have administrator rights, so the user
+     "runas" when RoxaZipFM.exe itself does not have administrator rights, so the user
      only has to confirm the UAC prompt instead of restarting the program as
      administrator.
 

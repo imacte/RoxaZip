@@ -18,8 +18,8 @@
   bogus results (E_NOTIMPL / REGDB_E_CLASSNOTREG) where the native probe works.
 #>
 param(
-  [string]$IdentityName = 'SevenZipZS.ShellExtension',
-  [string]$Clsid = '23170F69-20BB-278A-1000-000100020000',
+  [string]$IdentityName = 'RoxaZip.ShellExtension',
+  [string]$Clsid = '3878DDB7-37F6-4265-BB4F-835DC2A790ED',
   [string]$TargetFile = "$env:WINDIR\win.ini"
 )
 

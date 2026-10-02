@@ -1,6 +1,6 @@
 #include "../../MyVersionInfo.rc"
 
-MY_VERSION_INFO_DLL("7z Plugin", "7z")
+MY_VERSION_INFO_DLL("RoxaZip 7z Plugin", "RoxaZip")
 
 0 ICON  "../Icons/7z.ico"
 

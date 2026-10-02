@@ -75,7 +75,7 @@ typedef enum {
 
 static LPCWSTR const k_7zip_with_Ver_Uninstall = k_7zip_with_Ver L" Uninstall";
 
-static LPCWSTR const k_Reg_Software_7zip = L"Software\\7-Zip-Zstandard";
+static LPCWSTR const k_Reg_Software_7zip = L"Software\\RoxaZip";
 
 static LPCWSTR const k_Reg_Path = L"Path";
  
@@ -101,7 +101,7 @@ static LPCWSTR const k_Reg_Path32 = L"Path"
 #endif
 #endif
 
-#define k_7zip_CLSID L"{23170F69-20BB-278A-1000-000100020000}"
+#define k_7zip_CLSID L"{3878DDB7-37F6-4265-BB4F-835DC2A790ED}"
 
 static LPCWSTR const k_Reg_CLSID_7zip = L"CLSID\\" k_7zip_CLSID;
 static LPCWSTR const k_Reg_CLSID_7zip_Inproc = L"CLSID\\" k_7zip_CLSID L"\\InprocServer32";
@@ -408,8 +408,8 @@ static void SetShellProgramsGroup(HWND hwndOwner)
             "RoxaZip Help.lnk");
         wcscpy(destPath, path);
         CatAscii(destPath, k == 0 ?
-            "7zFM.exe" :
-            "7-zip.chm");
+            "RoxaZipFM.exe" :
+            "RoxaZip.chm");
         
         if (CreateShellLink(link, destPath) == S_OK)
         {
@@ -441,9 +441,13 @@ static LPCSTR const k_ShellEx_Items[] =
 
 static LPCWSTR const k_Shell_Approved = L"Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved";
 
-static LPCWSTR const k_AppPaths_7zFm = L"Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\7zFM.exe";
+static LPCWSTR const k_AppPaths_7zFm = L"Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\RoxaZipFM.exe";
+/* key used by the builds before the 7zFM.exe -> RoxaZipFM.exe rename */
+// **** RoxaZip Modification Start ****
+static LPCWSTR const k_AppPaths_7zFm_Legacy = L"Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\7zFM.exe";
+// **** RoxaZip Modification End ****
 #define k_REG_Uninstall L"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
-static LPCWSTR const k_Uninstall_7zip = k_REG_Uninstall L"7-Zip-Zstandard";
+static LPCWSTR const k_Uninstall_7zip = k_REG_Uninstall L"RoxaZip";
 
 
 static void RemoveQuotes(WCHAR *s)
@@ -470,7 +474,7 @@ static void WriteCLSID(void)
   
   if (MyRegistry_QueryString2(HKEY_CLASSES_ROOT, k_Reg_CLSID_7zip_Inproc, NULL, s))
   {
-    if (AreEqual_Path_PrefixName(s, path, L"7-zip.dll"))
+    if (AreEqual_Path_PrefixName(s, path, L"RoxaZipShell.dll"))
     {
       {
         const LONG res = MyRegistry_DeleteKey(HKEY_CLASSES_ROOT, k_Reg_CLSID_7zip_Inproc);
@@ -484,7 +488,7 @@ static void WriteCLSID(void)
         {
           WCHAR destPath[MAX_PATH];
           CpyAscii(destPath, k_ShellEx_Items[i]);
-          CatAscii(destPath, "\\7-Zip-Zstandard");
+          CatAscii(destPath, "\\RoxaZip");
           
           MyRegistry_DeleteKey(HKEY_CLASSES_ROOT, destPath);
         }
@@ -507,7 +511,7 @@ static void WriteCLSID(void)
   
   if (MyRegistry_QueryString2_32(HKEY_CLASSES_ROOT, k_Reg_CLSID_7zip_Inproc, NULL, s))
   {
-    if (AreEqual_Path_PrefixName(s, path, L"7-zip32.dll"))
+    if (AreEqual_Path_PrefixName(s, path, L"RoxaZipShell32.dll"))
     {
       {
         const LONG res = MyRegistry_DeleteKey_32(HKEY_CLASSES_ROOT, k_Reg_CLSID_7zip_Inproc);
@@ -521,7 +525,7 @@ static void WriteCLSID(void)
         {
           WCHAR destPath[MAX_PATH];
           CpyAscii(destPath, k_ShellEx_Items[i]);
-          CatAscii(destPath, "\\7-Zip-Zstandard");
+          CatAscii(destPath, "\\RoxaZip");
           
           MyRegistry_DeleteKey_32(HKEY_CLASSES_ROOT, destPath);
         }
@@ -545,8 +549,16 @@ static void WriteCLSID(void)
   if (MyRegistry_QueryString2(HKEY_LOCAL_MACHINE, k_AppPaths_7zFm, NULL, s))
   {
     // RemoveQuotes(s);
-    if (AreEqual_Path_PrefixName(s, path, L"7zFM.exe"))
+    if (AreEqual_Path_PrefixName(s, path, L"RoxaZipFM.exe"))
       MyRegistry_DeleteKey(HKEY_LOCAL_MACHINE, k_AppPaths_7zFm);
+  }
+
+  /* The builds before the 7zFM.exe -> RoxaZipFM.exe rename registered this key;
+     remove it as well, but only while it points into this installation. */
+  if (MyRegistry_QueryString2(HKEY_LOCAL_MACHINE, k_AppPaths_7zFm_Legacy, NULL, s))
+  {
+    if (AreEqual_Path_PrefixName(s, path, L"7zFM.exe"))
+      MyRegistry_DeleteKey(HKEY_LOCAL_MACHINE, k_AppPaths_7zFm_Legacy);
   }
 
   if (MyRegistry_QueryString2(HKEY_LOCAL_MACHINE, k_Uninstall_7zip, L"UninstallString", s))
@@ -693,22 +705,44 @@ static const char * const k_Names =
   " History.txt"
   " License.txt"
   " readme.txt"
-  " 7-zip.chm"
-  " 7z.sfx"
-  " 7zCon.sfx"
-  " 7z.exe"
-  " 7za.exe"
-  " 7za.dll"
-  " 7zxa.dll"
-  " 7zG.exe"
-  " 7z.dll"
-  " 7zFM.exe"
+  " RoxaZip.chm"
+  " RoxaZip.sfx"
+  " RoxaZipCon.sfx"
+  " RoxaZip.exe"
+  " RoxaZipA.exe"
+  " RoxaZipA.dll"
+  " RoxaZipXA.dll"
+  " RoxaZipG.exe"
+  " RoxaZip.dll"
+  " RoxaZipFM.exe"
   #ifdef USE_7ZIP_32_DLL
-  " 7-zip32.dll"
+  " RoxaZipShell32.dll"
   #endif
-  " 7-zip.dll"
+  " RoxaZipShell.dll"
   " Uninstall.exe";
 
+
+
+/* Removes the legacy command name links (7z.exe, 7zFM.exe, 7zG.exe) that the
+   installer creates for compatibility with scripts that still use the 7-Zip
+   names. The link is a hard link, so deleting it keeps the real program. */
+// **** RoxaZip Modification Start ****
+static void RemoveLegacyAliases(void)
+// **** RoxaZip Modification End ****
+{
+  static LPCSTR const k_LegacyAliases[] =
+  {
+    "7z.exe", "7zFM.exe", "7zG.exe"
+  };
+  unsigned i;
+  for (i = 0; i < Z7_ARRAY_SIZE(k_LegacyAliases); i++)
+  {
+    WCHAR dest[MAX_PATH + 40];
+    wcscpy(dest, path);
+    CatAscii(dest, k_LegacyAliases[i]);
+    DeleteFileW(dest);
+  }
+}
 
 
 static int Install(void)
@@ -807,6 +841,7 @@ static int Install(void)
     RemoveDir();
 
     path[pathLen] = 0;
+    RemoveLegacyAliases();
     RemoveDir();
     
     if (!g_SilentMode)

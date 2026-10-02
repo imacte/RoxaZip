@@ -6,7 +6,7 @@ a silver buckle. Icons have no text or label plates; top-volume colors distingui
 formats. Format names in preview sheets are captions outside the artwork. Backgrounds
 are transparent. The book geometry is drawn in `stacked-books.mjs`; no downloaded
 WinRAR artwork is embedded. The monochrome
-toolbar inspired by [NanaZip](https://github.com/M2Team/NanaZip) is unchanged.
+toolbar is unchanged.
 The pipeline covers all 61 application-owned image resources:
 34 archive ICOs, 9 application/installer/SFX ICOs, 14 toolbar BMPs, one shell menu
 BMP and three package PNGs. The third-party DarkMode demo icon and Windows-owned
@@ -34,7 +34,7 @@ pwsh -File verify-windows.ps1
 After a native build, also check the compiled group-icon order and extension maps:
 
 ```powershell
-pwsh -File verify-windows.ps1 -FileManager ../../CPP/7zip/Bundles/Fm/x64/7zFM.exe -ArchiveLibrary ../../CPP/7zip/Bundles/Format7zF/x64/7z.dll
+pwsh -File verify-windows.ps1 -FileManager ../../CPP/7zip/Bundles/Fm/x64/RoxaZipFM.exe -ArchiveLibrary ../../CPP/7zip/Bundles/Format7zF/x64/RoxaZip.dll
 ```
 
 The ordinary build is font-independent: SVG lettering is already outlined. It

@@ -5,7 +5,7 @@
 
 #include "resource.h"
 
-MY_VERSION_INFO_APP("7z SFX", "7z.sfx")
+MY_VERSION_INFO_APP("RoxaZip SFX", "RoxaZip.sfx")
 
 #define xc 240
 #define yc 64
@@ -51,5 +51,5 @@ END
 
 
 #ifndef UNDER_CE
-1 24 MOVEABLE PURE "../../UI/GUI/7zG.exe.manifest"
+1 24 MOVEABLE PURE "../../UI/GUI/RoxaZipG.exe.manifest"
 #endif

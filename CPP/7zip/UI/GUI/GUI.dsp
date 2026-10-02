@@ -152,7 +152,7 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\7zG.exe.manifest
+SOURCE=.\RoxaZipG.exe.manifest
 # End Source File
 # Begin Source File
 

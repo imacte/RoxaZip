@@ -11,10 +11,10 @@ bool CheckContextMenuHandler(const UString &path, UInt32 wow = 0);
 LONG SetContextMenuHandler(bool setMode, const UString &path, UInt32 wow = 0);
 
 /* Registers (or unregisters) the shell extension for both DLLs next to the
-   program - 7-zip.dll and the 32-bit one, if it is present.
+   program - RoxaZipShell.dll and the 32-bit one, if it is present.
 
-   Used by "7zFM.exe -ShellMenu=register|unregister", which the options page
-   starts elevated when the machine-wide keys have to be changed: 7zFM.exe then
+   Used by "RoxaZipFM.exe -ShellMenu=register|unregister", which the options page
+   starts elevated when the machine-wide keys have to be changed: RoxaZipFM.exe then
    does not have to be restarted as administrator, the user just gets the UAC
    prompt. */
 LONG SetContextMenuHandler_All(bool setMode);

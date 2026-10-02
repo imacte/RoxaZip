@@ -1,4 +1,4 @@
-PROG = 7zG.exe
+PROG = RoxaZipG.exe
 CFLAGS = $(CFLAGS) \
   -DZ7_LANG \
   -DZ7_EXTERNAL_CODECS \

@@ -33,14 +33,14 @@ export ARCH=$(arch)
 mkdir -p "$OUTDIR"
 
 # standalone, minimalistic (flzma2, zstd)
-build 7zr   Bundles/Alone7z
+build RoxaZipR   Bundles/Alone7z
 
 # standalone, small (flzma2, zstd, lz4, hashes)
-build 7za   Bundles/Alone
+build RoxaZipA   Bundles/Alone
 
 # standalone, full featured
-build 7zz   Bundles/Alone2
+build RoxaZipZ   Bundles/Alone2
 
 # full featured via plugin loading (7z.so)
-build 7z    UI/Console
-build 7z.so Bundles/Format7zF
+build RoxaZip    UI/Console
+build RoxaZip.so Bundles/Format7zF

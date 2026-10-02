@@ -1,4 +1,4 @@
-PROG = 7-zip.dll
+PROG = RoxaZipShell.dll
 DEF_FILE = Explorer.def
 CFLAGS = $(CFLAGS) \
   -DZ7_LANG \

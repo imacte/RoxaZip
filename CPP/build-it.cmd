@@ -28,13 +28,13 @@ IF not exist %OUTDIR% mkdir %OUTDIR%
 
 set ERR_COUNT=0
 
-call :build Bundles\Format7zExtract     7zxa.dll                           || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build Bundles\Format7z            7za.dll                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build Bundles\Format7zF           7z.dll                             || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build UI\FileManager              7zFM.exe                           || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build UI\GUI                      7zG.exe                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build UI\Explorer                 7-zip.dll                          || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build Bundles\SFXWin              7z.sfx                             || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build Bundles\Format7zExtract     RoxaZipXA.dll                           || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build Bundles\Format7z            RoxaZipA.dll                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build Bundles\Format7zF           RoxaZip.dll                             || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build UI\FileManager              RoxaZipFM.exe                           || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build UI\GUI                      RoxaZipG.exe                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build UI\Explorer                 RoxaZipShell.dll                          || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build Bundles\SFXWin              RoxaZip.sfx                             || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
 call :build Bundles\Codec_brotli        brotli.dll                         || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
 call :build Bundles\Codec_lizard        lizard.dll                         || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
 call :build Bundles\Codec_lz4           lz4.dll                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
@@ -46,20 +46,20 @@ call :build ..\..\C\Util\7zipUninstall  7zipUninstall.exe  Uninstall.exe   || (I
 
 IF "%BUILD_EXTR%" == "-with-sfx-setup" (
   del /s /q %ROOT%\Bundles\SFXSetup\%PLATFORM% > NUL:
-  call :build Bundles\SFXSetup          7zS.sfx                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+  call :build Bundles\SFXSetup          RoxaZipS.sfx                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
   set MY_DYNAMIC_LINK=1
   set LFLAGS=%LFLAGS% /LTCG /NODEFAULTLIB:libucrt.lib ucrt.lib
   del /s /q %ROOT%\Bundles\SFXSetup\%PLATFORM% > NUL:
-  call :build Bundles\SFXSetup          7zS.sfx            7zSD.sfx        || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+  call :build Bundles\SFXSetup          RoxaZipS.sfx            RoxaZipSD.sfx        || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
   set "MY_DYNAMIC_LINK="
 )
 
 set LFLAGS=/SUBSYSTEM:CONSOLE,%SUBSYS%
 
-call :build UI\Console                  7z.exe                             || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build Bundles\SFXCon              7zCon.sfx                          || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build Bundles\Alone               7za.exe                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
-call :build Bundles\Alone2              7zz.exe                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build UI\Console                  RoxaZip.exe                             || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build Bundles\SFXCon              RoxaZipCon.sfx                          || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build Bundles\Alone               RoxaZipA.exe                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
+call :build Bundles\Alone2              RoxaZipZ.exe                            || (IF %STOP_ON_ERROR% NEQ 0 goto ende)
 
 :ende
 cd %ROOT%\..

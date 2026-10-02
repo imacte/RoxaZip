@@ -20,16 +20,16 @@ int main()
   assert(RegCreateKeyExW(HKEY_CURRENT_USER, name, 0, NULL, 0, KEY_ALL_ACCESS, NULL, &root, NULL) == ERROR_SUCCESS);
   assert(RegOverridePredefKey(HKEY_CLASSES_ROOT, root) == ERROR_SUCCESS);
   assert(RegOverridePredefKey(HKEY_LOCAL_MACHINE, root) == ERROR_SUCCESS);
-  const UString path(L"C:\\RegistryTest\\7-zip.dll");
+  const UString path(L"C:\\RegistryTest\\RoxaZipShell.dll");
   assert(SetContextMenuHandler_State(1) == ERROR_SUCCESS);
   assert(CheckContextMenuHandler_Complete(path));
   const wchar_t *missing[] = {
-    L"Folder\\shellex\\ContextMenuHandlers\\7-Zip-Zstandard",
-    L"Directory\\shellex\\ContextMenuHandlers\\7-Zip-Zstandard",
-    L"Directory\\shellex\\DragDropHandlers\\7-Zip-Zstandard",
-    L"Drive\\shellex\\DragDropHandlers\\7-Zip-Zstandard",
+    L"Folder\\shellex\\ContextMenuHandlers\\RoxaZip",
+    L"Directory\\shellex\\ContextMenuHandlers\\RoxaZip",
+    L"Directory\\shellex\\DragDropHandlers\\RoxaZip",
+    L"Drive\\shellex\\DragDropHandlers\\RoxaZip",
     L"Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved",
-    L"*\\shellex\\ContextMenuHandlers\\7-Zip-Zstandard"
+    L"*\\shellex\\ContextMenuHandlers\\RoxaZip"
   };
   for (unsigned i = 0; i < sizeof(missing)/sizeof(missing[0]); i++)
   {
@@ -43,7 +43,7 @@ int main()
   assert(SetContextMenuHandler_State(0) == ERROR_SUCCESS);
   assert(!CheckContextMenuHandler_Dll(path));
   // Disabling this installation must not remove a different installation's DLL.
-  const UString other(L"C:\\Other\\7-zip.dll");
+  const UString other(L"C:\\Other\\RoxaZipShell.dll");
   assert(SetContextMenuHandler(true, other) == ERROR_SUCCESS);
   assert(SetContextMenuHandler_State(0) == ERROR_SUCCESS);
   assert(CheckContextMenuHandler_Dll(other));

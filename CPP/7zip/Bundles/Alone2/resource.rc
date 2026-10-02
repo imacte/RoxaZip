@@ -1,6 +1,6 @@
 #include "../../MyVersionInfo.rc"
 
-MY_VERSION_INFO_APP("RoxaZip Standalone 2 Console", "7zz")
+MY_VERSION_INFO_APP("RoxaZip Standalone 2 Console", "RoxaZipZ")
 
 #ifndef UNDER_CE
 1  24  MOVEABLE PURE   "../../UI/Console/Console.manifest"

@@ -1,4 +1,4 @@
-PROG = 7zra.dll
+PROG = RoxaZipRA.dll
 DEF_FILE = ../../Archive/Archive2.def
 CFLAGS = $(CFLAGS) \
   -DZ7_NO_CRYPTO

@@ -104,9 +104,9 @@ try {
 $testDir = Join-Path $env:TEMP ('7zip-options-files-' + [guid]::NewGuid().ToString('N'))
 [void](New-Item -ItemType Directory -Path $testDir)
 try {
-  $testExe = Join-Path $testDir '7zFM.exe'
+  $testExe = Join-Path $testDir 'RoxaZipFM.exe'
   Copy-Item -LiteralPath $Exe -Destination $testExe
-  $codec = Join-Path (Split-Path $Exe -Parent) '7z.dll'
+  $codec = Join-Path (Split-Path $Exe -Parent) 'RoxaZip.dll'
   if (Test-Path -LiteralPath $codec) { Copy-Item -LiteralPath $codec -Destination $testDir }
   $emptyZip = [byte[]](0x50,0x4b,5,6) + [byte[]]::new(18)
   foreach($name in @('backup-ShellMenu=unregister.zip','backup-ShellMenu=register.zip','7zipzs-setdefault/sample.zip')) {
@@ -125,7 +125,7 @@ try {
   }
 } finally {
   # Only this test's freshly created files; leave an unexpected file untouched.
-  foreach($name in @('7zFM.exe','7z.dll','backup-ShellMenu=unregister.zip','backup-ShellMenu=register.zip','7zipzs-setdefault/sample.zip')) {
+  foreach($name in @('RoxaZipFM.exe','RoxaZip.dll','backup-ShellMenu=unregister.zip','backup-ShellMenu=register.zip','7zipzs-setdefault/sample.zip')) {
     $file = Join-Path $testDir $name
     for ($retry = 0; $retry -lt 20 -and (Test-Path -LiteralPath $file); $retry++) {
       try { Remove-Item -LiteralPath $file -ErrorAction Stop }

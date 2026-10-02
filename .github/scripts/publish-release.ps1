@@ -68,7 +68,7 @@ Build and test results: $runUrl
 
 Windows installers: x64, x86 and ARM64. Files with the -ndm suffix omit dark mode.
 Codecs packages and the Total Commander plugin are included. SHA256SUMS.txt lists asset checksums.
-Linux tar.gz packages: x64 and ARM64, built with GCC and Clang. Each includes 7z, 7za, 7zr, 7zz and 7z.so with executable permissions preserved.
+Linux tar.gz packages: x64 and ARM64, built with GCC and Clang. Each includes RoxaZip, RoxaZipA, RoxaZipR, RoxaZipZ and RoxaZip.so with executable permissions preserved.
 "@
     $notesPath = Join-Path $ArtifactDirectory 'release-notes.md'
     Set-Content -LiteralPath $notesPath -Value $notes -Encoding utf8

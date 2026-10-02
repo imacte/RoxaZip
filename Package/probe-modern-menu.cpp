@@ -17,9 +17,9 @@
 #include <shellapi.h>
 #include <stdio.h>
 
-// {23170F69-20BB-278A-1000-000100020000} - CLSID_CZipContextMenu of RoxaZip
+// {3878DDB7-37F6-4265-BB4F-835DC2A790ED} - CLSID_CZipContextMenu of RoxaZip
 static const GUID CLSID_ZipZS =
-  { 0x23170F69, 0x20BB, 0x278A, { 0x10, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00 } };
+  { 0x3878DDB7, 0x37F6, 0x4265, { 0xBB, 0x4F, 0x83, 0x5D, 0xC2, 0xA7, 0x90, 0xED } };
 
 static void Print(const char *name, HRESULT hr)
 {

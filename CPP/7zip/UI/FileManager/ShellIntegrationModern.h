@@ -21,7 +21,7 @@
 
 namespace NShellIntegrationModern {
 
-  // <program dir>\SevenZipZS.ShellExtension_x64.msix  (empty if it does not exist)
+  // <program dir>\RoxaZip.ShellExtension_x64.msix  (empty if it does not exist)
   UString Get_DefaultMsixPath();
 
   // is one of the packages of this fork registered for the current user?
@@ -47,7 +47,7 @@ namespace NShellIntegrationModern {
   // true if this process already runs with administrator rights
   bool Is_Process_Elevated();
 
-  /* Runs "7zFM.exe <args>" elevated (one UAC prompt) and waits for it. Used for
+  /* Runs "RoxaZipFM.exe <args>" elevated (one UAC prompt) and waits for it. Used for
      every change that writes to HKEY_LOCAL_MACHINE / HKEY_CLASSES_ROOT, so the
      program never has to be restarted as administrator. errorText gets a message
      when the user cancels the prompt or the helper fails. */

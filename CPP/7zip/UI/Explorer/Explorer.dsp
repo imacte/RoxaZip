@@ -606,7 +606,7 @@ SOURCE=..\..\..\Windows\Window.h
 # End Group
 # Begin Source File
 
-SOURCE=".\7-zip.dll.manifest"
+SOURCE=".\RoxaZipShell.dll.manifest"
 # End Source File
 # Begin Source File
 

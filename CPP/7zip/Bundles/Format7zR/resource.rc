@@ -1,5 +1,5 @@
 #include "../../../../C/7zVersion.rc"
 
-MY_VERSION_INFO_DLL("7z Reduced Standalone Plugin", "7zr")
+MY_VERSION_INFO_DLL("RoxaZip Reduced Standalone Plugin", "RoxaZipRA")
 
 101  ICON  "../../Archive/Icons/7z.ico"

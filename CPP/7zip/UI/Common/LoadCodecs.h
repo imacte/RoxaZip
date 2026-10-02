@@ -20,14 +20,14 @@ Z7_EXTERNAL_CODECS
   
   1) Executable that uses external plugins must be compiled
      with Z7_EXTERNAL_CODECS defined:
-       - 7z.exe, 7zG.exe, 7zFM.exe
+       - RoxaZip.exe, RoxaZipG.exe, RoxaZipFM.exe
     
      Note: Z7_EXTERNAL_CODECS is used also in CPP/7zip/Common/CreateCoder.h
-           that code is used in plugin module (7z.dll).
+           that code is used in plugin module (RoxaZip.dll).
   
   2) Standalone modules are compiled without Z7_EXTERNAL_CODECS:
-    - SFX modules: 7z.sfx, 7zCon.sfx
-    - standalone versions of console 7-Zip: 7za.exe, 7zr.exe
+    - SFX modules: RoxaZip.sfx, RoxaZipCon.sfx
+    - standalone versions of console 7-Zip: RoxaZipA.exe, RoxaZipR.exe
 
   if Z7_EXTERNAL_CODECS is defined, CCodecs class implements interfaces:
     - ICompressCodecsInfo : for Codecs

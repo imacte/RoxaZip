@@ -1,4 +1,4 @@
-PROG = 7zS2con.sfx
+PROG = RoxaZipS2Con.sfx
 MY_FIXED = 1
 
 CFLAGS = $(CFLAGS) -D_CONSOLE \

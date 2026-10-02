@@ -6,8 +6,18 @@
   If the classic shell extension registration is still present, the classic menu
   lists "RoxaZip" twice.
 
-  This script removes only the classic *context menu* registration
-  (HKCR\{*,Folder,Directory,Drive}\shellex\ContextMenuHandlers\7-Zip-Zstandard):
+  This script removes only the classic *context menu* registration:
+
+      HKCR\{*,Folder,Directory,Drive}\shellex\ContextMenuHandlers\RoxaZip
+      HKCR\{*,Folder,Directory,Drive}\shellex\ContextMenuHandlers\7-Zip-Zstandard
+
+  The second (legacy) key name is what builds before the rename registered. An
+  in-place upgrade keeps it, and because it points to the previous shell
+  extension DLL, Explorer can show the entry twice; remove it with this script:
+
+      pwsh -File Package\disable-legacy-shell-ext.ps1
+
+  Only the context menu handler is removed:
 
     * the drag&drop registration is kept,
     * the packaged command (and therefore the modern menu) is kept,
@@ -18,12 +28,14 @@
       pwsh -File Package\disable-legacy-shell-ext.ps1            # remove + backup
       pwsh -File Package\disable-legacy-shell-ext.ps1 -Restore   # put them back
 
-  Note: the "Options > System/Integration" page of 7zFM.exe (or re-running the
-  installer) re-creates these keys.
+  Note: the "Options > System/Integration" page of RoxaZipFM.exe (or re-running the
+  installer) re-creates the current key.
 #>
 param(
   [switch]$Restore,
-  [string]$KeyName = '7-Zip-Zstandard',
+  [string]$KeyName = 'RoxaZip',
+  # key name used by builds before the rename; an upgrade leaves it behind
+  [string]$LegacyKeyName = '7-Zip-Zstandard',
   [string]$BackupDir
 )
 
@@ -31,6 +43,7 @@ $ErrorActionPreference = 'Stop'
 function Info($m) { Write-Host "  $m" }
 
 $roots = @('*', 'Folder', 'Directory', 'Drive')
+$keyNames = @($KeyName, $LegacyKeyName) | Where-Object { $_ } | Select-Object -Unique
 
 if (-not $BackupDir) { $BackupDir = Join-Path $PSScriptRoot 'Output' }
 
@@ -40,8 +53,8 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 if (-not $isAdmin)
 {
   Write-Host 'Restarting with administrator rights (UAC) ...'
-  $argLine = '-NoProfile -ExecutionPolicy Bypass -File "{0}" -KeyName "{1}" -BackupDir "{2}"' -f `
-    $PSCommandPath, $KeyName, $BackupDir
+  $argLine = '-NoProfile -ExecutionPolicy Bypass -File "{0}" -KeyName "{1}" -LegacyKeyName "{2}" -BackupDir "{3}"' -f `
+    $PSCommandPath, $KeyName, $LegacyKeyName, $BackupDir
   if ($Restore) { $argLine += ' -Restore' }
   $p = Start-Process -FilePath (Get-Process -Id $PID).Path -ArgumentList $argLine -Verb RunAs -Wait -PassThru
   exit $p.ExitCode
@@ -65,29 +78,32 @@ if ($Restore)
 }
 
 $removed = 0
-foreach ($root in $roots)
+foreach ($name in $keyNames)
 {
-  $key = "HKCR\$root\shellex\ContextMenuHandlers\$KeyName"
-  # -LiteralPath: the root "*" would otherwise be treated as a wildcard and the
-  # whole HKEY_CLASSES_ROOT tree would be enumerated (looks like a hang).
-  $regPath = "Registry::HKEY_CLASSES_ROOT\$root\shellex\ContextMenuHandlers\$KeyName"
-  if (-not (Test-Path -LiteralPath $regPath))
+  foreach ($root in $roots)
   {
-    Info "not present : $key"
-    continue
-  }
-  $backup = Join-Path $BackupDir ("legacy-shellext-{0}.reg" -f (Get-SafeName $root))
-  & reg.exe export "$key" "$backup" /y | Out-Null
-  Info "backed up   : $key  ->  $(Split-Path $backup -Leaf)"
-  & reg.exe delete "$key" /f | Out-Null
-  if (Test-Path -LiteralPath $regPath)
-  {
-    Info "FAILED      : $key"
-  }
-  else
-  {
-    Info "removed     : $key"
-    $removed++
+    $key = "HKCR\$root\shellex\ContextMenuHandlers\$name"
+    # -LiteralPath: the root "*" would otherwise be treated as a wildcard and the
+    # whole HKEY_CLASSES_ROOT tree would be enumerated (looks like a hang).
+    $regPath = "Registry::HKEY_CLASSES_ROOT\$root\shellex\ContextMenuHandlers\$name"
+    if (-not (Test-Path -LiteralPath $regPath))
+    {
+      Info "not present : $key"
+      continue
+    }
+    $backup = Join-Path $BackupDir ("legacy-shellext-{0}-{1}.reg" -f (Get-SafeName $name), (Get-SafeName $root))
+    & reg.exe export "$key" "$backup" /y | Out-Null
+    Info "backed up   : $key  ->  $(Split-Path $backup -Leaf)"
+    & reg.exe delete "$key" /f | Out-Null
+    if (Test-Path -LiteralPath $regPath)
+    {
+      Info "FAILED      : $key"
+    }
+    else
+    {
+      Info "removed     : $key"
+      $removed++
+    }
   }
 }
 

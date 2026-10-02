@@ -1,4 +1,4 @@
-PROG = 7zS.sfx
+PROG = RoxaZipS.sfx
 MY_FIXED = 1
 
 CFLAGS = $(CFLAGS) \

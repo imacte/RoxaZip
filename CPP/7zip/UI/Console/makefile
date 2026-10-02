@@ -1,4 +1,4 @@
-PROG = 7z.exe
+PROG = RoxaZip.exe
 CFLAGS = $(CFLAGS)  \
   -DZ7_EXTERNAL_CODECS \
 

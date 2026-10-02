@@ -1,4 +1,4 @@
-PROG = 7z.dll
+PROG = RoxaZip.dll
 DEF_FILE = ../Archive.def
 CFLAGS = $(CFLAGS) \
   -DZ7_EXTERNAL_CODECS \

@@ -1,4 +1,4 @@
-PROG = 7z
+PROG = RoxaZip
 DEF_FILE = ../../Archive/Archive2.def
 
 # IS_X64 = 1

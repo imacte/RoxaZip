@@ -1,4 +1,4 @@
-PROG = 7za.dll
+PROG = RoxaZipA.dll
 DEF_FILE = ../../Archive/Archive2.def
 CFLAGS = $(CFLAGS) -DZSTD_LEGACY_SUPPORT -DZSTD_MULTITHREAD
 

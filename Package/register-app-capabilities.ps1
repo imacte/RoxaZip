@@ -3,13 +3,13 @@
 
   This writes (needs administrator rights, the script elevates itself):
 
-      HKLM\SOFTWARE\7-Zip-Zstandard\Capabilities
+      HKLM\SOFTWARE\RoxaZip\Capabilities
           ApplicationName        = RoxaZip
           ApplicationDescription = ...
           FileAssociations\.7z   = 7-Zip-Zstandard.7z
           ...
       HKLM\SOFTWARE\RegisteredApplications
-          RoxaZip               = Software\7-Zip-Zstandard\Capabilities
+          RoxaZip               = Software\RoxaZip\Capabilities
 
   With that entry the options page ("System" tab -> double click a row) can open
   the app's own page in "Default apps" through
@@ -23,7 +23,7 @@
 #>
 param(
   [string]$AppName = '7-Zip ZS',
-  [string]$CapabilitiesPath = 'Software\7-Zip-Zstandard\Capabilities',
+  [string]$CapabilitiesPath = 'Software\RoxaZip\Capabilities',
   [string]$ProgIdPrefix = '7-Zip-Zstandard',
   # only file types whose ProgID <ProgIdPrefix>.<ext> exists are registered
   [string[]]$Exts = @(
@@ -77,7 +77,7 @@ if (-not $isAdmin)
 if ($Uninstall)
 {
   Write-Host "`n== Removing the registration" -ForegroundColor Cyan
-  foreach ($k in @($regCap, "HKLM\SOFTWARE\7-Zip-Zstandard")) { & reg.exe delete "$k" /f 2>$null | Out-Null }
+  foreach ($k in @($regCap, "HKLM\SOFTWARE\RoxaZip")) { & reg.exe delete "$k" /f 2>$null | Out-Null }
   $name = Get-RegisteredName
   if ($name) { & reg.exe delete "$regApp" /v "$name" /f 2>$null | Out-Null }
   if (Get-RegisteredName) { Info 'WARN   the RegisteredApplications value is still there' }
