@@ -27,6 +27,7 @@ This license applies to the files that were written for RoxaZip and that are
 not part of the archive manager itself:
 
   - the packaging, release and shell integration tooling: `Package/`
+  - the Microsoft Store packaging: `RoxaZipPackage/`
   - the tests added for RoxaZip: `tests/assoc-command.cpp`,
     `tests/check-fm-sdk.ps1`, `tests/lz-frame.c`,
     `tests/publish-test-failures.ps1`, `tests/registry-context-menu.cpp`,

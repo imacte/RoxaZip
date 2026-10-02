@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RoxaZip - Copyright (c) 2026 RoxaZip contributors - License: MIT, see DOC/License-MIT.txt -->
+
+<!--
+  RoxaZip - full MSIX package for the Microsoft Store.
+
+  This is the Store variant, not the sparse package in ..\Package (that one only
+  gives an existing classic installation a package identity for the Windows 11
+  menu and is built locally).
+
+  TODO before the first submission: replace the three Identity/Properties values
+  below with the values from Partner Center (Product -> Product identity):
+    Name                  -> Package/Identity/Name
+    Publisher             -> Package/Identity/Publisher
+    PublisherDisplayName  -> Package/Identity/PublisherDisplayName
+  build-store-package.ps1 can inject them from the command line
+  (-IdentityName / -Publisher / -PublisherDisplayName), and "msstore init" writes
+  them into this file as well.
+
+  The package keeps full file system access (unvirtualizedResources,
+  FileSystemWriteVirtualization disabled), so the archive manager behaves like
+  the classic installation. What the package adds is the package identity that
+  makes the Windows 11 context menu and the execution aliases work.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap8="http://schemas.microsoft.com/appx/manifest/uap/windows10/8"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
+  xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
+  xmlns:desktop10="http://schemas.microsoft.com/appx/manifest/desktop/windows10/10"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  IgnorableNamespaces="uap uap3 uap8 uap10 rescap desktop desktop4 desktop5 desktop6 desktop10 com">
+
+  <!-- These are the values Partner Center assigned to this product
+       (Product -> Product identity). The Publisher is issued by the Store and
+       must stay exactly like this, otherwise the Store rejects the upload.
+       A local test build changes the publisher to the test certificate
+       (build-store-package.ps1 -Sign) in its staging copy only. -->
+  <Identity
+    Name="imacte.RoxaZip"
+    Publisher="CN=99CE4C4C-7CDF-4CB7-A3F5-AAB5567A3092"
+    Version="26.3.0.0" />
+
+  <Properties>
+    <DisplayName>RoxaZip</DisplayName>
+    <PublisherDisplayName>imacte</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+
+    <!-- The file manager is the entry point: context menu, file associations,
+         aliases. It is also what the Store lists as the app. -->
+    <Application
+      Id="RoxaZip.FileManager"
+      Executable="RoxaZipFM.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="RoxaZip"
+        Description="RoxaZip archive manager"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png" />
+      <Extensions>
+        <!-- The 7-Zip command names stay usable through the OS, so no 7z*.exe
+             files are needed in the installation folder. AllowOverride lets the
+             alias win over a classic 7-Zip that is installed later. -->
+        <uap3:Extension
+          Category="windows.appExecutionAlias"
+          Executable="RoxaZipFM.exe"
+          EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="RoxaZipFM.exe" />
+            <desktop:ExecutionAlias Alias="7zFM.exe" uap8:AllowOverride="true" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+        <desktop4:Extension Category="windows.fileExplorerContextMenus">
+          <desktop4:FileExplorerContextMenus>
+            <desktop4:ItemType Type="*">
+              <desktop4:Verb Id="RoxaZip" Clsid="3878DDB7-37F6-4265-BB4F-835DC2A790ED" />
+            </desktop4:ItemType>
+            <desktop5:ItemType Type="Directory">
+              <desktop5:Verb Id="RoxaZip" Clsid="3878DDB7-37F6-4265-BB4F-835DC2A790ED" />
+            </desktop5:ItemType>
+            <desktop10:ItemType Type="Drive">
+              <desktop10:Verb Id="RoxaZip" Clsid="3878DDB7-37F6-4265-BB4F-835DC2A790ED" />
+            </desktop10:ItemType>
+          </desktop4:FileExplorerContextMenus>
+        </desktop4:Extension>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:SurrogateServer DisplayName="RoxaZip Shell Extension">
+              <com:Class
+                Id="3878DDB7-37F6-4265-BB4F-835DC2A790ED"
+                Path="RoxaZipShell.dll"
+                ThreadingModel="STA" />
+            </com:SurrogateServer>
+          </com:ComServer>
+        </com:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap3:FileTypeAssociation Name="roxazip" Parameters="&quot;%1&quot;">
+            <uap:Logo>Assets\StoreLogo.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.001</uap:FileType>
+              <uap:FileType>.7z</uap:FileType>
+              <uap:FileType>.apfs</uap:FileType>
+              <uap:FileType>.arj</uap:FileType>
+              <uap:FileType>.b64</uap:FileType>
+              <uap:FileType>.br</uap:FileType>
+              <uap:FileType>.bz2</uap:FileType>
+              <uap:FileType>.cab</uap:FileType>
+              <uap:FileType>.cpio</uap:FileType>
+              <uap:FileType>.deb</uap:FileType>
+              <uap:FileType>.dmg</uap:FileType>
+              <uap:FileType>.esd</uap:FileType>
+              <uap:FileType>.fat</uap:FileType>
+              <uap:FileType>.gz</uap:FileType>
+              <uap:FileType>.gzip</uap:FileType>
+              <uap:FileType>.hfs</uap:FileType>
+              <uap:FileType>.iso</uap:FileType>
+              <uap:FileType>.lha</uap:FileType>
+              <uap:FileType>.liz</uap:FileType>
+              <uap:FileType>.lz</uap:FileType>
+              <uap:FileType>.lz4</uap:FileType>
+              <uap:FileType>.lz5</uap:FileType>
+              <uap:FileType>.lzh</uap:FileType>
+              <uap:FileType>.lzma</uap:FileType>
+              <uap:FileType>.ntfs</uap:FileType>
+              <uap:FileType>.rar</uap:FileType>
+              <uap:FileType>.rpm</uap:FileType>
+              <uap:FileType>.squashfs</uap:FileType>
+              <uap:FileType>.swm</uap:FileType>
+              <uap:FileType>.tar</uap:FileType>
+              <uap:FileType>.taz</uap:FileType>
+              <uap:FileType>.tbz</uap:FileType>
+              <uap:FileType>.tbz2</uap:FileType>
+              <uap:FileType>.tgz</uap:FileType>
+              <uap:FileType>.tlz</uap:FileType>
+              <uap:FileType>.tpz</uap:FileType>
+              <uap:FileType>.txz</uap:FileType>
+              <uap:FileType>.tz</uap:FileType>
+              <uap:FileType>.tzst</uap:FileType>
+              <uap:FileType>.vhd</uap:FileType>
+              <uap:FileType>.vhdx</uap:FileType>
+              <uap:FileType>.vmdk</uap:FileType>
+              <uap:FileType>.wim</uap:FileType>
+              <uap:FileType>.xar</uap:FileType>
+              <uap:FileType>.xz</uap:FileType>
+              <uap:FileType>.z</uap:FileType>
+              <uap:FileType>.zip</uap:FileType>
+              <uap:FileType>.zipx</uap:FileType>
+              <uap:FileType>.zst</uap:FileType>
+              <uap:FileType>.zstd</uap:FileType>
+              <uap10:FileType>*</uap10:FileType>
+            </uap:SupportedFileTypes>
+          </uap3:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+
+    <!-- Console binary: "RoxaZip" and the legacy "7z" alias. -->
+    <Application
+      Id="RoxaZip.Console"
+      Executable="RoxaZip.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        AppListEntry="none"
+        DisplayName="RoxaZip"
+        Description="RoxaZip console"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png" />
+      <Extensions>
+        <uap3:Extension
+          Category="windows.appExecutionAlias"
+          Executable="RoxaZip.exe"
+          EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="RoxaZip.exe" />
+            <desktop:ExecutionAlias Alias="7z.exe" uap8:AllowOverride="true" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+
+    <!-- GUI helper of the file manager: "RoxaZipG" and the legacy "7zG" alias. -->
+    <Application
+      Id="RoxaZip.Windows"
+      Executable="RoxaZipG.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        AppListEntry="none"
+        DisplayName="RoxaZip"
+        Description="RoxaZip progress helper"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png" />
+      <Extensions>
+        <uap3:Extension
+          Category="windows.appExecutionAlias"
+          Executable="RoxaZipG.exe"
+          EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="RoxaZipG.exe" />
+            <desktop:ExecutionAlias Alias="7zG.exe" uap8:AllowOverride="true" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="unvirtualizedResources" />
+  </Capabilities>
+</Package>
