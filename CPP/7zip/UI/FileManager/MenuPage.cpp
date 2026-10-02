@@ -230,8 +230,19 @@ bool CMenuPage::OnInit()
   }
 
   Set_ModeControls_Text(*this);
-  EnableItem(IDX_SYSTEM_MENU_MODERN, NShellIntegrationModern::Is_Supported());
-  EnableItem(IDX_SYSTEM_MENU_BOTH, NShellIntegrationModern::Is_Supported());
+  // **** RoxaZip Modification Start ****
+  /* The Windows 11 menu can only be switched on when the sparse package is
+     available next to the program. A released installation does not contain it,
+     and "Apply" would then fail with a message box, so the option is disabled
+     instead. A package that is already registered keeps the option enabled, so
+     that it can be switched off again. */
+  const bool modernAvailable =
+      NShellIntegrationModern::Is_Supported() &&
+      (NShellIntegrationModern::Is_Installed() ||
+       !NShellIntegrationModern::Get_DefaultMsixPath().IsEmpty());
+  // **** RoxaZip Modification End ****
+  EnableItem(IDX_SYSTEM_MENU_MODERN, modernAvailable);
+  EnableItem(IDX_SYSTEM_MENU_BOTH, modernAvailable);
   Update_MenuMode_Controls();
 
   CContextMenuInfo ci;
@@ -562,7 +573,11 @@ bool CMenuPage::Apply_MenuMode(enum_MenuMode mode)
   {
     if (backend.MsixPath.IsEmpty())
     {
-      ShowMenuErrorMessage(L"Package file not found: RoxaZip.ShellExtension*.msix", *this);
+      ShowMenuErrorMessage(
+          L"The Windows 11 menu needs the \"RoxaZip.ShellExtension\" package, "
+          L"which is not installed and not available in this folder.\n\n"
+          L"Use the classic menu (\"Show more options\"), or install the package.",
+          *this);
       return false;
     }
   }

@@ -59,16 +59,29 @@ try {
       if ([OptionsSmoke]::Send($tab,0x130B,0).ToInt32() -ne $i) { throw "Wrong selected tab $i" }
       Write-Output "Round $round tab $i OK"
       if ($i -eq 1) {
+        # The Windows 11 modes (2307, 2308) need the sparse package: it has to be
+        # registered, or lie next to the program as RoxaZip.ShellExtension*.msix.
+        # This test directory has neither, so those radios have to be disabled -
+        # otherwise "Apply" would refuse with a message box instead.
+        $modernUsable =
+          [bool](Get-AppxPackage -Name 'RoxaZip.ShellExtension' -ErrorAction SilentlyContinue) -or
+          [bool](Get-ChildItem (Join-Path (Split-Path $Exe -Parent) 'RoxaZip.ShellExtension*.msix') -ErrorAction SilentlyContinue)
+        $disabled = 0
         foreach ($id in @(2306,2307,2308,2309,2307,2306)) {
           $radio = [OptionsSmoke]::Child($dialog, 'Button', $id)
           if ($radio -eq [IntPtr]::Zero) { throw "Radio $id missing" }
-          if (-not [OptionsSmoke]::IsWindowEnabled($radio)) { throw "Radio $id disabled (modern support missing)" }
+          $enabled = [OptionsSmoke]::IsWindowEnabled($radio)
+          $expectEnabled = $modernUsable -or $id -eq 2306 -or $id -eq 2309
+          if ($enabled -ne $expectEnabled) {
+            throw "Radio $id enabled=$enabled but the sparse package is available=$modernUsable"
+          }
+          if (-not $expectEnabled) { $disabled++; continue }
           [void][OptionsSmoke]::Send($radio,0xF5,0)
           if ([OptionsSmoke]::Send($radio,0xF0,0).ToInt32() -ne 1) { throw "Radio $id not selected" }
           $classic = [OptionsSmoke]::Child($dialog, 'Button', 2301)
           if ([OptionsSmoke]::IsWindowVisible($classic) -ne ($id -eq 2306 -or $id -eq 2308)) { throw "Classic visibility incorrect for $id" }
         }
-        Write-Output "Round $round all menu modes and checkbox visibility OK"
+        Write-Output "Round $round all menu modes and checkbox visibility OK ($disabled disabled without the sparse package)"
       }
     }
     [void][OptionsSmoke]::PostMessage($dialog, 0x111, [IntPtr]2, [IntPtr]::Zero)

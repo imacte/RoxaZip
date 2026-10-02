@@ -95,8 +95,33 @@ Values that contain a program path have to be written again after the upgrade:
 
 - `Options -> System` in the file manager, or `RoxaZipFM.exe -AssocAll=+7z,zip`,
   re-applies the file associations;
-- `Options -> RoxaZip`, or `Package\build-shell-package.ps1`, re-registers the
-  sparse package of the Windows 11 context menu.
+- `Options -> RoxaZip` re-registers the sparse package of the Windows 11 context
+  menu.
+
+### The Windows 11 context menu needs the sparse package
+
+Windows 11 shows entries in the new context menu only for *packaged* apps, so
+that menu needs the sparse package `RoxaZip.ShellExtension`. A released
+installation does **not** contain it: the package has to be signed, and it is
+built next to the sources with
+
+```
+pwsh -File Package\build-shell-package.ps1 -InstallDir "<installation folder>"
+```
+
+which needs the Windows SDK (`makeappx`, `signtool`) and creates a self-signed
+development certificate on first use (one UAC prompt for the machine-wide trust).
+It copies the resulting `.msix` next to the binaries, which is where
+`Options -> RoxaZip` looks for it.
+
+Without that file the "Windows 11 menu" options are disabled and the classic
+menu ("Show more options") is used - it works out of the box and needs no
+package.
+
+For a release that should offer the Windows 11 menu without that step, the
+package has to be signed with a real code signing certificate whose subject
+matches `Identity/@Publisher` in `Package/AppxManifest.xml` and shipped next to
+the binaries.
 
 ### Kept on purpose
 

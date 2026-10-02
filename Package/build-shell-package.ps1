@@ -28,7 +28,7 @@
 #>
 param(
   [string]$InstallDir = 'D:\Program Files\RoxaZip',
-  [string]$Subject = 'CN=7-Zip ZS Sparse Package',
+  [string]$Subject = 'CN=RoxaZip Sparse Package',
   [string]$CertThumbprint,
   [string]$OutDir,
   [switch]$MakeCert,
@@ -145,7 +145,7 @@ else
     Where-Object { $_.Thumbprint -eq $cert.Thumbprint }
   if (-not $trusted)
   {
-    $cer = Join-Path $env:TEMP "7zipzs-sparse-$($cert.Thumbprint).cer"
+    $cer = Join-Path $env:TEMP "roxazip-sparse-$($cert.Thumbprint).cer"
     Export-Certificate -Cert $cert -FilePath $cer -Type CERT | Out-Null
     Import-Certificate -FilePath $cer -CertStoreLocation 'Cert:\CurrentUser\TrustedPeople' | Out-Null
     Remove-Item $cer -Force -ErrorAction SilentlyContinue
@@ -163,7 +163,7 @@ $machineTrusted = Get-ChildItem 'Cert:\LocalMachine\TrustedPeople' -ErrorAction 
 if (-not $machineTrusted)
 {
   Step "Trusting the certificate for the machine (needs administrator rights once)"
-  $cer = Join-Path $env:TEMP "7zipzs-sparse-$($cert.Thumbprint).cer"
+  $cer = Join-Path $env:TEMP "roxazip-sparse-$($cert.Thumbprint).cer"
   Export-Certificate -Cert $cert -FilePath $cer -Type CERT | Out-Null
   $p = Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\certutil.exe') `
     -ArgumentList @('-addstore', '-f', 'TrustedPeople', $cer) `
@@ -177,9 +177,23 @@ if (-not $machineTrusted)
 }
 else { Info "certificate is already trusted for the machine" }
 
+# ------------------------------------------- certificate and manifest match ---
+# Identity/@Publisher in AppxManifest.xml has to be the subject of the signing
+# certificate: a package signed by another certificate is rejected by
+# Add-AppxPackage with a publisher mismatch. Check it here, so the failure names
+# the files instead of showing an HRESULT.
+$manifestPublisher = ([xml](Get-Content (Join-Path $pkgDir 'AppxManifest.xml') -Raw)).Package.Identity.Publisher
+$certCn = ($cert.Subject -split ', *')[0]
+if ($manifestPublisher.Trim() -ine $certCn.Trim())
+{
+  Fail ("publisher mismatch: AppxManifest.xml says '$manifestPublisher', the certificate is '$($cert.Subject)'. " +
+        "Run with -MakeCert to create a matching development certificate, or pass -CertThumbprint of a certificate whose subject is '$manifestPublisher'.")
+}
+Info "publisher   : $manifestPublisher (matches the certificate)"
+
 # ---------------------------------------------------------------- makeappx ---
 Step "Packing the sparse package"
-$stage = Join-Path $env:TEMP "7zipzs-sparse-stage-$([guid]::NewGuid().ToString('N').Substring(0,8))"
+$stage = Join-Path $env:TEMP "roxazip-sparse-stage-$([guid]::NewGuid().ToString('N').Substring(0,8))"
 New-Item -ItemType Directory -Path $stage | Out-Null
 Copy-Item (Join-Path $pkgDir 'AppxManifest.xml') $stage
 Copy-Item $assetsDir (Join-Path $stage 'Assets') -Recurse
@@ -221,6 +235,20 @@ $pkg = Get-AppxPackage -Name $identityName
 if (-not $pkg) { Fail 'registration failed' }
 Info "registered  : $($pkg.PackageFullName)"
 Info "external dir: $InstallDir"
+
+# The options page (Options > RoxaZip) looks for the package next to the
+# binaries, both for a new registration and for removing it again.
+$msixDst = Join-Path $InstallDir (Split-Path $msix -Leaf)
+try
+{
+  Copy-Item $msix $msixDst -Force -ErrorAction Stop
+  Info "copied      : $msixDst"
+}
+catch
+{
+  Info "note        : could not copy the package to $InstallDir (administrator rights?)"
+  Info "              copy $msix there if the options page should find it later"
+}
 
 if ($RestartExplorer)
 {

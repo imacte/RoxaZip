@@ -55,7 +55,8 @@ pwsh -File Package\build-shell-package.ps1 -Uninstall
 ### Signing
 
 The first run creates a self-signed code signing certificate
-(`CN=7-Zip ZS Sparse Package`) and signs the package with it.
+(`CN=RoxaZip Sparse Package`, the same subject as `Identity/@Publisher`) and
+signs the package with it.
 Sideloading checks the root of the signature chain, so the certificate must be
 trusted **machine-wide**; the script does that once with `certutil -addstore -f
 TrustedPeople` (one UAC prompt):
