@@ -92,6 +92,14 @@
 
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
+    <!-- This package is sideloaded and is never uploaded to the Store, so the
+         restricted capability stays: without it, the classic installation would
+         write its settings (HKCU\Software\RoxaZip) into the per-package hive as
+         soon as it runs with this package identity, and a RoxaZip started from a
+         plain shortcut would not see them. The Store package
+         (..\RoxaZipPackage\Package.appxmanifest) had to drop it - certification
+         denied the request on 2026-10-06 (10.6.3 Capabilities); see
+         DOC/StoreSubmission.md. -->
     <rescap:Capability Name="unvirtualizedResources" />
   </Capabilities>
 </Package>

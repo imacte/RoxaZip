@@ -17,10 +17,26 @@
   (-IdentityName / -Publisher / -PublisherDisplayName), and "msstore init" writes
   them into this file as well.
 
-  The package keeps full file system access (unvirtualizedResources,
-  FileSystemWriteVirtualization disabled), so the archive manager behaves like
-  the classic installation. What the package adds is the package identity that
-  makes the Windows 11 context menu and the execution aliases work.
+  The package declares no non-virtualizing capability. The first submission asked
+  for unvirtualizedResources (together with FileSystemWriteVirtualization
+  disabled, which requires it) and certification denied the request on
+  2026-10-06 with policy 10.6.3 Capabilities - "Your request to use
+  unvirtualizedResources has been reviewed and was denied based on the
+  information provided. You may want to remove the restricted capability and
+  resubmit." The capability and the property are therefore gone.
+
+  Nothing in the archive manager needs them. MSIX only virtualizes writes to
+  HKCU\Software and to %USERPROFILE%\AppData (see "Flexible virtualization" in
+  the MSIX documentation). Packing, extracting and editing archives everywhere
+  else - other drives, network shares, removable media, the rest of the user
+  profile - writes the real file system, exactly as the classic installation
+  does. The price for dropping the capability is that the settings under
+  HKCU\Software\RoxaZip live in the per-package per-user hive: they are private
+  to RoxaZip and disappear when the package is uninstalled. The classic
+  installation and the sparse package in ..\Package are not affected.
+
+  What the package adds is the package identity that makes the Windows 11
+  context menu and the execution aliases work.
 -->
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -32,10 +48,9 @@
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
   xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
-  xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
   xmlns:desktop10="http://schemas.microsoft.com/appx/manifest/desktop/windows10/10"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
-  IgnorableNamespaces="uap uap3 uap8 uap10 rescap desktop desktop4 desktop5 desktop6 desktop10 com">
+  IgnorableNamespaces="uap uap3 uap8 uap10 rescap desktop desktop4 desktop5 desktop10 com">
 
   <!-- These are the values Partner Center assigned to this product
        (Product -> Product identity). The Publisher is issued by the Store and
@@ -56,7 +71,10 @@
     <DisplayName>RoxaZip</DisplayName>
     <PublisherDisplayName>imacte</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
-    <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
+    <!-- No desktop6:/virtualization: FileSystemWriteVirtualization or
+         RegistryWriteVirtualization here: both require the unvirtualizedResources
+         restricted capability, which certification denied. See the note at the
+         top of this file. -->
   </Properties>
 
   <Dependencies>
@@ -239,6 +257,10 @@
 
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
-    <rescap:Capability Name="unvirtualizedResources" />
+    <!-- unvirtualizedResources was dropped on 2026-10-06 after certification
+         denied it (10.6.3 Capabilities); the archive manager does not need it.
+         See the note at the top of this file before adding it back: a package
+         that declares it is rejected again unless the Store approves the
+         request in the same submission. -->
   </Capabilities>
 </Package>

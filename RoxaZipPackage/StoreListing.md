@@ -117,7 +117,10 @@ pwsh -File RoxaZipPackage\make-screenshots.ps1 -ExeDir "<installation folder>"
 ## Restricted capabilities (submission options)
 
 Partner Center asks for a separate justification per restricted capability
-("Submission options" -> restricted capabilities). Paste one text per box.
+("Submission options" -> restricted capabilities). The package declares exactly
+one: **`runFullTrust`** (text below). `unvirtualizedResources` was requested in
+the first submission and denied, so it is no longer in the manifest - there is
+only one box to fill now.
 
 ### Why do you need the runFullTrust capability?
 
@@ -133,26 +136,34 @@ runFullTrust (FullTrustApplication entry point) is the supported way to ship suc
 an application in an MSIX package; without it the program cannot start.
 ```
 
-### Why do you need the unvirtualizedResources capability?
+### unvirtualizedResources - no longer requested
 
-```
-RoxaZip works with the files the user chooses, so it has to see and modify the
-real file system instead of a per-package virtual copy:
+The first submission (2026-10-02) also asked for this capability, with
+`desktop6:FileSystemWriteVirtualization` set to `disabled` (that property
+requires it). Certification answered on 2026-10-06 under **10.6.3 Capabilities**:
 
-- it opens, creates and extracts archives in any folder the user selects,
-  including network shares, removable drives and locations outside the user
-  profile, and it preserves file attributes, timestamps, alternate data streams
-  and hard links;
-- the file manager browses all drives, and the command line tool is called by
-  other programs and scripts with absolute paths;
-- the shell extension runs in Explorer's surrogate process, has to resolve paths
-  exactly like Explorer does, and loads its own DLLs from the program directory.
+> Your request to use unvirtualizedResources has been reviewed and was denied
+> based on the information provided. You may want to remove the restricted
+> capability and resubmit.
 
-With virtualized file and registry access the program would write into a private
-package copy instead of the user's files: archives would appear to be created but
-end up in a hidden location, and the integration with Explorer and with other
-tools would break.
-```
+Both the capability and the property were removed from `Package.appxmanifest`
+for the resubmission, so there is nothing to justify here any more. Nothing is
+lost by that: MSIX virtualizes writes only to `HKCU\Software` and to
+`%USERPROFILE%\AppData`. Packing, extracting and editing archives in every other
+location - other drives, network shares, removable media, the rest of the user
+profile - still writes the real file system, exactly like the classic
+installation. What changes is that the settings under `HKCU\Software\RoxaZip`
+now live in the package's private hive: they are invisible to other programs and
+are removed when the package is uninstalled.
+
+Do not add it back without a justification Microsoft accepts. The
+[documentation](https://learn.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-desktop6-filesystemwritevirtualization)
+says the write virtualization property "is currently intended to be used only by
+certain types of desktop PC games that are published by Microsoft and our
+partners", and it needs the same restricted capability. If a later version really
+does need unvirtualized access, name the concrete case in the submission options:
+which process *outside* the package has to see which file or registry entry, and
+what breaks in a package-private hive. "It is an archive manager" was not enough.
 
 ### Certification notes (optional, speeds up the review)
 
