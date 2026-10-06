@@ -124,16 +124,15 @@ only one box to fill now.
 
 ### Why do you need the runFullTrust capability?
 
+Partner Center cuts this box at **500 characters**, and it cuts silently: the
+706-character version used for the first submission lost its closing argument in
+the middle of the sentence. The text below is 479 characters, so paste it as one
+paragraph and check the last word ("start.") is still there. The longer version
+(which also named the codec DLLs and the registry) is in the git history; the
+extra detail did not add anything to the argument.
+
 ```
-RoxaZip is a Win32 desktop archive manager (a fork of 7-Zip and 7-Zip ZS) that is
-packaged as MSIX for the Store. All of its components are classic Win32
-executables and DLLs: the file manager (RoxaZipFM.exe), the command line tool
-(RoxaZip.exe), the progress dialog helper (RoxaZipG.exe) and the Explorer shell
-extension (RoxaZipShell.dll). They use Win32 APIs that an app container does not
-provide - CreateProcess to run the helper, the Explorer context menu interfaces,
-the common dialogs, the registry for settings and the multi-format codec DLLs.
-runFullTrust (FullTrustApplication entry point) is the supported way to ship such
-an application in an MSIX package; without it the program cannot start.
+RoxaZip is a Win32 desktop archive manager (a 7-Zip fork) shipped as MSIX. The file manager, command line tool, GUI helper and Explorer shell extension (RoxaZipShell.dll) are classic Win32 binaries, and the shell extension is a packaged COM server. They need APIs an app container lacks: CreateProcess, the Explorer context menu interfaces, common dialogs and direct file access to user-chosen archives. runFullTrust is the supported entry point; without it the app cannot start.
 ```
 
 ### unvirtualizedResources - no longer requested
