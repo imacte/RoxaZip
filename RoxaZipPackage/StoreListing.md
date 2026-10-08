@@ -230,9 +230,13 @@ MSA that created it; the official description is
 <https://learn.microsoft.com/zh-cn/services-hub/microsoft-engage-center/support/support-requests>).
 Open the case - its title contains the number 2610020010001019 - and reply on the
 **Communication** tab. Replying to the confirmation e-mail does the same thing, as
-long as the subject with the case number is kept. The list only shows requests
-assigned to your workspace, so if the case does not show up (or it was closed),
-create a new one through the same page and paste the follow-up text below.
+long as the subject with the case number is kept.
+
+**Stay on that case; do not open a second one.** A follow-up case
+(2610070010000866, opened 2026-10-08) was answered the same day and closed as a
+duplicate: Microsoft confirmed that 2610020010001019 is open and active, and
+wrote that duplicate requests cause further delays. If the case is not visible in
+the list, check the workspace filter before creating anything new.
 
 Ticket text:
 
