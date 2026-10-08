@@ -191,6 +191,13 @@ that with "the package specifies a headless app; you do not have permission to
 create headless apps - also ensure you have the waiver HeadlessAppBypass
 associated to this app". The waiver is granted per product by the Store team.
 
+This stopped being a nice-to-have: certification of 2026-10-07 passed with the
+required fix **10.1.1.11 On Device Tiles** - "the additional installed components
+that are visible in the Start Menu have a unique name that clearly identifies
+which item is the main product" - and the report shows all three entries with the
+same icon. The waiver plus `-HideHelperApps` is the fix for the next submission;
+the naming fallback is in `DOC/StoreSubmission.md`.
+
 ### How to request it
 
 Ticket **2610020010001019** was submitted on 2026-10-02 through the "Create
@@ -203,13 +210,29 @@ went unanswered for other developers.
 
 The steps below are the ones that worked:
 
-Open a support ticket at
-<https://support.serviceshub.microsoft.com/supportforbusiness/create?sapId=bc9d4067-7218-61b9-1d2c-68ae591acf9d>
-and choose the category **Developer, Student and Startup Programs -> Dev Center
--> Account Management** (recommended by Microsoft support in
+Open <https://developer.microsoft.com/en-us/windows/support> and use **Create
+support case (MSA)** under "Non-technical support (Dev Center programs)" - the
+Entra ID link answers "no access" for an individual developer account. The old
+Services Hub form
+(`support.serviceshub.microsoft.com/supportforbusiness/create?sapId=...`)
+redirects to the same place today: cases are managed in **Engage Center**
+(<https://engagecenter.microsoft.com> -> "Support requests"). Choose the category
+**Developer, Student and Startup Programs -> Dev Center -> Account Management**
+(recommended by Microsoft support in
 [this Q&A](https://learn.microsoft.com/en-ie/answers/questions/2115779/headlessappbypass-waiver)).
 Do not rely on `partnerops@microsoft.com`, and the "Windows Developer Support"
 page does not offer that category - developers got stuck in a loop there.
+
+### How to follow up on the ticket
+
+The case lives in Engage Center under **Support requests** (sign in with the same
+MSA that created it; the official description is
+<https://learn.microsoft.com/zh-cn/services-hub/microsoft-engage-center/support/support-requests>).
+Open the case - its title contains the number 2610020010001019 - and reply on the
+**Communication** tab. Replying to the confirmation e-mail does the same thing, as
+long as the subject with the case number is kept. The list only shows requests
+assigned to your workspace, so if the case does not show up (or it was closed),
+create a new one through the same page and paste the follow-up text below.
 
 Ticket text:
 
@@ -230,6 +253,28 @@ The last two are helper executables without their own user interface: they are
 started by the file manager and by scripts, and listing them in the Start menu
 would be confusing for customers. We therefore mark them with
 AppListEntry="none", which currently blocks the package upload.
+```
+
+Follow-up for the same ticket, sent on 2026-10-07 once the product was live:
+
+```
+Follow-up for product RoxaZip (Store ID 9P836WXHPJGZ).
+
+The product is published (version 26.3.23.0). Certification passed with one
+required fix, policy 10.1.1.11 On Device Tiles: "Your submission installs
+multiple components to the device. Please make sure the additional installed
+components that are visible in the Start Menu have a unique name that clearly
+identifies which item is the main product."
+
+The three visible entries come from the three <Application> elements of the
+package: RoxaZip (the file manager), RoxaZip Console (RoxaZip.exe, needed for the
+7z.exe execution alias) and RoxaZip GUI (RoxaZipG.exe, the progress dialog helper
+that the file manager starts). The two helpers have no user interface of their
+own. Marking them with AppListEntry="none" is the documented way to ship helper
+executables, and the upload is rejected without the HeadlessAppBypass waiver.
+
+Please associate the HeadlessAppBypass waiver with this product so the next
+submission can hide the two helper entries.
 ```
 
 ### After the waiver is granted
