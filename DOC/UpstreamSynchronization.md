@@ -59,3 +59,20 @@ Then check the marked regions, update the table above, and run the build and the
 test suite (`tests/run-options-tests.ps1`, `tests/test-branding-shortcuts.ps1`,
 `tests/smoke-options.ps1`, `tests/test-release-publishing.ps1`,
 `design/icons` -> `npm run check`).
+
+## Language files (payload data, not in the source tree)
+
+`Lang\*.txt` are not part of the upstream source tree or of this repository: the
+reviewed copies live in the 7-Zip repository
+<https://github.com/imacte/7zip> (`Lang\`), and the release builds fetch them
+from there. After an upstream bump, refresh that folder:
+
+```powershell
+pwsh -File .github\scripts\update-upstream-lang.ps1 -Installer 7z2604.exe `
+    -RoxaZip build\bin-x64-ndm\RoxaZip.exe -OutDir <clone-of-imacte/7zip>\Lang
+# then in the clone: git add Lang && git commit && git push
+```
+
+The strings this fork adds stay in this repository
+(`.github/scripts/lang-additions\`) and are merged when the payload is packaged.
+Details: `RoxaZipPackage/README.md`.

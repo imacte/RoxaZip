@@ -176,6 +176,11 @@ jobs:
 
           REM Will be by the do-release action
           copy %WDIR%\.github\workflows\do-release.cmd %WDIR%\build\do-release.cmd
+          REM and the scripts it uses: take the payload language files from the
+          REM 7-Zip repository and merge this fork's own entries into them
+          copy %WDIR%\.github\scripts\fetch-upstream-lang.ps1 %WDIR%\build\fetch-upstream-lang.ps1
+          copy %WDIR%\.github\scripts\apply-lang-additions.ps1 %WDIR%\build\apply-lang-additions.ps1
+          xcopy /E /I /Y %WDIR%\.github\scripts\lang-additions %WDIR%\build\lang-additions > NUL
 
       - name: LZ5 and Lizard frame regression tests
         shell: cmd
@@ -300,6 +305,15 @@ jobs:
         del 7-Zip.exe
         REM the help file is shipped under the RoxaZip name
         if exist 7-zip.chm ren 7-zip.chm RoxaZip.chm
+
+    - name: Fetch the payload language files
+      shell: pwsh
+      run: |
+        # Lang\ is not in the upstream source tree; the reviewed files come from
+        # https://github.com/imacte/7zip. If that fails, the language files of the
+        # unpacked upstream installer stay, so the build is not blocked by it.
+        try { & ./.github/scripts/fetch-upstream-lang.ps1 -OutDir skel/Lang }
+        catch { Write-Warning "keeping the installer language files: $_" }
 
     - name: Build the Store packages
       shell: pwsh

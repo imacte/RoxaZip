@@ -142,19 +142,19 @@ foreach ($name in $binaries)
 }
 Info "binaries   : $copied"
 
+# The language files are upstream 7-Zip files. The CI fetches the reviewed ones
+# from https://github.com/imacte/7zip into the staged payload
+# (.github/scripts/fetch-upstream-lang.ps1) and keeps the installer's copies as a
+# fallback; an installed copy is the last resort for a local build.
 if (Test-Path (Join-Path $SourceDir 'Lang'))
 {
   Copy-Item (Join-Path $SourceDir 'Lang') (Join-Path $stage 'Lang') -Recurse -Force
   Info "Lang       : $((Get-ChildItem (Join-Path $stage 'Lang') -File | Measure-Object).Count) files from the source directory"
 }
-elseif (Test-Path $InstallDir)
+elseif (Test-Path (Join-Path $InstallDir 'Lang'))
 {
-  $lang = Join-Path $InstallDir 'Lang'
-  if (Test-Path $lang)
-  {
-    Copy-Item $lang (Join-Path $stage 'Lang') -Recurse -Force
-    Info "Lang       : $((Get-ChildItem (Join-Path $stage 'Lang') -File | Measure-Object).Count) files"
-  }
+  Copy-Item (Join-Path $InstallDir 'Lang') (Join-Path $stage 'Lang') -Recurse -Force
+  Info "Lang       : $((Get-ChildItem (Join-Path $stage 'Lang') -File | Measure-Object).Count) files from the installation"
 }
 # the extra files come from the staged payload first (CI), then from an installed copy
 foreach ($name in $extras)
@@ -166,6 +166,23 @@ foreach ($name in $extras)
 if (-not (Test-Path (Join-Path $stage 'Lang')) -and -not (Test-Path (Join-Path $stage 'RoxaZip.chm')))
 {
   Info "note       : no Lang/help text files found - pass -SourceDir of a staged payload or -InstallDir"
+}
+
+# The language files are upstream 7-Zip files and cannot contain the strings this
+# fork adds (Help -> Check for updates), so they are merged into the staged copy
+# and the package ships them. See .github/scripts/apply-lang-additions.ps1.
+$langStage = Join-Path $stage 'Lang'
+if (Test-Path $langStage)
+{
+  $applyLang = Join-Path (Split-Path $pkgDir -Parent) '.github\scripts\apply-lang-additions.ps1'
+  if (Test-Path $applyLang)
+  {
+    & $applyLang -LangDir $langStage | ForEach-Object { Info "lang       : $_" }
+  }
+  else
+  {
+    Info "note       : $applyLang not found - the fork's own strings stay English"
+  }
 }
 
 $assets = Join-Path (Split-Path $pkgDir -Parent) 'Package\Assets'

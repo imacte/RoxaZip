@@ -1,0 +1,33 @@
+;!@Lang2@!UTF-8!
+; RoxaZip - this fork's own file manager strings, simplified Chinese.
+;
+; Merged into the shipped Lang\zh-cn.txt by
+; .github/scripts/apply-lang-additions.ps1 (see RoxaZipPackage/README.md).
+; The IDs are the ones from CPP/7zip/UI/FileManager/resource.h and must stay
+; ascending; the file manager reads the menu item by its command ID (962) and
+; the messages by their string ID. Everything that is not translated here falls
+; back to the English string table inside RoxaZipFM.exe.
+;
+; Help -> Check for updates (StoreUpdate.cpp)
+962
+检查更新(&U)...
+3020
+检查更新
+3021
+RoxaZip {0} 已是最新版本。
+3022
+Microsoft Store 上有更新版本的 RoxaZip：{0}
+3023
+已安装版本：{0}
+3024
+现在下载并安装吗？安装更新时 RoxaZip 会关闭。
+3025
+更新未能完成。\n\n{0}
+3026
+RoxaZip {0} 已安装。\n\n现在重新启动 RoxaZip 吗？
+3027
+更新由 Microsoft Store 提供，而这个 RoxaZip 不是从商店安装的。\n\n要打开下载页面吗？
+3028
+Microsoft Store 未能完成更新（状态 {0}）。
+3029
+Microsoft Store 报告了错误（代码 {0}）。

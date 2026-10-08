@@ -26,7 +26,28 @@ del 7-Zip.exe
 REM The help file comes from the upstream skeleton; ship it under the RoxaZip name
 REM (the installer, the uninstaller and the program expect "RoxaZip.chm").
 if exist 7-zip.chm ren 7-zip.chm RoxaZip.chm
+
+REM The payload language files come from the 7-Zip repository (Lang\, upstream
+REM files - the source tree does not contain them) and the entries this fork adds
+REM are merged into them. Without the scripts next to this one, or without a
+REM network, the language files of the skeleton stay and the build keeps working.
+call :fetch_lang
+call :merge_lang_additions
 goto start
+
+@rem Take the language files of the 7-Zip repository into the payload
+:fetch_lang
+if not exist "%~dp0fetch-upstream-lang.ps1" exit /b 0
+pwsh -NoProfile -File "%~dp0fetch-upstream-lang.ps1" -OutDir "%SKEL%\Lang"
+if %errorlevel% NEQ 0 echo WARNING: could not fetch Lang from imacte/7zip - keeping the upstream installer files
+exit /b 0
+
+@rem Merge the strings this fork adds into the payload language files
+:merge_lang_additions
+if not exist "%~dp0apply-lang-additions.ps1" exit /b 0
+pwsh -NoProfile -File "%~dp0apply-lang-additions.ps1" -LangDir "%SKEL%\Lang"
+IF %errorlevel% NEQ 0 EXIT 1
+exit /b 0
 
 @rem Doit function
 :doit
