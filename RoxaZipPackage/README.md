@@ -24,6 +24,68 @@ Do not confuse the three package flavours of this repository:
 * **file associations** from the manifest;
 * updates and uninstall through the Store.
 
+### Updates
+
+The Store updates an installed package on its own (the user setting "Update apps
+automatically" decides when); the program does not have to run for that. On top
+of it the file manager offers **Help -> Check for updates**:
+
+* the Store variant asks the Store for a newer package
+  (`StoreContext.GetAppAndOptionalStorePackageUpdatesAsync`) and lets the Store
+  download and install it (`RequestDownloadAndInstallStorePackageUpdatesAsync`).
+  The Store shows its own consent and progress dialogs; the file manager only
+  disables its window while it waits (`CShellOperationGuard`), then offers to
+  restart;
+* the classic installation has no package identity, so the Store cannot update
+  it: it is offered the download page instead;
+* after a successful update the program is started again through its app user
+  model id (`shell:AppsFolder\<package family name>!RoxaZip.FileManager`),
+  because the folder of the previous package version is gone.
+
+Implementation: `CPP/7zip/UI/FileManager/StoreUpdate.{h,cpp}` (the only file that
+uses the Store API) plus the menu entry and strings in `resource.{h,rc}` and the
+flow in `MyLoadMenu.cpp`. `FMBuild.mak` compiles it with the C++/WinRT flags
+(`-DZ7_ENABLE_STORE_UPDATE`), the same way as `ShellIntegrationModern.cpp`; builds
+without that switch get the stubs and answer "not installed from the Store".
+
+Background:
+<https://learn.microsoft.com/en-us/windows/uwp/packaging/self-install-package-updates>
+
+### Language files: where they come from, and this fork's own strings
+
+The file manager reads its texts from `Lang\<id>.txt` next to the program and
+falls back to the English string table inside `RoxaZipFM.exe`. The upstream 7-Zip
+**source tree does not contain those files** - they ship inside the official
+binary package (`https://www.7-zip.org/a/7z2603.exe`, 93 files under `Lang\`; the
+`-src.7z` package and the git tree contain none of them).
+
+The reviewed copies live in the **7-Zip repository**
+<https://github.com/imacte/7zip> (`Lang\`, unmodified upstream files), and the
+release builds take them from there:
+
+* `.github/scripts/fetch-upstream-lang.ps1` downloads only `Lang\` (partial clone
+  plus sparse checkout) into the staged payload. The store-package job and
+  `do-release.cmd` call it; **if it fails, the language files of the unpacked
+  upstream installer stay**, so a network problem cannot block a release;
+* `.github/scripts/update-upstream-lang.ps1` extracts the files of a new upstream
+  package into a folder - run it against a clone of the 7-Zip repository after an
+  upstream bump, then commit and push there;
+* `.github/scripts/apply-lang-additions.ps1` merges
+  `.github/scripts/lang-additions\<id>.txt` into the payload language files. That
+  is where the strings *this fork* adds live (**Help -> Check for updates**,
+  `zh-cn.txt`); they use the numeric IDs from
+  `CPP/7zip/UI/FileManager/resource.h` (the menu item by its command ID) and are
+  inserted at the position the IDs require, because CLang keeps the IDs of the
+  file ascending. `-Check` only verifies that a language file already carries
+  them. The 7-Zip repository stays a pure upstream copy.
+
+A language is added by dropping another file into the additions folder
+(`zh-tw.txt` for example); languages without a file keep the English text.
+
+Both call sites are wired: `build-store-package.ps1` (the Store package) and
+`.github/workflows/do-release.cmd` (the classic installer payload, whose scripts
+the CI windows job copies next to it).
+
 ### Never installed together with the sparse package
 
 The Store package and the sparse package of `Package/build-shell-package.ps1`

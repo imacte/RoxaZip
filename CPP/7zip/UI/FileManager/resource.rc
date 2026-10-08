@@ -164,6 +164,8 @@ BEGIN
   POPUP "&Help" MY_MENUITEM_ID(IDM_HELP)
   BEGIN
     MENUITEM "&Contents...\tF1",            IDM_HELP_CONTENTS
+    MY_MENUITEM_SEPARATOR
+    MENUITEM "Check for &updates...",       IDM_CHECK_UPDATE
   #endif
     MY_MENUITEM_SEPARATOR
   MENUITEM "&About RoxaZip...",               IDM_ABOUT
@@ -210,6 +212,20 @@ BEGIN
   IDS_SELECT_ONE_FILE      "You must select one file"
   // IDS_SELECT_FILES         "You must select one or more files"
   IDS_TOO_MANY_ITEMS       "Too many items"
+
+  // Help -> Check for updates. The Microsoft Store variant updates itself; the
+  // classic installation has no package identity and is sent to the download
+  // page instead (see StoreUpdate.cpp and DOC/StoreSubmission.md).
+  IDS_UPDATE_TITLE          "Check for updates"
+  IDS_UPDATE_NONE           "RoxaZip {0} is the latest version."
+  IDS_UPDATE_AVAILABLE      "A newer version of RoxaZip is available from the Microsoft Store: {0}"
+  IDS_UPDATE_INSTALLED_INFO "Installed version: {0}"
+  IDS_UPDATE_PROMPT         "Download and install it now? RoxaZip will close while the update is installed."
+  IDS_UPDATE_FAILED         "The update could not be completed.\n\n{0}"
+  IDS_UPDATE_DONE           "RoxaZip {0} was installed.\n\nRestart RoxaZip now?"
+  IDS_UPDATE_NOT_STORE      "Updates are delivered by the Microsoft Store, and this RoxaZip was not installed from the Store.\n\nOpen the download page?"
+  IDS_UPDATE_ERROR_STATE    "The Microsoft Store did not complete the update (state {0})."
+  IDS_UPDATE_FAILED_CODE    "The Microsoft Store reported a failure (code {0})."
 
   IDS_COPY      "Copy"
   IDS_MOVE      "Move"

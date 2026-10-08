@@ -127,6 +127,7 @@
 
 #define IDM_HELP_CONTENTS        960
 #define IDM_ABOUT                961
+#define IDM_CHECK_UPDATE         962
 
 #define IDS_OPTIONS                     2100
 
@@ -141,6 +142,18 @@
 #define IDS_SELECT_ONE_FILE             3014
 #define IDS_SELECT_FILES                3015
 #define IDS_TOO_MANY_ITEMS              3016
+
+// Help -> Check for updates (the Microsoft Store variant updates itself)
+#define IDS_UPDATE_TITLE                3020
+#define IDS_UPDATE_NONE                 3021
+#define IDS_UPDATE_AVAILABLE            3022
+#define IDS_UPDATE_INSTALLED_INFO       3023
+#define IDS_UPDATE_PROMPT               3024
+#define IDS_UPDATE_FAILED               3025
+#define IDS_UPDATE_DONE                 3026
+#define IDS_UPDATE_NOT_STORE            3027
+#define IDS_UPDATE_ERROR_STATE          3028
+#define IDS_UPDATE_FAILED_CODE          3029
 
 #define IDS_COPY                        6000
 #define IDS_MOVE                        6001

@@ -111,11 +111,105 @@ the narrower `<virtualization:ExcludedDirectory>` /
 `<virtualization:ExcludedKey>` syntax, but it requires `unvirtualizedResources`
 as well.
 
+## Certification result of the resubmission (2026-10-07): passed, published
+
+The resubmitted packages (`RoxaZip_26.3.23.0_x64.msix` and `_arm64.msix`, built
+by the `store-package` job from commit `a216670d`, declaring only
+`runFullTrust`) passed certification. Partner Center reports
+**Pass with required fix**, review completed 2026-10-07, and two e-mails arrived:
+"Your submission for the product RoxaZip has passed certification" and "Your
+submission is processed". The product is live:
+<https://apps.microsoft.com/detail/9P836WXHPJGZ>.
+
+### The one required fix: 10.1.1.11 On Device Tiles
+
+> Your submission installs multiple components to the device. Please make sure
+> the additional installed components that are visible in the Start Menu have a
+> unique name that clearly identifies which item is the main product.
+
+The report shows the three Start entries side by side - `RoxaZip`,
+`RoxaZip Console` and `RoxaZip GUI` - with the same icon, which is exactly the
+three `<Application>` elements of the package. Microsoft asks for this in the
+**next** submission ("Please include these changes the next time you submit your
+app"), so the published 26.3.23.0 stays available while it is prepared.
+
+Two ways to fix it, in this order:
+
+1. **Hide the helpers (preferred).** `AppListEntry="none"` on the console and the
+   GUI helper leaves a single Start entry and is the documented fix for helper
+   executables; the package already supports it with
+   `build-store-package.ps1 -HideHelperApps` / `STORE_HIDE_HELPERS: '1'`. It
+   needs the **HeadlessAppBypass** waiver, which is still pending - see the
+   "HeadlessAppBypass waiver" section below for the follow-up text to send.
+2. **If the waiver is refused**, keep the entries but make it obvious which one
+   is the product: give the console and the GUI helper their own icons and names
+   that say they are helpers (for example `RoxaZip Console (helper)` and
+   `RoxaZip GUI (helper)`). This is the fallback, not the plan - it depends on
+   the reviewer, while the waiver removes the entries altogether.
+
+Do not drop the two helper `<Application>` elements to get rid of the tiles: the
+`7z.exe` and `7zG.exe` execution aliases live on them, and the file manager
+cannot declare aliases for other executables.
+
+### The Store build, verified with the Store package (2026-10-07)
+
+The classic installation was removed (its uninstaller, the sideloaded sparse
+package and `HKCU\Software\RoxaZip`), and the published package was installed from
+the Store with `winget install --id 9P836WXHPJGZ --source msstore`:
+
+| Check | Result |
+|---|---|
+| Package | `imacte.RoxaZip_26.3.23.0_x64`, `SignatureKind = Store`, manifest declares only `runFullTrust` |
+| Execution aliases | all six present (`7z.exe`, `7zFM.exe`, `7zG.exe`, `RoxaZip*.exe`) |
+| Codecs | `RoxaZip.exe i` lists zstd, brotli, lz4, lz5, lizard, bzip2, zip and the hash algorithms |
+| Archive round trip | `7z.exe a test.7z -m0=zstd` -> `l` -> `t` -> `x`; SHA-256 of the extracted 2 MB file identical |
+| Extraction target | the files land in the real file system, as expected outside `AppData` |
+| Windows 11 context menu | the cascaded "RoxaZip" submenu appears in the new menu |
+| Start menu | still three entries - the 10.1.1.11 finding above |
+| Settings | the real `HKCU\Software\RoxaZip` stays untouched; the app writes into the package hive (`%LOCALAPPDATA%\Packages\imacte.RoxaZip_dxy69cxvrx1ke\SystemAppData\Helium\User.dat`) |
+
+The Windows 11 context menu and the packaged COM surrogate work without
+`unvirtualizedResources` - that is exactly the integration the old justification
+claimed would break, and it does not.
+
+### In-app updates (Help -> Check for updates)
+
+The Store updates an installed package on its own; the menu entry is for the
+customer who wants to ask. It uses the Store API
+([Download and install package updates from the Store](https://learn.microsoft.com/en-us/windows/uwp/packaging/self-install-package-updates)):
+
+| Case | Behavior |
+|---|---|
+| Store package, newer version published | the newer version is offered, the customer confirms, the Store downloads and installs it with its own dialogs, then RoxaZip offers to restart |
+| Store package, nothing newer | "RoxaZip \<version\> is the latest version." |
+| Classic installation (no package identity) | the Store cannot update it; the download page is offered |
+| Developer-signed test package | the Store has no license for it, so the error path is shown - test the real path with a Store-installed build |
+
+Files: `CPP/7zip/UI/FileManager/StoreUpdate.{h,cpp}` (the only WinRT user besides
+`ShellIntegrationModern.cpp`), the menu entry and the strings in
+`resource.{h,rc}`, the flow in `MyLoadMenu.cpp`, and the compile rule in
+`CPP/7zip/UI/FileManager/FMBuild.mak` (`-DZ7_ENABLE_STORE_UPDATE`, C++/WinRT,
+same flags as the shell integration; other builds get the stubs).
+
+The Chinese texts of the feature are in
+`.github/scripts/lang-additions/zh-cn.txt`; the packaging fetches the payload
+language files from <https://github.com/imacte/7zip> and merges those entries in
+(see `RoxaZipPackage/README.md`, "Language files: where they come from, and this
+fork's own strings").
+
+To verify after the next submission: keep the **older** Store version on a test
+machine, publish the newer one, then Help -> Check for updates. The query alone
+can be checked right away with the current Store build - it answers "latest
+version" while nothing newer is published.
+
 ## Update checklist
 
-1. If the HeadlessAppBypass waiver arrived, set `STORE_HIDE_HELPERS: '1'` in the
+1. The next submission has to clear **10.1.1.11 On Device Tiles**. Once the
+   HeadlessAppBypass waiver arrived, set `STORE_HIDE_HELPERS: '1'` in the
    `store-package` job of `.github/workflows/build.yml` and push. The job log then
-   prints `hide helper apps: True`.
+   prints `hide helper apps: True`, and the two helper applications carry
+   `AppListEntry="none"`. Without the waiver, use the naming fallback from the
+   section above instead.
 2. Wait for the workflow, open the run, download the **`RoxaZip Store package`**
    artifact and unpack it (both architectures).
 3. Partner Center -> RoxaZip -> **new submission**.
@@ -169,3 +263,4 @@ Once it is granted, `-HideHelperApps` leaves only `RoxaZip`.
 | uploading a package whose version is not higher than the published one | reusing `26.3.0.0` for an update | the version comes from the CI run number |
 | "10.6.3 Capabilities - your request to use unvirtualizedResources has been reviewed and was denied" | the manifest declared the `unvirtualizedResources` restricted capability (with `desktop6:FileSystemWriteVirtualization`) and Microsoft did not approve it for a file manager | remove the capability and the property from `RoxaZipPackage/Package.appxmanifest` and resubmit (see "Certification result" above) |
 | a restricted capability justification that stops in the middle of a sentence ("...the common dialogs, the re") | the "Submission options" justification boxes hold **500 characters** and cut off the rest without a warning; the text from `StoreListing.md` was 706 characters | use the 479-character `runFullTrust` text from `StoreListing.md` and check that it ends with "cannot start." |
+| "10.1.1.11 On Device Tiles - your submission installs multiple components to the device ... additional installed components that are visible in the Start Menu have a unique name that clearly identifies which item is the main product" (Pass with required fix, 2026-10-07) | the package declares three `<Application>` elements, so the Start menu shows `RoxaZip`, `RoxaZip Console` and `RoxaZip GUI` with the same icon | hide the two helpers with `-HideHelperApps` once the HeadlessAppBypass waiver is granted, or give them their own names and icons; include it in the next submission (see "Certification result of the resubmission") |

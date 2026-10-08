@@ -14,13 +14,18 @@
 #include "AboutDialog.h"
 #include "App.h"
 #include "BrowseDialog2.h"
+#include "FormatUtils.h"
 #include "HelpUtils.h"
 #include "LangUtils.h"
 #include "MyLoadMenu.h"
 #include "RegistryUtils.h"
+#include "ShellOperationWait.h"
+#include "StoreUpdate.h"
 
 #include "PropertyNameRes.h"
 #include "resource.h"
+
+#include <shellapi.h>
 
 using namespace NWindows;
 
@@ -808,6 +813,96 @@ static void MyBenchmark(bool totalMode)
   Benchmark(totalMode);
 }
 
+/*
+  Help -> Check for updates.
+
+  The Microsoft Store variant (the MSIX package in RoxaZipPackage\) asks the
+  Store for a newer package and lets the Store download and install it; the
+  Store shows its own consent and progress dialogs, the file manager only
+  disables its window while it waits. The classic installation has no package
+  identity, so the Store cannot update it and the download page is offered
+  instead.
+*/
+static void CheckForUpdates(HWND hWnd)
+{
+  const UString title = LangString(IDS_UPDATE_TITLE);
+
+  if (!NStoreUpdate::Is_Supported())
+  {
+    if (::MessageBoxW(hWnd, LangString(IDS_UPDATE_NOT_STORE), title,
+        MB_ICONINFORMATION | MB_YESNO) == IDYES)
+    {
+      HINSTANCE r = ::ShellExecuteW(hWnd, L"open", NStoreUpdate::k_DownloadPage,
+          NULL, NULL, SW_SHOWNORMAL);
+      UNUSED_VAR(r)
+    }
+    return;
+  }
+
+  NStoreUpdate::CResult result;
+  HRESULT hr;
+  {
+    // the window stays visible but cannot be used while the Store is asked
+    CShellOperationGuard guard(hWnd);
+    hr = NStoreUpdate::Get_Available_Updates(result);
+  }
+
+  const UString installed = NStoreUpdate::Get_Installed_Version();
+
+  if (FAILED(hr))
+  {
+    const UString message = result.Error.IsEmpty() ?
+        MyFormatNew(IDS_UPDATE_FAILED_CODE, NumberToString((UInt64)(unsigned)hr)) :
+        MyFormatNew(IDS_UPDATE_FAILED, result.Error);
+    ::MessageBoxW(hWnd, message, title, MB_ICONERROR | MB_OK);
+    return;
+  }
+
+  if (!result.HasUpdate)
+  {
+    ::MessageBoxW(hWnd, MyFormatNew(IDS_UPDATE_NONE, installed), title,
+        MB_ICONINFORMATION | MB_OK);
+    return;
+  }
+
+  UString question = MyFormatNew(IDS_UPDATE_AVAILABLE, result.Version);
+  question.Add_LF();
+  question += MyFormatNew(IDS_UPDATE_INSTALLED_INFO, installed);
+  question.Add_LF();
+  question.Add_LF();
+  question += LangString(IDS_UPDATE_PROMPT);
+
+  if (::MessageBoxW(hWnd, question, title, MB_ICONQUESTION | MB_YESNO) != IDYES)
+    return;
+
+  {
+    CShellOperationGuard guard(hWnd);
+    hr = NStoreUpdate::Download_And_Install(result);
+  }
+
+  if (FAILED(hr) || !result.Installed)
+  {
+    UString message;
+    if (!result.Error.IsEmpty())
+      message = MyFormatNew(IDS_UPDATE_FAILED, result.Error);
+    else if (FAILED(hr))
+      message = MyFormatNew(IDS_UPDATE_FAILED_CODE, NumberToString((UInt64)(unsigned)hr));
+    else
+      message = MyFormatNew(IDS_UPDATE_ERROR_STATE, NumberToString(result.State));
+    ::MessageBoxW(hWnd, message, title, MB_ICONERROR | MB_OK);
+    return;
+  }
+
+  /* The update is installed; the running process still uses the old package
+     files, so it has to be started again. */
+  if (::MessageBoxW(hWnd, MyFormatNew(IDS_UPDATE_DONE, result.Version), title,
+      MB_ICONINFORMATION | MB_YESNO) == IDYES)
+  {
+    if (NStoreUpdate::Restart())
+      ::PostMessage(hWnd, WM_CLOSE, 0, 0);
+  }
+}
+
 bool OnMenuCommand(HWND hWnd, unsigned id)
 {
   if (ExecuteFileCommand(id))
@@ -933,6 +1028,9 @@ bool OnMenuCommand(HWND hWnd, unsigned id)
       dialog.Create(hWnd);
       break;
     }
+    case IDM_CHECK_UPDATE:
+      CheckForUpdates(hWnd);
+      break;
 
     case IDM_TEMP_DIR:
     {

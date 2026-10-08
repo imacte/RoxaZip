@@ -57,5 +57,9 @@ FM_WINRT_STANDARD = -std:c++20
 # WinRT uses its own language standard, so it cannot share the program's PCH.
 $O\ShellIntegrationModern.obj: ../../UI/FileManager/ShellIntegrationModern.cpp ../../UI/FileManager/ShellIntegrationModern.h ../../UI/FileManager/ShellOperationWait.h
 	$(CC) $(CFLAGS_O1) -DZ7_ENABLE_MODERN_SHELL_INTEGRATION $(FM_WINRT_STANDARD) -W3 -EHsc -I"$(CPPWINRT_INCLUDE)" ../../UI/FileManager/ShellIntegrationModern.cpp
+
+# In-app updates through the Microsoft Store (Help -> Check for updates).
+$O\StoreUpdate.obj: ../../UI/FileManager/StoreUpdate.cpp ../../UI/FileManager/StoreUpdate.h ../../UI/FileManager/ShellIntegrationModern.h ../../UI/FileManager/ShellOperationWait.h
+	$(CC) $(CFLAGS_O1) -DZ7_ENABLE_STORE_UPDATE $(FM_WINRT_STANDARD) -W3 -EHsc -I"$(CPPWINRT_INCLUDE)" ../../UI/FileManager/StoreUpdate.cpp
 !ENDIF
 !ENDIF
