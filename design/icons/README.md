@@ -8,9 +8,9 @@ formats. Format names in preview sheets are captions outside the artwork. Backgr
 are transparent. The book geometry is drawn in `stacked-books.mjs`; no downloaded
 WinRAR artwork is embedded. The monochrome
 toolbar is unchanged.
-The pipeline covers all 61 application-owned image resources:
+The pipeline covers all 108 application-owned image resources:
 34 archive ICOs, 9 application/installer/SFX ICOs, 14 toolbar BMPs, one shell menu
-BMP and three package PNGs. The third-party DarkMode demo icon and Windows-owned
+BMP and 50 package PNGs. The third-party DarkMode demo icon and Windows-owned
 folder/drive/file icons are outside this set.
 
 See [design overview](preview-books.png), [light preview](preview-light.png), [dark preview](preview-dark.png), and
@@ -78,6 +78,15 @@ premultiplied BGRA, are loaded as DIB sections, and are tinted to the current
 system/dark-mode text color before insertion into the image list. The menu BMP
 also uses premultiplied alpha. Package assets are checked in and the packaging
 script reports missing assets instead of silently drawing the previous logo.
+
+`Square44x44Logo` includes 14 target sizes (16, 20, 24, 30, 32, 36, 40, 48,
+60, 64, 72, 80, 96 and 256px), each with default, `altform-unplated` and
+`altform-lightunplated` PNGs. Both theme variants use the transparent artwork.
+The Store and sparse package scripts generate `resources.pri` with the Windows
+SDK's MakePRI before packing. Both the variants and the index are needed to
+avoid a system-color backplate on taskbar and context-menu icons. The manifest
+continues to reference `Assets\Square44x44Logo.png` with a transparent background.
+See [Microsoft's icon guidance](https://learn.microsoft.com/en-us/windows/apps/design/iconography/app-icon-construction).
 
 The NMAKE resource rule tracks image changes for incremental rebuilds. Normal
 native builds consume the committed ICO/BMP/PNG files and do not need Node.

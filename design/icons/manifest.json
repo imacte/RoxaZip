@@ -710,6 +710,174 @@
     {
       "target": "Package/Assets/LargeTile.png",
       "size": 310
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-16.png",
+      "size": 16
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-16_altform-unplated.png",
+      "size": 16
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-16_altform-lightunplated.png",
+      "size": 16
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-20.png",
+      "size": 20
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-20_altform-unplated.png",
+      "size": 20
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-20_altform-lightunplated.png",
+      "size": 20
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-24.png",
+      "size": 24
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-24_altform-unplated.png",
+      "size": 24
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-24_altform-lightunplated.png",
+      "size": 24
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-30.png",
+      "size": 30
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-30_altform-unplated.png",
+      "size": 30
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-30_altform-lightunplated.png",
+      "size": 30
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-32.png",
+      "size": 32
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-32_altform-unplated.png",
+      "size": 32
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-32_altform-lightunplated.png",
+      "size": 32
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-36.png",
+      "size": 36
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-36_altform-unplated.png",
+      "size": 36
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-36_altform-lightunplated.png",
+      "size": 36
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-40.png",
+      "size": 40
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-40_altform-unplated.png",
+      "size": 40
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-40_altform-lightunplated.png",
+      "size": 40
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-48.png",
+      "size": 48
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-48_altform-unplated.png",
+      "size": 48
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-48_altform-lightunplated.png",
+      "size": 48
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-60.png",
+      "size": 60
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-60_altform-unplated.png",
+      "size": 60
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-60_altform-lightunplated.png",
+      "size": 60
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-64.png",
+      "size": 64
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-64_altform-unplated.png",
+      "size": 64
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-64_altform-lightunplated.png",
+      "size": 64
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-72.png",
+      "size": 72
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-72_altform-unplated.png",
+      "size": 72
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-72_altform-lightunplated.png",
+      "size": 72
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-80.png",
+      "size": 80
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-80_altform-unplated.png",
+      "size": 80
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-80_altform-lightunplated.png",
+      "size": 80
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-96.png",
+      "size": 96
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-96_altform-unplated.png",
+      "size": 96
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-96_altform-lightunplated.png",
+      "size": 96
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-256.png",
+      "size": 256
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-256_altform-unplated.png",
+      "size": 256
+    },
+    {
+      "target": "Package/Assets/Square44x44Logo.targetsize-256_altform-lightunplated.png",
+      "size": 256
     }
   ],
   "packageWide": [

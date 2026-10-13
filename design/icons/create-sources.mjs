@@ -80,6 +80,12 @@ for(const [name,geometry] of Object.entries(tools)) {
   manifest.toolbars.push({name,source,targets:[{path:`CPP/7zip/UI/FileManager/${name}.bmp`,width:48,height:36,glyphSize:28},{path:`CPP/7zip/UI/FileManager/${name}2.bmp`,width:24,height:24,glyphSize:22}]});
 }
 for(const [name,size] of [['StoreLogo',50],['StoreLogo300x300',300],['Square44x44Logo',44],['Square71x71Logo',71],['Square150x150Logo',150],['Square310x310Logo',310],['LargeTile',310]]) manifest.package.push({target:`Package/Assets/${name}.png`,size});
+// Shell target sizes: default plus unplated variants for both system themes.
+for(const size of [16,20,24,30,32,36,40,48,60,64,72,80,96,256]) {
+  for(const suffix of ['', '_altform-unplated', '_altform-lightunplated']) {
+    manifest.package.push({target:`Package/Assets/Square44x44Logo.targetsize-${size}${suffix}.png`,size});
+  }
+}
 /* Wide tile: the square application icon centred on a 310x150 canvas. */
 manifest.packageWide=[{target:'Package/Assets/Wide310x150Logo.png',width:310,height:150,iconSize:150}];
 manifest.menu={target:'CPP/7zip/UI/Explorer/MenuLogo.bmp',size:16};

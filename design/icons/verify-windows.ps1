@@ -118,12 +118,35 @@ foreach ($icon in $icons) {
 $bmps = @($manifest.toolbars | ForEach-Object { $_.targets })
 foreach ($bmp in $bmps) { [IconResourceCheck]::Bitmap((Join-Path $root $bmp.path),$bmp.width,$bmp.height,$true) }
 [IconResourceCheck]::Bitmap((Join-Path $root $manifest.menu.target),$manifest.menu.size,$manifest.menu.size,$false)
-$mapped = @($icons) + @($bmps | ForEach-Object { $_.path }) + @($manifest.package | ForEach-Object { $_.target }) + @($manifest.menu.target) + @($manifest.excluded)
+Add-Type -AssemblyName System.Drawing
+$packageImages = @($manifest.package) + @($manifest.packageWide)
+foreach ($entry in $packageImages) {
+  $png = [System.Drawing.Bitmap]::new((Join-Path $root $entry.target))
+  try {
+    $width = if ($entry.size) { $entry.size } else { $entry.width }
+    $height = if ($entry.size) { $entry.size } else { $entry.height }
+    if ($png.Width -ne $width -or $png.Height -ne $height) { throw "Wrong PNG dimensions: $($entry.target)" }
+    $transparent = $false
+    $visible = $false
+    for ($y = 0; $y -lt $height; $y++) {
+      for ($x = 0; $x -lt $width; $x++) {
+        $alpha = $png.GetPixel($x, $y).A
+        $transparent = $transparent -or $alpha -eq 0
+        $visible = $visible -or $alpha -ge 128
+      }
+    }
+    if (-not $transparent -or -not $visible) { throw "Missing PNG alpha coverage: $($entry.target)" }
+  } finally { $png.Dispose() }
+}
+$mapped = @($icons) + @($bmps | ForEach-Object { $_.path }) + @($packageImages | ForEach-Object { $_.target }) + @($manifest.menu.target) + @($manifest.excluded)
 $tracked = & git -C $root ls-files '*.ico' '*.bmp' '*.png' '*.svg'
 foreach ($file in $tracked) {
+  # Store listing screenshots are documentation, not application resources.
+  if ($file -like 'RoxaZipPackage/Screenshots/*') { continue }
   if ($file -notlike 'design/icons/*' -and $file -notin $mapped) { throw "Uncovered image resource: $file" }
 }
 Write-Output "PASS: $count native ICO size loads, 15 alpha BMPs, ImageList insertion and complete tracked-resource coverage."
+Write-Output "PASS: $($packageImages.Count) package PNG dimensions and transparency."
 if ($FileManager) {
   $mapping = [IconResourceCheck]::Mapping((Resolve-Path $FileManager).Path, [int[]](@(1,100) + @(201..234)))
   for ($i=0; $i -lt $manifest.formats.Count; $i++) {

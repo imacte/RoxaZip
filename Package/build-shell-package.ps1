@@ -94,8 +94,10 @@ Info "RoxaZipFM.exe    : $((Get-Item $exe).Length) bytes"
 
 $makeappx = Get-SdkTool 'makeappx.exe'
 $signtool = Get-SdkTool 'signtool.exe'
+$makepri = Get-SdkTool 'makepri.exe'
 if (-not $makeappx) { Fail 'makeappx.exe not found (install the Windows SDK)' }
 if (-not $signtool) { Fail 'signtool.exe not found (install the Windows SDK)' }
+if (-not $makepri) { Fail 'makepri.exe not found (install the Windows SDK)' }
 Info "makeappx    : $makeappx"
 
 # ------------------------------------------------------------------- assets ---
@@ -197,6 +199,18 @@ $stage = Join-Path $env:TEMP "roxazip-sparse-stage-$([guid]::NewGuid().ToString(
 New-Item -ItemType Directory -Path $stage | Out-Null
 Copy-Item (Join-Path $pkgDir 'AppxManifest.xml') $stage
 Copy-Item $assetsDir (Join-Path $stage 'Assets') -Recurse
+
+# Qualified icon filenames need a PRI so the Shell can select unplated variants.
+$priConfig = Join-Path $stage 'priconfig.xml'
+& $makepri createconfig /cf $priConfig /dq en-US /o | Out-Null
+if ($LASTEXITCODE -ne 0) { Fail "makepri createconfig failed ($LASTEXITCODE)" }
+# Keep all scales/languages in this package instead of separate resource packs.
+$priXml = [xml](Get-Content -LiteralPath $priConfig -Raw)
+foreach ($node in @($priXml.SelectNodes('/resources/packaging'))) { [void]$node.ParentNode.RemoveChild($node) }
+$priXml.Save($priConfig)
+& $makepri new /pr $stage /cf $priConfig /of (Join-Path $stage 'resources.pri') /o | Out-Null
+if ($LASTEXITCODE -ne 0) { Fail "makepri new failed ($LASTEXITCODE)" }
+Remove-Item -LiteralPath $priConfig -Force
 
 if (-not $OutDir) { $OutDir = Join-Path $pkgDir 'Output' }
 if (-not (Test-Path $OutDir)) { New-Item -ItemType Directory -Path $OutDir | Out-Null }

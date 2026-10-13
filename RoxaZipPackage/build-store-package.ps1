@@ -228,6 +228,21 @@ if ($xml.Package.Identity.Publisher -like '*PLACEHOLDER*' -and -not $Sign)
   Info "note       : placeholder publisher - pass -Publisher (Partner Center) before uploading"
 }
 
+# Qualified icon filenames need a PRI so the Shell can select unplated variants.
+Step "Indexing package resources"
+$makepri = Get-SdkTool 'makepri.exe'
+if (-not $makepri) { Fail 'makepri.exe not found (install the Windows SDK)' }
+$priConfig = Join-Path $stage 'priconfig.xml'
+& $makepri createconfig /cf $priConfig /dq en-US /o | Out-Null
+if ($LASTEXITCODE -ne 0) { Fail "makepri createconfig failed ($LASTEXITCODE)" }
+# Keep all scales/languages in this package instead of separate resource packs.
+$priXml = [xml](Get-Content -LiteralPath $priConfig -Raw)
+foreach ($node in @($priXml.SelectNodes('/resources/packaging'))) { [void]$node.ParentNode.RemoveChild($node) }
+$priXml.Save($priConfig)
+& $makepri new /pr $stage /cf $priConfig /of (Join-Path $stage 'resources.pri') /o | Out-Null
+if ($LASTEXITCODE -ne 0) { Fail "makepri new failed ($LASTEXITCODE)" }
+Remove-Item -LiteralPath $priConfig -Force
+
 # ------------------------------------------------------------------- pack -----
 Step "Packing"
 $makeappx = Get-SdkTool 'makeappx.exe'
