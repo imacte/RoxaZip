@@ -1413,7 +1413,7 @@ UInt64 CHandler::GetPackSize(unsigned refIndex) const
   }
 }
 
-static char *PrintDictSize(char *s, UInt64 w)
+static char *PrintDictSize(char *s Z7_lifetimebound, UInt64 w)
 {
   char                               c = 'K'; w >>= 10;
   if ((w & ((1 << 10) - 1)) == 0)  { c = 'M'; w >>= 10;
@@ -3056,9 +3056,10 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       totalUnpacked += curUnpackSize,
       totalPacked += curPackSize)
   {
-    lps->InSize = totalPacked;
-    lps->OutSize = totalUnpacked;
-    RINOK(lps->SetCur())
+    CLocalProgress *lps2 = lps.ClsPtr();
+    lps2->InSize = totalPacked;
+    lps2->OutSize = totalUnpacked;
+    RINOK(lps2->SetCur())
     {
       const unsigned num = _refs.Size();
       if (i >= num)

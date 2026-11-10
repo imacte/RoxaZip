@@ -10,20 +10,20 @@ if {[namespace which -command "::7z"] eq ""} {
 
 test main--usage {7z version, usage} {
 	7z
-	assertLogged {^\s*RoxaZip \d+.\d+} {<Commands>} {<Switches>}
+	assertLogged {^\s*RoxaZip (?:\(\w+\) )?\d+\.\d+} {<Commands>} {<Switches>}
 	set _ OK
 } OK
 
 test main--formats {7z version, formats} {
 	7z i
-	assertLogged {^\s*RoxaZip \d+.\d+} {\szstd\s+zst zstd tzst} {\sbrotli\s+br brotli tbr}
+	assertLogged {^\s*RoxaZip (?:\(\w+\) )?\d+\.\d+} {\szstd\s+zst zstd tzst} {\sbrotli\s+br brotli tbr}
 	assertLogged \
-		{\n\s*0\s+ED\s+4F71102 BROTLI\s} \
-		{\n\s*0\s+ED\s+4F71104 LZ4\s} \
-		{\n\s*0\s+ED\s+4F71106 LIZARD\s} \
-		{\n\s*0\s+ED\s+4F71105 LZ5\s} \
-		{\n\s*0\s+ED\s+4F71101 ZSTD\s} \
-		{\n\s*0\s+ED\s+21 FLZMA2\s}
+		{\n\s*(?:0\s+)?ED\s+4F71102 BROTLI\s} \
+		{\n\s*(?:0\s+)?ED\s+4F71104 LZ4\s} \
+		{\n\s*(?:0\s+)?ED\s+4F71106 LIZARD\s} \
+		{\n\s*(?:0\s+)?ED\s+4F71105 LZ5\s} \
+		{\n\s*(?:0\s+)?ED\s+4F71101 ZSTD\s} \
+		{\n\s*(?:0\s+)?ED\s+21 FLZMA2\s}
 
 	set _ OK
 } OK
@@ -33,7 +33,7 @@ test main--e-inv-cmd {error, unsupported command} -body {
 } -returnCodes error -match glob -result "*Command Line Error:\nUnsupported command:\ninv*"
 
 test main--e-inv-arg {error, unknown switch} -body {
-	7z a -tzstd --xxx-unknown-arg -mx3 -si -so << "Dummy stdin" .
+	7z a -tzstd --xxx-unknown-arg -mx3 -si -so . << "Dummy stdin"
 } -returnCodes error -match glob -result "*Command Line Error:\nUnknown switch:\n--xxx-unknown-arg*"
 
 foreach t {{-t7z -m0=zstd:x1} {-tzstd -mx1} {-tzip -mx1}} {
@@ -83,9 +83,10 @@ test main--pipe-a-to-e {7z simple compression / decompression via std-pipes} {
 	variable Z7_PATH
 	foreach t {zstd brotli bzip2 xz gzip lz4 lz5} {
 		if {[catch {
-			7z a -t$t -mx3 -si -so << "$t: This is a test string passed to stdin" . | $Z7_PATH e -t$t -si -so
+			tcltest::DebugDo 1 { catch { puts \t----debug--$t--:\n[7z a -t$t -mx3 -si -so . << "$t: This is a test string passed to stdin" | xxd -p]\n\t---/debug---- } }
+			7z a -t$t -mx3 -si -so . << "$t: This is a test string passed to stdin" | $Z7_PATH e -t$t -si -so
 		} res]} {
-			error "Test of -t$t failed: $res"
+			return -code error "Test of -t$t failed: $res"
 		}
 		assertLogged "^$t: This is a test string passed to stdin$"
 	}
@@ -96,9 +97,10 @@ test main--pipe-a-to-e-mx0 {7z simple compression / decompression via std-pipes,
 	variable Z7_PATH
 	foreach t {zstd brotli bzip2 xz gzip lz4 lz5 lizard} {
 		if {[catch {
-			7z a -t$t -mx0 -si -so << "$t: This is a test string passed to stdin" . | $Z7_PATH e -t$t -si -so
+			tcltest::DebugDo 1 { catch { puts \t----debug--$t--:\n[7z a -t$t -mx0 -si -so . << "$t: This is a test string passed to stdin" | xxd -p]\n\t---/debug---- } }
+			7z a -t$t -mx0 -si -so . << "$t: This is a test string passed to stdin" | $Z7_PATH e -t$t -si -so
 		} res]} {
-			error "Test of -t$t failed: $res"
+			return -code error "Test of -t$t failed: $res"
 		}
 		assertLogged "^$t: This is a test string passed to stdin$"
 	}
@@ -125,10 +127,10 @@ test main--compress-mx0 {7z simple compression / decompression, level 0} -setup 
 			set v2 [7z e -so -- $arcpath]
 			#puts $v2
 			if {$v2 ne $v} {
-				error "retrieved $v2 instead of original"
+				return -code error "retrieved $v2 instead of original"
 			}
 		} res]} {
-			error "Test of -t$t failed: $res"
+			return -code error "Test of -t$t failed: $res"
 		}
 	}
 	set _ OK
@@ -145,8 +147,9 @@ foreach {t m} {zip {zstd Deflate} 7z {zstd brotli lz4 lz5 lizard}} {
 			file mkdir $tmpdir
 		} -body {
 			set arcpath [file join $tmpdir test.$m.[expr {$t eq "zip" ? "zip" : "7z"}]]
-			# compress:
-			7z a -t$t -m0=$m:x0 -- $arcpath [file join $BASEPATH C *z*]
+			# Bound parallelism: ZIP/Zstd can exhaust a 32-bit address space on
+			# high-core-count hosts. Thread options are tested separately below.
+			7z a -t$t -mmt=2 -m0=$m:x0 -- $arcpath [file join $BASEPATH C *z*]
 			assertLogged {\nCreating archive} \
 				{\nAdd new data to archive: \d+ folders, \d{2,} files, \d{7,} bytes} \
 				{\nEverything is Ok}
@@ -170,9 +173,9 @@ test main--mmt-option {7z force multi-threaded & single-threaded compression / d
 	foreach mt {=on =off =1 =2 d2 d-2 p25u1 p1+1} {
 		foreach t {zstd brotli bzip2} {
 			if {[catch {
-				7z a -t$t -mmt$mt -mx3 -si -so << "$t,mt$mt This is a test string passed to stdin" . | $Z7_PATH e -t$t -mmt$mt -si -so
+				7z a -t$t -mmt$mt -mx3 -si -so . << "$t,mt$mt This is a test string passed to stdin" | $Z7_PATH e -t$t -mmt$mt -si -so
 			} res]} {
-				error "Test of -t$t -mmt$mt failed: $res"
+				return -code error "Test of -t$t -mmt$mt failed: $res"
 			}
 			assertLogged "^$t,mt[string map {+ \\+} $mt] This is a test string passed to stdin$"
 		}
@@ -201,10 +204,10 @@ test main--encrypt-decrypt {7z encryption, decription} -setup {
 			set v2 [7z e -so -p$Z7_PWD -- $arcpath]
 			#puts $v2
 			if {$v2 ne $v} {
-				error "retrieved $v2 instead of original"
+				return -code error "retrieved $v2 instead of original"
 			}
 		} res]} {
-			error "Test of -m0=$m on \"$v\" failed: $res"
+			return -code error "Test of -m0=$m on \"$v\" failed: $res"
 		}
   }
   set _ OK
@@ -301,13 +304,13 @@ test main--decompress-currupt-archive {7z simple compression / decompression, de
 				set f [open $arcpath "r+b"]; chan seek $f -5 end; chan truncate $f; close $f
 				# test (shall fail):
 				if {![catch { 7z t {*}$m -- $arcpath } res]} {
-					error "test doesn't fail: $res"
+					return -code error "test doesn't fail: $res"
 				}
 				assertNotLogged {(?n)^Everything is Ok}
 				assertLogged {(?n)^(?:ERROR: )?Unexpected end of (?:archive|data)}
 				# decompress (shall fail):
 				if {![catch { 7z e {*}$m -so -- $arcpath > [expr {$::tcl_platform(platform) eq "unix" ? "/dev/null" : {\\.\NUL}}] } res]} {
-					error "decompress doesn't fail: $res"
+					return -code error "decompress doesn't fail: $res"
 				}
 				assertLogged {(?n)^(?:ERROR: )?Unexpected end of (?:archive|data)}
 
@@ -315,17 +318,17 @@ test main--decompress-currupt-archive {7z simple compression / decompression, de
 				set f [open $arcpath "ab"]; ::puts -nonewline $f 12345; close $f
 				# test (shall fail):
 				if {![catch { 7z t {*}$m -- $arcpath } res]} {
-					error "test doesn't fail: $res"
+					return -code error "test doesn't fail: $res"
 				}
 				assertNotLogged {(?n)^Everything is Ok}
 				assertLogged {(?n)^(?:(?:Open )?ERROR: )?(?:Cannot open the file as \[\w+\] archive|Data Error|Unexpected end of (?:archive|data))}
 				# decompress (shall fail):
 				if {![catch { 7z e {*}$m -so -- $arcpath > [expr {$::tcl_platform(platform) eq "unix" ? "/dev/null" : {\\.\NUL}}] } res]} {
-					error "decompress doesn't fail: $res"
+					return -code error "decompress doesn't fail: $res"
 				}
 				assertLogged {(?n)^(?:(?:Open )?ERROR: )?(?:Cannot open the file as \[\w+\] archive|Data Error|Unexpected end of (?:archive|data))}
 			} res]} {
-				error "Test of -t$t failed: $res"
+				return -code error "Test of -t$t failed: $res"
 			}
 		}
 	}

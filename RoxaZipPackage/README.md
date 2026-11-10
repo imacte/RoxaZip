@@ -56,7 +56,8 @@ Background:
 The file manager reads its texts from `Lang\<id>.txt` next to the program and
 falls back to the English string table inside `RoxaZipFM.exe`. The upstream 7-Zip
 **source tree does not contain those files** - they ship inside the official
-binary package (`https://www.7-zip.org/a/7z2603.exe`, 93 files under `Lang\`; the
+binary package (`https://github.com/ip7z/7zip/releases/download/26.06/7z2606.exe`,
+93 files under `Lang\`; the
 `-src.7z` package and the git tree contain none of them).
 
 The reviewed copies live in the **7-Zip repository**
@@ -140,7 +141,7 @@ GitHub release, because an unsigned `.msix` cannot be installed by users.
 `RoxaZip.chm` and the text files (a staged payload, as in CI), they are taken
 from there; otherwise they come from `-InstallDir`. `-IdentityName`,
 `-Publisher`, `-PublisherDisplayName` and `-Version` override the manifest when
-needed (`-Version` accepts `26.03` and `26.3.0.0`).
+needed (`-Version` accepts `26.06` and `26.6.0.0`).
 
 `-HideHelperApps` marks the console and the GUI helper with
 `AppListEntry="none"` so that only "RoxaZip" appears in the Start menu. It uses

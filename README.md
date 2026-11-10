@@ -48,7 +48,7 @@ All methods, their levels, the encryption modes, hashing and sample `RoxaZip i` 
 
 ## What you get
 
-- **Codecs**: Zstandard 1.5.7, Brotli 1.2.0, LZ4 1.10.0, LZ5 1.5, Lizard 2.1 and
+- **Codecs**: Zstandard 1.5.7, Brotli 1.2.1, LZ4 1.10.0, LZ5 1.5, Lizard 2.1 and
   Fast LZMA2 1.0.1 - usable inside `.7z` archives and for `.zst`, `.br`, `.lz4`, `.lz5`
   and `.liz` files.
 - **Hashers**: CRC32/64, MD2/4/5, SHA1/256/384/512, SHA3-256/384/512, XXH32/64,

@@ -18,7 +18,7 @@ Z7_CLASS_IMP_COM_1(
 )
   CMyComPtr<ICompressProgressInfo> _progress;
 public:
-  CDecProgress(ICompressProgressInfo *progress): _progress(progress) {}
+  CDecProgress(ICompressProgressInfo *progress Z7_lifetimebound): _progress(progress) {}
 };
 
 Z7_COM7F_IMF(CDecProgress::SetRatioInfo(const UInt64 * /* inSize */, const UInt64 *outSize))
@@ -588,6 +588,7 @@ HRESULT CDecoder::Decode(
         progress2 ? (ICompressProgressInfo *)progress2 : compressProgress,
         dataAfterEnd_Error);
 
+  #ifndef Z7_NO_CRYPTO
     if (codeResult == S_OK)
     {
       for (i = 0; i < folderInfo.Coders.Size(); i++)
@@ -604,6 +605,7 @@ HRESULT CDecoder::Decode(
         }
       }
     }
+  #endif
     return codeResult;
   }
   

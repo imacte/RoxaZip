@@ -9,7 +9,7 @@
   repository:
 
     pwsh -File .github\scripts\update-upstream-lang.ps1 `
-        -Installer 7z2604.exe -RoxaZip build\bin-x64-ndm\RoxaZip.exe -OutDir <clone>\Lang
+        -Installer 7z2606.exe -RoxaZip build\bin-x64-ndm\RoxaZip.exe -OutDir <clone>\Lang
     # then, in the clone:  git add Lang ; git commit ; git push
 
   The strings this fork adds are not written here; they stay in this repository

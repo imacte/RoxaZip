@@ -40,7 +40,7 @@ param(
   [string]$InstallDir = 'D:\Program Files\RoxaZip',
   [ValidateSet('x64', 'arm64', 'x86')]
   [string]$Arch = 'x64',
-  [string]$Version = '26.3.0.0',
+  [string]$Version = '26.6.0.0',
   # Partner Center -> Product identity; empty keeps the placeholder in the manifest
   [string]$IdentityName,
   [string]$Publisher,
@@ -82,7 +82,7 @@ function Get-SdkTool([string]$name)
   return $null
 }
 
-# The manifest needs four version parts ("26.03" and "26.3.0.0" both work).
+# The manifest needs four version parts ("26.06" and "26.6.0.0" both work).
 $vParts = @($Version.Split('.') | ForEach-Object { [int]$_ })
 while ($vParts.Count -lt 4) { $vParts += 0 }
 $Version = ($vParts[0..3] -join '.')

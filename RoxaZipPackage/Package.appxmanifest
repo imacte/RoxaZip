@@ -64,7 +64,7 @@
   <Identity
     Name="imacte.RoxaZip"
     Publisher="CN=99CE4C4C-7CDF-4CB7-A3F5-AAB5567A3092"
-    Version="26.3.0.0"
+    Version="26.6.0.0"
     ProcessorArchitecture="x64" />
 
   <Properties>

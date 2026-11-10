@@ -1,6 +1,6 @@
 
 name: Build and release RoxaZip
-on: [push, pull_request]
+on: [workflow_dispatch, push, pull_request]
 
 jobs:
 
@@ -127,6 +127,9 @@ jobs:
           for /f "usebackq tokens=*" %%i in (`vswhere -latest -property installationPath`) do (
             echo VCVARSALL_PATH=%%i\VC\Auxiliary\Build\vcvarsall.bat >> %GITHUB_ENV%
           )
+          rem Upstream #572: avoid the VS2026 ARM64 optimizer regression.
+          rem Apply the same toolset to the binaries and compiled regression tests.
+          if "${{ matrix.arch }}" == "arm64" echo VCVARS_EXTRA=-vcvars_ver=14.4 >> %GITHUB_ENV%
 
       - name: Pre-requirements
         shell: cmd
@@ -147,7 +150,8 @@ jobs:
       - name: Compiling ${{ matrix.arch }}
         shell: cmd
         run: |
-          call "%VCVARSALL_PATH%" ${{ matrix.arch }}
+          call "%VCVARSALL_PATH%" ${{ matrix.arch }} %VCVARS_EXTRA%
+          if errorlevel 1 exit /b 1
           set WDIR=%cd%
           set PLATFORM=${{matrix.platform}}
           set SUBSYS=${{matrix.subsys}}
@@ -185,14 +189,16 @@ jobs:
       - name: LZ5 and Lizard frame regression tests
         shell: cmd
         run: |
-          call "%VCVARSALL_PATH%" ${{ matrix.arch }}
+          call "%VCVARSALL_PATH%" ${{ matrix.arch }} %VCVARS_EXTRA%
+          if errorlevel 1 exit /b 1
           powershell -NoProfile -ExecutionPolicy Bypass -File tests\run-lz-frame-tests.ps1
           if errorlevel 1 exit /b 1
 
       - name: Options regression tests
         shell: cmd
         run: |
-          call "%VCVARSALL_PATH%" ${{ matrix.arch }}
+          call "%VCVARSALL_PATH%" ${{ matrix.arch }} %VCVARS_EXTRA%
+          if errorlevel 1 exit /b 1
           powershell -NoProfile -ExecutionPolicy Bypass -File tests\run-options-tests.ps1
           if errorlevel 1 exit /b 1
 
@@ -213,7 +219,8 @@ jobs:
         if: matrix.arch == 'x64'
         shell: cmd
         run: |
-          call "%VCVARSALL_PATH%" ${{ matrix.arch }}
+          call "%VCVARSALL_PATH%" ${{ matrix.arch }} %VCVARS_EXTRA%
+          if errorlevel 1 exit /b 1
           set ZIP7_DARKMODE=0
           if "${{matrix.darkmode}}" == "darkmode" set ZIP7_DARKMODE=1
           cd CPP\7zip\Bundles\Fm
@@ -298,7 +305,7 @@ jobs:
         set SKEL=%WD%\skel
         mkdir %SKEL%
         cd %SKEL%
-        curl -L -o 7-Zip.exe https://www.7-zip.org/a/7z2603.exe
+        curl -fL -o 7-Zip.exe https://github.com/ip7z/7zip/releases/download/26.06/7z2606.exe
         IF %errorlevel% NEQ 0 EXIT 1
         "C:\Program Files\7-Zip\7z.exe" x 7-Zip.exe
         IF %errorlevel% NEQ 0 EXIT 1
@@ -320,8 +327,8 @@ jobs:
       env:
         # The Store rejects a package whose version is not higher than the
         # published one, so the run number becomes the third version part:
-        # 26.3.<run>.0 is always newer than the 26.3.0.0 of the first submission.
-        STORE_VERSION: 26.3.${{ github.run_number }}.0
+        # Keep the core version and use the run number for Store update ordering.
+        STORE_VERSION: 26.6.${{ github.run_number }}.0
         # The Store associated the HeadlessAppBypass waiver with the product on
         # 2026-11-10 (case 2610020010001019): the console and the GUI helper then
         # disappear from the Start menu (AppListEntry="none"). Without the waiver,

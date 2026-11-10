@@ -1,0 +1,56 @@
+# RoxaZip - Copyright (c) 2026 RoxaZip contributors
+# License: MIT - see DOC/License-MIT.txt
+
+if {[namespace which -command ::7z] eq ""} {
+    source [file join [file dirname [info script]] 7z.tcl]
+}
+
+# GNU split grows its default suffix at yz -> zaaa (or 89 -> 9000
+# for numeric suffixes). These fixtures exercise discovery across that boundary,
+# and verify byte order through the public archive interface.
+set splitCases {}
+set suffixes {}
+foreach a [split abcdefghijklmnopqrstuvwxy ""] {
+    foreach b [split abcdefghijklmnopqrstuvwxyz ""] {
+        lappend suffixes $a$b
+    }
+}
+lappend suffixes zaaa zaab
+lappend splitCases [list linux-alpha x $suffixes]
+lappend splitCases [list linux-alpha-upper part [lmap s $suffixes {string toupper $s}]]
+set suffixes {}
+for {set i 0} {$i < 90} {incr i} {lappend suffixes [format %02d $i]}
+lappend suffixes 9000 9001
+lappend splitCases [list linux-numeric part. $suffixes]
+set suffixes {}
+for {set i 1} {$i <= 101} {incr i} {lappend suffixes [format %03d $i]}
+lappend splitCases [list numbered part. $suffixes]
+
+foreach splitCase $splitCases {
+    lassign $splitCase caseName prefix suffixes
+    test split--$caseName {discover and concatenate split volumes in order} -setup {
+        set splitDir [file join [temporaryDirectory] roxazip-split-[pid]-[clock microseconds]]
+        file mkdir $splitDir
+        set expected ""
+        foreach suffix $suffixes {
+            set chunk "volume-$suffix\n"
+            set f [open [file join $splitDir $prefix$suffix] wb]
+            puts -nonewline $f $chunk
+            close $f
+            append expected $chunk
+        }
+        set first [file join $splitDir $prefix[lindex $suffixes 0]]
+    } -body {
+        set actual [7z e -so -- $first]
+        if {$actual ne [string trimright $expected \n]} {
+            error "Missing, reordered or corrupted volumes in $caseName"
+        }
+        7z t -tsplit -- $first
+        assertLogged {Everything is Ok}
+        set result OK
+    } -cleanup {
+        file delete -force $splitDir
+    } -result OK
+}
+
+::tcltest::cleanupTests

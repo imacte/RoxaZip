@@ -3,8 +3,9 @@ REM Build some release of RoxaZip
 
 SET COPYCMD=/Y /B
 SET COPTS=-m0=lzma -mx9 -ms=on -mf=bcj2
-SET URL=https://www.7-zip.org/a/7z2603.exe
-SET VERSION=26.03
+REM Use the upstream GitHub mirror for the matching help and language payload.
+SET URL=https://github.com/ip7z/7zip/releases/download/26.06/7z2606.exe
+SET VERSION=26.06
 SET SZIP="C:\Program Files\7-Zip\7z.exe"
 REM LURL must match the layout of the REMOTE repository: this repo keeps the upstream
 REM CPP/7zip tree, so the path is the same as upstream - only the repository differs.
@@ -18,7 +19,7 @@ REM Download our skeleton files
 mkdir %WD%\totalcmd
 mkdir %SKEL%
 cd %SKEL%
-curl %URL% -L -o 7-Zip.exe
+curl %URL% -fL -o 7-Zip.exe
 IF %errorlevel% NEQ 0 EXIT 1
 %SZIP% x 7-Zip.exe
 IF %errorlevel% NEQ 0 EXIT 1
