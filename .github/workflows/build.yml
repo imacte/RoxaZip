@@ -292,6 +292,10 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    - name: Store package argument regression tests
+      shell: pwsh
+      run: ./tests/test-store-package-arguments.ps1
+
     - uses: actions/download-artifact@v7
       with:
         path: artifact
@@ -336,7 +340,9 @@ jobs:
         STORE_HIDE_HELPERS: '1'
       run: |
         if (-not $env:STORE_VERSION) { throw 'STORE_VERSION is not set' }
-        $hide = if ($env:STORE_HIDE_HELPERS -eq '1') { @('-HideHelperApps') } else { @() }
+        # Preserve the array even with one element: splatting a scalar string
+        # passes individual characters to pwsh and corrupts identity arguments.
+        [string[]]$hide = if ($env:STORE_HIDE_HELPERS -eq '1') { @('-HideHelperApps') } else { @() }
         Write-Output "Store version $env:STORE_VERSION, hide helper apps: $($hide.Count -gt 0)"
         foreach ($arch in @('x64', 'arm64')) {
           $bin = Join-Path $PWD "artifact/bin-$arch"
