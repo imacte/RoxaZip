@@ -322,10 +322,11 @@ jobs:
         # published one, so the run number becomes the third version part:
         # 26.3.<run>.0 is always newer than the 26.3.0.0 of the first submission.
         STORE_VERSION: 26.3.${{ github.run_number }}.0
-        # Set to 1 once the Store associated the HeadlessAppBypass waiver with the
-        # product: the console and the GUI helper then disappear from the Start
-        # menu (AppListEntry="none"), which the Store rejects without the waiver.
-        STORE_HIDE_HELPERS: ''
+        # The Store associated the HeadlessAppBypass waiver with the product on
+        # 2026-11-10 (case 2610020010001019): the console and the GUI helper then
+        # disappear from the Start menu (AppListEntry="none"). Without the waiver,
+        # the Store rejects a package that contains that setting at upload.
+        STORE_HIDE_HELPERS: '1'
       run: |
         if (-not $env:STORE_VERSION) { throw 'STORE_VERSION is not set' }
         $hide = if ($env:STORE_HIDE_HELPERS -eq '1') { @('-HideHelperApps') } else { @() }

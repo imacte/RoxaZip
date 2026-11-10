@@ -189,7 +189,8 @@ alias) and `RoxaZip GUI` (progress window, provides the `7zG.exe` alias).
 Hiding the two helper entries needs `AppListEntry="none"`, and the Store rejects
 that with "the package specifies a headless app; you do not have permission to
 create headless apps - also ensure you have the waiver HeadlessAppBypass
-associated to this app". The waiver is granted per product by the Store team.
+associated to this app". The waiver is granted per product by the Store team;
+RoxaZip received it on 2026-11-10.
 
 This stopped being a nice-to-have: certification of 2026-10-07 passed with the
 required fix **10.1.1.11 On Device Tiles** - "the additional installed components
@@ -203,7 +204,7 @@ the naming fallback is in `DOC/StoreSubmission.md`.
 Ticket **2610020010001019** was submitted on 2026-10-02 through the "Create
 support case (MSA)" link on <https://developer.microsoft.com/en-us/windows/support/>
 (program Windows Developer Center, problem type App Management, support plan
-Professional No Charge) and is waiting for the Store team. The form is reachable
+Professional No Charge) and was approved on 2026-11-10. The form is reachable
 without a business tenant; the Engage Center link for Entra ID accounts only shows
 "no access" for an individual developer account, and `partnerops@microsoft.com`
 went unanswered for other developers.
@@ -245,7 +246,7 @@ Product : RoxaZip
 Store ID: 9P836WXHPJGZ
 Identity: imacte.RoxaZip
 Publisher: CN=99CE4C4C-7CDF-4CB7-A3F5-AAB5567A3092
-Package family name: imacte.RoxaZip_dy69qcvur1ke
+Package family name: imacte.RoxaZip_dxy69cxvrx1ke
 
 Please associate the "HeadlessAppBypass" waiver with this product.
 
@@ -281,16 +282,25 @@ Please associate the HeadlessAppBypass waiver with this product so the next
 submission can hide the two helper entries.
 ```
 
-### After the waiver is granted
+The nine-question checklist Store support sent on 2026-11-04 (app name, Store
+ID, the three listing links, and the headless-execution rationale) is answered
+in [../DOC/SupportReply-2610020010001019.md](../DOC/SupportReply-2610020010001019.md).
+That reply also corrects one sentence of the earlier follow-up: RoxaZipG.exe does
+show the operation's progress window; it has no standalone main window. Support
+approved the waiver on 2026-11-10, so the checklist is closed.
+
+### The waiver is granted (2026-11-10)
+
+The CI `store-package` job sets `STORE_HIDE_HELPERS: '1'`, which passes
+`-HideHelperApps`:
 
 ```powershell
 pwsh -File RoxaZipPackage\build-store-package.ps1 -HideHelperApps
 ```
 
-adds `AppListEntry="none"` to the two helper applications. For CI, add the same
-switch to the "Build the Store packages" step in `.github/workflows/build.yml`.
-Until the waiver exists, the packages ship with the three visible entries, which
-also keeps the `7z.exe` and `7zG.exe` aliases working.
+adds `AppListEntry="none"` to the two helper applications. The published
+26.3.23.0 still has the three visible entries; the next submission has only
+`RoxaZip`.
 
 ## Age rating questionnaire (expected answers)
 
@@ -317,3 +327,8 @@ is the link to use in the submission form.
 | License | GNU LGPL v2.1-or-later (see COPYING); bundled libraries under their own licenses |
 | Source code | https://github.com/imacte/RoxaZip |
 | Pricing | free |
+
+The live Store catalog (checked 2026-11-04) exposed the privacy policy URL but
+no Website and no Support contact. Both fields belong in Partner Center ->
+属性 (Properties) -> Support info; they appear on the public listing only after
+the submission is published.

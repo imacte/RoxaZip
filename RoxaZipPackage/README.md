@@ -109,7 +109,7 @@ that (see the open work below).
 | `Package/Identity/Name` | `imacte.RoxaZip` |
 | `Package/Identity/Publisher` | `CN=99CE4C4C-7CDF-4CB7-A3F5-AAB5567A3092` |
 | `Package/Properties/PublisherDisplayName` | `imacte` |
-| Package family name (PFN) | `imacte.RoxaZip_dy69qcvur1ke` |
+| Package family name (PFN) | `imacte.RoxaZip_dxy69cxvrx1ke` |
 | Store ID | `9P836WXHPJGZ` |
 | Store page | <https://apps.microsoft.com/detail/9P836WXHPJGZ> |
 
@@ -143,9 +143,11 @@ from there; otherwise they come from `-InstallDir`. `-IdentityName`,
 needed (`-Version` accepts `26.03` and `26.3.0.0`).
 
 `-HideHelperApps` marks the console and the GUI helper with
-`AppListEntry="none"` so that only "RoxaZip" appears in the Start menu. It
-requires the **HeadlessAppBypass** waiver for the product - see the ticket text
-and the procedure in [StoreListing.md](StoreListing.md).
+`AppListEntry="none"` so that only "RoxaZip" appears in the Start menu. It uses
+the **HeadlessAppBypass** waiver granted for the product on 2026-11-10 - the
+ticket text and history are in [StoreListing.md](StoreListing.md). The CI
+`store-package` job sets `STORE_HIDE_HELPERS: '1'`, so the next package hides
+the helpers by default.
 
 ## Local test before submitting
 
@@ -222,12 +224,11 @@ separate build:
 
 ## Open work
 
-* the x64 package is submitted for certification (version `26.3.0.0`); the arm64
-  package exists in CI and goes out with the next update, whose version comes from
-  the workflow run number;
-* the HeadlessAppBypass waiver (ticket `2610020010001019`) is pending. Once the
-  Store granted it, `-HideHelperApps` (or `STORE_HIDE_HELPERS: '1'` in CI) removes
-  the console and the GUI helper from the Start menu;
+* the Store packages are published (version `26.3.23.0`); the next update comes
+  from the CI run number (see the update checklist);
+* the HeadlessAppBypass waiver (ticket `2610020010001019`) was granted on
+  2026-11-10; `-HideHelperApps` (or `STORE_HIDE_HELPERS: '1'`, now the default in
+  CI) removes the console and the GUI helper from the Start menu;
 * the whole submission process - identity, first submission, update checklist, the
   waiver and the Store error messages seen so far - is documented in
   [../DOC/StoreSubmission.md](../DOC/StoreSubmission.md);

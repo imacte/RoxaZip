@@ -15,7 +15,7 @@ text and the restricted capability justifications.
 | Package/Identity/Name | `imacte.RoxaZip` |
 | Publisher | `CN=99CE4C4C-7CDF-4CB7-A3F5-AAB5567A3092` |
 | Publisher display name | `imacte` |
-| Package family name (Store-signed) | `imacte.RoxaZip_dy69qcvur1ke` |
+| Package family name (Store-signed) | `imacte.RoxaZip_dxy69cxvrx1ke` |
 
 The publisher comes from the Store account and must stay exactly like this; a
 package with a different publisher is rejected. `build-store-package.ps1 -Sign`
@@ -39,7 +39,7 @@ RoxaZip_26.3.<run number>.0_arm64.msix
 | Version | `26.3.<run number>.0`. The Store rejects a package that is not newer than the published one, and the run number keeps it increasing. Pass another value with `-Version` (it accepts `26.03` and `26.3.0.0`). |
 | Architecture | `ProcessorArchitecture` is set from `-Arch`. It used to stay `neutral`, which gave both architectures the same full name and made the Store refuse the second package. |
 | Signature | Unsigned on purpose: the Store signs the uploaded package. `-Sign -Install` creates a test certificate and installs the package locally, which is only for testing. |
-| Helpers | `-HideHelperApps` hides the console and the GUI helper from the Start menu. It needs the HeadlessAppBypass waiver (see below). |
+| Helpers | `-HideHelperApps` hides the console and the GUI helper from the Start menu. The HeadlessAppBypass waiver was granted on 2026-11-10 (see below). |
 | Assets | `Package/Assets` (8 PNGs) is copied into `Assets\`; the CI job stages the upstream skeleton itself (`Lang`, help file, text files). |
 
 Local build:
@@ -138,9 +138,9 @@ Two ways to fix it, in this order:
 1. **Hide the helpers (preferred).** `AppListEntry="none"` on the console and the
    GUI helper leaves a single Start entry and is the documented fix for helper
    executables; the package already supports it with
-   `build-store-package.ps1 -HideHelperApps` / `STORE_HIDE_HELPERS: '1'`. It
-   needs the **HeadlessAppBypass** waiver, which is still pending - see the
-   "HeadlessAppBypass waiver" section below for the follow-up text to send.
+   `build-store-package.ps1 -HideHelperApps` / `STORE_HIDE_HELPERS: '1'`. The
+   **HeadlessAppBypass** waiver was granted on 2026-11-10, so the next package
+   uses that setting - see the "HeadlessAppBypass waiver" section below.
 2. **If the waiver is refused**, keep the entries but make it obvious which one
    is the product: give the console and the GUI helper their own icons and names
    that say they are helpers (for example `RoxaZip Console (helper)` and
@@ -204,22 +204,25 @@ version" while nothing newer is published.
 
 ## Update checklist
 
-1. The next submission has to clear **10.1.1.11 On Device Tiles**. Once the
-   HeadlessAppBypass waiver arrived, set `STORE_HIDE_HELPERS: '1'` in the
-   `store-package` job of `.github/workflows/build.yml` and push. The job log then
-   prints `hide helper apps: True`, and the two helper applications carry
-   `AppListEntry="none"`. Without the waiver, use the naming fallback from the
-   section above instead.
+1. The next submission has to clear **10.1.1.11 On Device Tiles**. The
+   HeadlessAppBypass waiver was granted on 2026-11-10, so `STORE_HIDE_HELPERS:
+   '1'` is set in the `store-package` job of `.github/workflows/build.yml`.
+   After pushing, the job log prints `hide helper apps: True`, and the two
+   helper applications carry `AppListEntry="none"`. (If the waiver had not
+   arrived, the naming fallback from the section above would be used instead.)
 2. Wait for the workflow, open the run, download the **`RoxaZip Store package`**
    artifact and unpack it (both architectures).
-3. Partner Center -> RoxaZip -> **new submission**.
-4. Packages page: upload both packages, keep **Windows 10/11 Desktop** checked.
-   The version is already higher than the published one.
+3. Partner Center -> RoxaZip -> **new submission**. The existing draft
+   ("提交 2", last saved 2026-10-08) can be reused: check that Properties ->
+   Support info still holds the Website/Support links, then continue it.
+4. Packages page: upload both new packages and remove the 26.3.23.0 ones if the
+   draft still lists them; keep **Windows 10/11 Desktop** checked. The new
+   version is already higher than the published one.
 5. Review the other sections (they carry over, but confirm them):
    | Section | Check |
    |---|---|
    | Pricing and availability | still free, all markets |
-   | Properties | privacy = no, category = Utilities -> File managers |
+   | Properties | privacy answer (must match the policy), category, and the Website/Support contact links in Support info (see the 2026-11-04 section) |
    | Age ratings | the generated ratings are reused |
    | Store listing | text and screenshots (update them if the release changed something visible) |
    | Submission options | only the `runFullTrust` box - `unvirtualizedResources` is gone from the manifest (see "Certification result" above) |
@@ -237,30 +240,53 @@ the `HeadlessAppBypass` waiver:
 > `AppListEntry="none"` in the AppxManifest file and also ensure you have the
 > waiver "HeadlessAppBypass" associated to this app.
 
-Ticket **2610020010001019** was submitted on 2026-10-02 and is waiting for the
-Store team. It was created through the **Create support case (MSA)** link on
+Ticket **2610020010001019** was submitted on 2026-10-02 and **approved on
+2026-11-10**. It was created through the **Create support case (MSA)** link on
 <https://developer.microsoft.com/en-us/windows/support/> - program *Windows
 Developer Center*, problem type *App Management*, support plan *Professional No
 Charge*, contact by e-mail. The waiver is granted per product.
+
+The approval e-mail (2026-11-10, from Store support, in the same thread) says the
+request has been approved and that the next package submission will not
+encounter the headless app validation error. It names the enabled capability
+"sharedread" rather than "HeadlessAppBypass"; if an upload still reports the
+headless error, reply on the same case instead of opening a new one.
 
 Routes that do **not** work for an individual developer account: the "Create
 support case (Entra ID)" link (the business Engage Center answers "no access to
 any workspace"), and `partnerops@microsoft.com` (other developers reported no
 answer for a month).
 
-While the waiver is missing, the packages ship with three visible Start menu
-entries: `RoxaZip` (file manager), `RoxaZip Console` (command line, provides the
-`7z.exe` alias) and `RoxaZip GUI` (progress window, provides the `7zG.exe` alias).
-Once it is granted, `-HideHelperApps` leaves only `RoxaZip`.
+The published 26.3.23.0 still ships with three visible Start menu entries:
+`RoxaZip` (file manager), `RoxaZip Console` (command line, provides the
+`7z.exe` alias) and `RoxaZip GUI` (progress window, provides the `7zG.exe`
+alias). Thanks to the waiver, the next package built by CI uses
+`-HideHelperApps` and leaves only `RoxaZip`.
+
+## 2026-11-04: the nine-question checklist
+
+Store support asked on 2026-11-04 for nine details before the
+`HeadlessAppBypass` waiver could be associated with the product: the app name,
+Store ID, privacy policy URL, developer website, support contact, a confirmation
+that those links are in the submission, and the headless-execution rationale
+(questions 7-9). The ready-to-send bilingual reply is in
+[SupportReply-2610020010001019.md](SupportReply-2610020010001019.md); it was
+sent, and Store support approved the waiver on 2026-11-10.
+
+The Website and Support contact links belong in Partner Center -> 属性
+(Properties) -> Support info (the public Store catalog on 2026-11-04 exposed only
+the privacy policy URL). Use the correct package family name
+(`imacte.RoxaZip_dxy69cxvrx1ke`) - the archived ticket text used to carry
+`imacte.RoxaZip_dy69qcvur1ke`, so use the value from "Product identity" above.
 
 ## Errors seen, and what caused them
 
 | Store message | Cause | Fix |
 |---|---|---|
-| "specifies a headless app ... you don't have permission to create headless apps" | `AppListEntry="none"` without the waiver | request the waiver, or keep the helper entries visible |
+| "specifies a headless app ... you don't have permission to create headless apps" | `AppListEntry="none"` without the waiver | the waiver was granted on 2026-11-10; use `-HideHelperApps` |
 | "the following restricted capabilities require approval: runFullTrust, unvirtualizedResources" | restricted capabilities used without a justification (first submission only) | fill the box on the submission options page (`StoreListing.md` has the text); `unvirtualizedResources` is no longer declared, so it has no box any more |
 | "all .msix packages must be uniquely identified by their full name ... `imacte.RoxaZip_26.3.0.0_Neutral` ... have different content" | the manifest `Identity` had no `ProcessorArchitecture`, so x64 and arm64 shared one full name | `-Arch` sets `ProcessorArchitecture` |
 | uploading a package whose version is not higher than the published one | reusing `26.3.0.0` for an update | the version comes from the CI run number |
 | "10.6.3 Capabilities - your request to use unvirtualizedResources has been reviewed and was denied" | the manifest declared the `unvirtualizedResources` restricted capability (with `desktop6:FileSystemWriteVirtualization`) and Microsoft did not approve it for a file manager | remove the capability and the property from `RoxaZipPackage/Package.appxmanifest` and resubmit (see "Certification result" above) |
 | a restricted capability justification that stops in the middle of a sentence ("...the common dialogs, the re") | the "Submission options" justification boxes hold **500 characters** and cut off the rest without a warning; the text from `StoreListing.md` was 706 characters | use the 479-character `runFullTrust` text from `StoreListing.md` and check that it ends with "cannot start." |
-| "10.1.1.11 On Device Tiles - your submission installs multiple components to the device ... additional installed components that are visible in the Start Menu have a unique name that clearly identifies which item is the main product" (Pass with required fix, 2026-10-07) | the package declares three `<Application>` elements, so the Start menu shows `RoxaZip`, `RoxaZip Console` and `RoxaZip GUI` with the same icon | hide the two helpers with `-HideHelperApps` once the HeadlessAppBypass waiver is granted, or give them their own names and icons; include it in the next submission (see "Certification result of the resubmission") |
+| "10.1.1.11 On Device Tiles - your submission installs multiple components to the device ... additional installed components that are visible in the Start Menu have a unique name that clearly identifies which item is the main product" (Pass with required fix, 2026-10-07) | the package declares three `<Application>` elements, so the Start menu shows `RoxaZip`, `RoxaZip Console` and `RoxaZip GUI` with the same icon | hide the two helpers with `-HideHelperApps` (waiver granted 2026-11-10); include it in the next submission (see "Certification result of the resubmission") |
